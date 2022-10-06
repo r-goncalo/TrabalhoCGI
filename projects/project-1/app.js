@@ -14,15 +14,32 @@ let drawField = true;
 
 let time = undefined;
 
+
+//all variables bellow this comment lack due implementation in the code
+
 var mousePos = vec2();
 
-var tvMin = undefined; // the minimum life time of a particle, 'q' increases and 'a' decreases
-var tvMax = undefined; // the maximum life time of a partice, 'w' increases and 's' decreases
-var origin = undefined; // the origin of the coordinates system, movement with SHIFT pressed changes it
-var vMin = undefined; // the minimum velocity of a new particle, SHIFT + PAGEUP increases and SHIFT + PAGEDOWN decreases
-var vMax = undefined; //maximum velocity of a new particle, PAGEUP increases and PAGEDOWN decreases
-var baseDeg = undefined; //angle that defines crentral dir to new particles, changes  with LEFT and RIGHT
-var degMaxVar = undefined; //maximum variance of baseDeg to new particles, changes with UP and DOWN
+const GravConst = 6.67 * Math.pow(10, -11);
+const BaseDensBig = 5510;
+const ScaleFactor = 6371000;
+const partMass = 1;
+
+var tvMin = 2; // the minimum life time of a particle, 'q' increases and 'a' decreases
+const tvMinMin = 1;
+const tvMinMax = 19;
+
+var tvMax = 10; // the maximum life time of a partice, 'w' increases and 's' decreases
+const tvMaxMin = 2;
+const tvMaxMax = 20;
+
+var origin = vec2(0, 0); // the origin of the coordinates system, movement with SHIFT pressed changes it
+var vMin = 0.1; // the minimum velocity of a new particle, SHIFT + PAGEUP increases and SHIFT + PAGEDOWN decreases
+var vMax = 0.2; //maximum velocity of a new particle, PAGEUP increases and PAGEDOWN decreases
+var baseDeg = 0; //angle that defines crentral dir to new particles, changes  with LEFT and RIGHT
+
+var degMaxVar = Math.PI; //maximum variance of baseDeg to new particles, changes with UP and DOWN
+const degMaxMin = -Math.PI;
+const degMaxMax = Math.PI;
 
 function main(shaders)
 {
