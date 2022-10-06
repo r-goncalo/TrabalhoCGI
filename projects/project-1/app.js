@@ -16,6 +16,14 @@ let time = undefined;
 
 var mousePos = vec2();
 
+var tvMin = undefined; // the minimum life time of a particle, 'q' increases and 'a' decreases
+var tvMax = undefined; // the maximum life time of a partice, 'w' increases and 's' decreases
+var origin = undefined; // the origin of the coordinates system, movement with SHIFT pressed changes it
+var vMin = undefined; // the minimum velocity of a new particle, SHIFT + PAGEUP increases and SHIFT + PAGEDOWN decreases
+var vMax = undefined; //maximum velocity of a new particle, PAGEUP increases and PAGEDOWN decreases
+var baseDeg = undefined; //angle that defines crentral dir to new particles, changes  with LEFT and RIGHT
+var degMaxVar = undefined; //maximum variance of baseDeg to new particles, changes with UP and DOWN
+
 function main(shaders)
 {
     // Generate the canvas element to fill the entire page
