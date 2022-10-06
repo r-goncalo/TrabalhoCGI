@@ -14,6 +14,8 @@ let drawField = true;
 
 let time = undefined;
 
+var mousePos = vec2();
+
 function main(shaders)
 {
     // Generate the canvas element to fill the entire page
@@ -41,12 +43,14 @@ function main(shaders)
     buildQuad();
     buildParticleSystem(N_PARTICLES);
 
+    //what should this code do when the page is resized
     window.addEventListener("resize", function(event) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         gl.viewport(0,0,canvas.width, canvas.height);
     });
 
+    //chat should this code do when the user presses on a key
     window.addEventListener("keydown", function(event) {
         console.log(event.key);
         switch(event.key) {
@@ -80,15 +84,19 @@ function main(shaders)
         }
     })
     
+    //what shoud this code do when the mouse is pressed
     canvas.addEventListener("mousedown", function(event) {
     });
 
-    canvas.addEventListener("mousemove", function(event) {
-        const p = getCursorPosition(canvas, event);
 
-        console.log(p);
+    //what should this code do when the mouse is moved
+    canvas.addEventListener("mousemove", function(event) {
+
+        mousePos = getCursorPosition(canvas, event);
+        
     });
 
+    //what should this code do when the mouse seizes to be pressed
     canvas.addEventListener("mouseup", function(event) {
     })
 
