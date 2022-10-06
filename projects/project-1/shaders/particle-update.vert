@@ -2,7 +2,7 @@ precision mediump float;
 
 /* Number of seconds (possibly fractional) that has passed since the last
    update step. */
-uniform float uDeltaTime;
+uniform float uDeltaTime; // "global" variable for all particles
 
 /* Inputs. These reflect the state of a single particle before the update. */
 

@@ -93,7 +93,7 @@ function main(shaders)
     canvas.addEventListener("mousemove", function(event) {
 
         mousePos = getCursorPosition(canvas, event);
-        
+
     });
 
     //what should this code do when the mouse seizes to be pressed
@@ -125,6 +125,7 @@ function main(shaders)
 
     }
 
+    //creates randomly spaced particles with a life expentancy
     function buildParticleSystem(nParticles) {
         const data = [];
 
@@ -163,11 +164,10 @@ function main(shaders)
 
     function animate(timestamp)
     {
-        let deltaTime = 0;
+        let deltaTime = 0; // the change of time since the last calculation
 
         if(time === undefined) {        // First time
             time = timestamp/1000;
-            deltaTime = 0;
         } 
         else {                          // All other times
             deltaTime = timestamp/1000 - time;
@@ -193,7 +193,7 @@ function main(shaders)
         
         gl.useProgram(updateProgram);
 
-        gl.uniform1f(uDeltaTime, deltaTime);
+        gl.uniform1f(uDeltaTime, deltaTime); //puts the variance in the shader
         
         // Setup attributes
         const vPosition = gl.getAttribLocation(updateProgram, "vPosition");
