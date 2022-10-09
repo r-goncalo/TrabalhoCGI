@@ -43,6 +43,8 @@ var tvMax = 10; // the maximum life time of a partice, 'w' increases and 's' dec
 const tvMaxMin = 2;
 const tvMaxMax = 20;
 
+const tvChange = 0.01;
+
 var origin = vec2(0, 0); // the origin of the particles, movement with SHIFT pressed changes it
 
 var vMin = 0.1; // the minimum velocity of a new particle, SHIFT + PAGEUP increases and SHIFT + PAGEDOWN decreases
@@ -103,7 +105,7 @@ function main(shaders)
 
                 if(event.shiftKey){
 
-                    vMin += vChange;
+                    vMin = Math.min( vMin + vChange, vMax);
                     console.log("Min Rand Vel: " + vMin);
 
                 }else{
@@ -123,7 +125,7 @@ function main(shaders)
 
                 }else{
 
-                    vMax -= vChange;
+                    vMax = Math.max( vMax - vChange, vMin);
                     console.log("Max Rand Vel: " + vMax);
 
                 }
@@ -154,12 +156,22 @@ function main(shaders)
 
                 break;
             case 'q':
+
+                tvMin = Math.min(tvMinMax, tvMin + tvChange, tvMax);
+                console.log("Min Life: " + tvMin);
+
                 break;
             case 'a':
+                tvMin = Math.max(tvMinMin, tvMin - tvChange);
+                console.log("Min Life: " + tvMin);
                 break;
             case 'w':
+                tvMax = Math.min(tvMaxMax, tvMax + tvChange);
+                console.log("Max Life: " + tvMax);
                 break;
             case 's':
+                tvMax = Math.max(tvMaxMin, tvMax - tvChange, tvMin);
+                console.log("Max Life: " + tvMax);
                 break;
             case '0':
                 drawField = !drawField;
