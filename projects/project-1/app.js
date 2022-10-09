@@ -28,7 +28,7 @@ var yScale;
 
 //all variables bellow this comment lack due implementation in the code
 
-var mousePos = vec2();
+var mousePos = vec2(0, 0); //probably unecessary and to remove
 
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
@@ -180,6 +180,7 @@ function main(shaders)
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
+
         }
     })
     
@@ -193,6 +194,14 @@ function main(shaders)
 
         mousePos = getCursorPosition(canvas, event);
         console.log("X: " + mousePos[0] + " Y: " + mousePos[1]);
+        
+        if(event.shiftKey){
+
+            origin = mousePos;
+            console.log("Origin: " + origin);
+
+
+        }
 
     });
 
