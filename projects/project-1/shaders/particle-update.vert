@@ -14,6 +14,13 @@ uniform float randLifeMax;
 uniform float randLifeMin;
 
 
+
+const int MAX_PLANETS=10;
+
+uniform float uRadius[MAX_PLANETS];
+uniform vec2 uPosition[MAX_PLANETS];
+
+
 /* Inputs. These reflect the state of a single particle before the update. */
 
 

@@ -390,6 +390,14 @@ function main(shaders)
 
         gl.drawArrays(gl.POINTS, 0, nParticles);
     }
+
+
+    function calcPlanetMass(radius){
+
+        return Math.pow(radius, 3) * BaseDensBig * Math.PI * 4 / 3
+
+    }
+
 }
 
 
