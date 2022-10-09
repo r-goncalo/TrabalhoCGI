@@ -278,11 +278,11 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
-        const vXLimit = gl.getUniformLocation(fieldProgram, "vXLimit");
-        const vYLimit = gl.getUniformLocation(fieldProgram, "vYLimit");
+        const vXScale = gl.getUniformLocation(fieldProgram, "vXScale");
+        const vYScale = gl.getUniformLocation(fieldProgram, "vYScale");
 
-        gl.uniform1f(vXLimit, xLimit);
-        gl.uniform1f(vYLimit, yLimit);
+        gl.uniform1f(vXScale, xScale);
+        gl.uniform1f(vYScale, yScale);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
         gl.enableVertexAttribArray(vPosition);
