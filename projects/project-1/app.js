@@ -234,10 +234,25 @@ function main(shaders)
     {
         // Setup uniforms
         const uDeltaTime = gl.getUniformLocation(updateProgram, "uDeltaTime");
-        
+        const vRandVelMin = gl.getUniformLocation(updateProgram, "randVelMin");
+        const vRandVelMax = gl.getUniformLocation(updateProgram, "randVelMax");
+        const vOrigin = gl.getUniformLocation(updateProgram, "origin");
+        const vVelDir = gl.getUniformLocation(updateProgram, "velDir");
+        const vMaxDirVar = gl.getUniformLocation(updateProgram, "maxDirVar");
+        const vRandLifeMax = gl.getUniformLocation(updateProgram, "randLifeMax");
+        const vRandLifeMin = gl.getUniformLocation(updateProgram, "randLifeMin");
+
         gl.useProgram(updateProgram);
 
+
         gl.uniform1f(uDeltaTime, deltaTime); //puts the variance in the shader
+        gl.uniform1f(vRandVelMin, vMin);
+        gl.uniform1f(vRandVelMax, vMax);
+        gl.uniform2f(vOrigin, origin);
+        gl.uniform1f(vVelDir, baseDeg);
+        gl.uniform1f(vMaxDirVar, degMaxVar);
+        gl.uniform1f(vRandLifeMax, tvMax);
+        gl.uniform1f(vRandLifeMin, tvMin);
         
         // Setup attributes
         const vPosition = gl.getAttribLocation(updateProgram, "vPosition");

@@ -10,6 +10,8 @@ uniform randVelMax;
 uniform origin;
 uniform velDir;
 uniform maxDirVar;
+uniform randLifeMax;
+uniform randLifeMin;
 
 
 /* Inputs. These reflect the state of a single particle before the update. */
