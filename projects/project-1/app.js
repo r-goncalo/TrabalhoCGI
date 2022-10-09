@@ -44,8 +44,11 @@ const tvMaxMin = 2;
 const tvMaxMax = 20;
 
 var origin = vec2(0, 0); // the origin of the particles, movement with SHIFT pressed changes it
+
 var vMin = 0.1; // the minimum velocity of a new particle, SHIFT + PAGEUP increases and SHIFT + PAGEDOWN decreases
 var vMax = 0.2; //maximum velocity of a new particle, PAGEUP increases and PAGEDOWN decreases
+const vChange = 0.01
+
 var baseDeg = 0; //angle that defines crentral dir to new particles, changes  with LEFT and RIGHT
 
 var degMaxVar = Math.PI; //maximum variance of baseDeg to new particles, changes with UP and DOWN
@@ -95,8 +98,34 @@ function main(shaders)
         console.log(event.key);
         switch(event.key) {
             case "PageUp":
+
+                if(event.shiftKey){
+
+                    vMin += vChange;
+                    console.log("Min Rand Vel: " + vMin);
+
+                }else{
+
+                    vMax += vChange;
+                    console.log("Max Rand Vel: " + vMax);
+
+                }
+
                 break;
             case "PageDown":
+
+                if(event.shiftKey){
+
+                    vMin -= vChange;
+                    console.log("Min Rand Vel: " + vMin);
+
+                }else{
+
+                    vMax -= vChange;
+                    console.log("Max Rand Vel: " + vMax);
+
+                }
+
                 break;
             case "ArrowUp":
                 break;
