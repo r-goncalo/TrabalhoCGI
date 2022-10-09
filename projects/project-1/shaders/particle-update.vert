@@ -4,9 +4,6 @@ precision mediump float;
    update step. */
 uniform float uDeltaTime; // "global" variable for all particles
 
-uniform float xLimit;
-uniform float yLimit;
-
 /* Inputs. These reflect the state of a single particle before the update. */
 
 

@@ -15,6 +15,11 @@ let drawField = true;
 let time = undefined;
 
 
+const xLimit = 1.5;
+var yLimit; //calculated before first render
+
+
+
 //all variables bellow this comment lack due implementation in the code
 
 var mousePos = vec2();
