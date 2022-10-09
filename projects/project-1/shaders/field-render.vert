@@ -18,8 +18,14 @@ void main()
 
     vCoord = vec2(vPosition[0] * vXScale, vPosition[1] * vYScale); 
 
+//    fColor = vec4(
+//                mod(vXScale, abs(vCoord[0])), 
+//                mod(vYScale, abs(vCoord[1])),
+//                 0, 1);
+
     fColor = vec4(
-                mod(vXScale, 1.0 + vCoord[0]), 
-                mod(vYScale, 1.0 + vCoord[1]),
+                mod((1.0/vXScale) * abs(vPosition[0]), 1.0), 
+                mod( (1.0/vYScale) * abs(vPosition[1]), 1.0),
                  0, 1);
+
 }
