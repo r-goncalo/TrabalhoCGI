@@ -15,8 +15,14 @@ let drawField = true;
 let time = undefined;
 
 
+//the coordinates will be considered X: -1 to 1 and Y: -1 to 1 when rendering
+//we want to think of them as X: -1.5 to 1.5 (rendering square and a half) and adjust Y to mantain porpotions
+//To mantain the X, it's as simple as just dividing by 1.5 the X of a point we want to draw
+//this two should always have the same propotion
 const xLimit = 1.5;
-var yLimit; //calculated before first render
+const xScale = 1/xLimit;
+var yLimit; //calculated before first render, it's supposed to mantain the square form because squares are nice
+var yScale;
 
 
 
@@ -55,6 +61,9 @@ function main(shaders)
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    yLimit = canvas.height/canvas.width;
+    yScale = 1/yLimit;
+
     /** type {WebGL2RenderingContext} */
     const gl = setupWebGL(canvas, {alpha: true});
 
@@ -78,6 +87,7 @@ function main(shaders)
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         gl.viewport(0,0,canvas.width, canvas.height);
+
     });
 
     //chat should this code do when the user presses on a key
@@ -123,6 +133,7 @@ function main(shaders)
     canvas.addEventListener("mousemove", function(event) {
 
         mousePos = getCursorPosition(canvas, event);
+        console.log("X: " + mousePos[0] + " Y: " + mousePos[1]);
 
     });
 
@@ -139,6 +150,8 @@ function main(shaders)
 
         const x = ((mx / canvas.width * 2) - 1);
         const y = (((canvas.height - my)/canvas.height * 2) -1);
+
+        console.log("True X: " + mx + " True Y: " + my);
 
         return vec2(x,y);
     }
@@ -161,8 +174,8 @@ function main(shaders)
 
         for(let i=0; i<nParticles; ++i) {
             // position
-            const x = Math.random()-0.5;
-            const y = Math.random()-0.5;
+            const x = (Math.random()-0.5) * xScale;
+            const y = (Math.random()-0.5) * yScale;
 
             data.push(x); data.push(y);
             
@@ -265,6 +278,11 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
+        const vXLimit = gl.getUniformLocation(fieldProgram, "vXLimit");
+        const vYLimit = gl.getUniformLocation(fieldProgram, "vYLimit");
+
+        gl.uniform1f(vXLimit, xLimit);
+        gl.uniform1f(vYLimit, yLimit);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
         gl.enableVertexAttribArray(vPosition);
