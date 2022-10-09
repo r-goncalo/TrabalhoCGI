@@ -55,6 +55,7 @@ const degChange = 0.05;
 var degMaxVar = Math.PI; //maximum variance of baseDeg to new particles, changes with UP and DOWN
 const degMaxMin = -Math.PI;
 const degMaxMax = Math.PI;
+const degVarChange = 0.05;
 
 function main(shaders)
 {
@@ -129,8 +130,16 @@ function main(shaders)
 
                 break;
             case "ArrowUp":
+
+                degMaxVar = Math.min(degMaxMax, degMaxVar + degVarChange);
+                console.log("Deg Max Var: " + degMaxVar);
+
                 break;
             case "ArrowDown":
+                
+                degMaxVar = Math.max(degMaxMin, degMaxVar - degVarChange);
+                console.log("Deg Max Var: " + degMaxVar);
+
                 break;
             case "ArrowLeft":
 
