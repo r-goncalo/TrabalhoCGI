@@ -248,7 +248,7 @@ function main(shaders)
         gl.uniform1f(uDeltaTime, deltaTime); //puts the variance in the shader
         gl.uniform1f(vRandVelMin, vMin);
         gl.uniform1f(vRandVelMax, vMax);
-        gl.uniform2f(vOrigin, origin);
+        gl.uniform2f(vOrigin, origin[0], origin[1]);
         gl.uniform1f(vVelDir, baseDeg);
         gl.uniform1f(vMaxDirVar, degMaxVar);
         gl.uniform1f(vRandLifeMax, tvMax);

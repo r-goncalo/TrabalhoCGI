@@ -5,13 +5,13 @@ precision mediump float;
 uniform float uDeltaTime; // "global" variable for all particles
 
 
-uniform randVelMin;
-uniform randVelMax;
-uniform origin;
-uniform velDir;
-uniform maxDirVar;
-uniform randLifeMax;
-uniform randLifeMin;
+uniform float randVelMin;
+uniform float randVelMax;
+uniform vec2 origin;
+uniform float velDir;
+uniform float maxDirVar;
+uniform float randLifeMax;
+uniform float randLifeMin;
 
 
 /* Inputs. These reflect the state of a single particle before the update. */
