@@ -19,19 +19,14 @@ uniform float randLifeMin;
 
 attribute vec2 vPosition;              // actual position
 attribute float vAge;                  // actual age (in seconds)
-attribute float vLife;                 // when it is supposed to dye 
+attribute float vLife;                 // when it is supposed to die 
 attribute vec2 vVelocity;              // actual speed
-
-// attribute vec2 vForce; //custom
-
 
 /* Outputs. These mirror the inputs. These values will be captured into our transform feedback buffer! */
 varying vec2 vPositionOut;
 varying float vAgeOut;
 varying float vLifeOut;
 varying vec2 vVelocityOut;
-
-// varying vec2 vForceOut; // custom
 
 // generates a pseudo random number that is a function of the argument. The argument needs to be constantly changing from call to call to generate different results
 highp float rand(vec2 co)
@@ -55,7 +50,17 @@ void main() {
    vVelocityOut = vVelocity + accel * uDeltaTime;
       
    if (vAgeOut >= vLife) {
-      // It's all up to you!
+
+      //vLife = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut);
+      vAgeOut = 0.0;
+      vPositionOut = origin;
+
+
+      highp float _velDir = velDir + rand(vVelocity) * maxDirVar;
+      highp float _vel = randVelMin + (randVelMax - randVelMin) * rand(vVelocityOut);
+      vVelocityOut = vec2(cos(_velDir) * _vel, sin(_velDir) * _vel);
+
+
    }
 
 }
