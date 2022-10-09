@@ -49,9 +49,9 @@ void main() {
    vec2 accel = vec2(0.0);
    vVelocityOut = vVelocity + accel * uDeltaTime;
       
-   if (vAgeOut >= vLife) {
+   if (vAgeOut >= vLifeOut) {
 
-      //vLife = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut);
+      vLifeOut = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut);
       vAgeOut = 0.0;
       vPositionOut = origin;
 
