@@ -43,7 +43,7 @@ var tvMax = 10; // the maximum life time of a partice, 'w' increases and 's' dec
 const tvMaxMin = 2;
 const tvMaxMax = 20;
 
-var origin = vec2(0, 0); // the origin of the coordinates system, movement with SHIFT pressed changes it
+var origin = vec2(0, 0); // the origin of the particles, movement with SHIFT pressed changes it
 var vMin = 0.1; // the minimum velocity of a new particle, SHIFT + PAGEUP increases and SHIFT + PAGEDOWN decreases
 var vMax = 0.2; //maximum velocity of a new particle, PAGEUP increases and PAGEDOWN decreases
 var baseDeg = 0; //angle that defines crentral dir to new particles, changes  with LEFT and RIGHT
@@ -61,7 +61,7 @@ function main(shaders)
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    yLimit = canvas.height/canvas.width;
+    yLimit = (canvas.height/canvas.width) * xLimit;
     yScale = 1/yLimit;
 
     /** type {WebGL2RenderingContext} */
@@ -161,6 +161,7 @@ function main(shaders)
     function buildQuad() {
         const vertices = [-1.0, 1.0, -1.0, -1.0, 1.0, -1.0,
                           -1.0, 1.0,  1.0, -1.0, 1.0,  1.0];
+                          
         
         quadBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
@@ -278,11 +279,11 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
-        const vXScale = gl.getUniformLocation(fieldProgram, "vXScale");
-        const vYScale = gl.getUniformLocation(fieldProgram, "vYScale");
+//        const vXScale = gl.getUniformLocation(fieldProgram, "vXScale");
+//        const vYScale = gl.getUniformLocation(fieldProgram, "vYScale");
 
-        gl.uniform1f(vXScale, xScale);
-        gl.uniform1f(vYScale, yScale);
+//        gl.uniform1f(vXScale, xScale);
+//        gl.uniform1f(vYScale, yScale);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
         gl.enableVertexAttribArray(vPosition);
