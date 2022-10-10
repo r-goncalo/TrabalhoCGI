@@ -205,7 +205,7 @@ function main(shaders)
     canvas.addEventListener("mousemove", function(event) {
 
         mousePos = getCursorPosition(canvas, event);
-        console.log("X: " + mousePos[0] + " Y: " + mousePos[1]);
+        //console.log("X: " + mousePos[0] + " Y: " + mousePos[1]);
         
         if(event.shiftKey){
 
@@ -456,7 +456,7 @@ function main(shaders)
         if(planets.length < 10){
 
             planets.push(vec4(position[0], position[1], radius, mass));
-            console.log("Planet created with Pos: " + position + " radius: " + radius + " masss: " + mass);
+            console.log("Planet created with Pos: " + position + " radius: " + radius + " mass: " + mass);
 
         }
 
