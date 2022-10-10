@@ -16,9 +16,10 @@ uniform float randLifeMin;
 
 const float distMult = 6571000.0;
 const float partMass = 1.0;
-const float gravConst = 0.0000000000667;
+//const float gravConst = 0.0000000000667;
+const float gravConst = 0.667;
 
-const int MAX_PLANETS= 10;
+const int MAX_PLANETS = 10;
 uniform vec4 uPlanets[MAX_PLANETS];
 
 
@@ -54,7 +55,7 @@ float accToPlanetX(int indexPlanet){
 
    if(vPosition[0] -  uPlanets[indexPlanet][0] != 0.0){
 
-     return  abs(vPosition[0] - uPlanets[indexPlanet][0]) / (pow(vPosition[0] - uPlanets[indexPlanet][0], 3.0) * pow(distMult, 2.0));
+     return  abs(vPosition[0] - uPlanets[indexPlanet][0]) / (pow( uPlanets[indexPlanet][0] - vPosition[0], 3.0) * pow(distMult, 2.0));
    
    }
    else{ return 0.0;}
@@ -66,17 +67,38 @@ float accToPlanetY(int indexPlanet){
 
    if(vPosition[1] -  uPlanets[indexPlanet][1] != 0.0){
 
-     return  abs(vPosition[1] - uPlanets[indexPlanet][1]) / (pow(vPosition[1] - uPlanets[indexPlanet][1], 3.0) * pow(distMult, 2.0));
+     return  abs(vPosition[1] - uPlanets[indexPlanet][1]) / (pow(uPlanets[indexPlanet][1] - vPosition[1], 3.0) * pow(distMult, 2.0));
    
    }
    else{ return 0.0;}
 
 }
 
+
 vec2 accToPlanet(int index){
 
-   return vec2(accToPlanetX(index), accToPlanetY(index))
-               * gravConst * partMass * uPlanets[index][3];
+
+
+    return vec2(accToPlanetX(index), accToPlanetY(index))
+               * gravConst * uPlanets[index][3];
+   
+
+/*
+
+   if(length(vPosition - vec2(uPlanets[index][0], uPlanets[index][1])) != 0.0){
+
+      return normalize(vec2(uPlanets[index][0], uPlanets[index][1]) - vPosition) *
+            gravConst * uPlanets[index][3]
+            / pow( distMult, 2.0) * vec2(sqrt(pow(uPlanets[index][0] - vPosition[0], 2.0)), 
+                                          sqrt(pow(uPlanets[index][1] - vPosition[1], 2.0 )));
+
+   }else {
+
+      return vec2(0.0, 0.0);
+
+   }
+
+*/
 
 }
 
@@ -95,8 +117,9 @@ void main() {
       accel = accel + accToPlanet(i);
    }
 
-   vVelocityOut = vVelocity + (accel * uDeltaTime);
-      
+    vVelocityOut = vVelocity + (accel * uDeltaTime);
+   //vVelocityOut = vec2(uPlanets[0][0], uPlanets[0][1]) * uPlanets[0][3] / 1000.0;
+
    if (vAgeOut >= vLifeOut) {
 
       vLifeOut = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut * vAgeOut + vVelocity);
