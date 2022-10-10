@@ -87,6 +87,7 @@ void main() {
    vAgeOut = vAge + uDeltaTime;
    vLifeOut = vLife;
 
+
    vec2 accel = vec2(0.0, 0.0);
 
    for(int i = 0; i < MAX_PLANETS; i++){

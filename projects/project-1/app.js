@@ -232,7 +232,7 @@ function main(shaders)
         const x = ((mx / canvas.width * 2) - 1);
         const y = (((canvas.height - my)/canvas.height * 2) -1);
 
-        console.log("True X: " + mx + " True Y: " + my);
+        //console.log("True X: " + mx + " True Y: " + my);
 
         return vec2(x,y);
     }
@@ -331,7 +331,7 @@ function main(shaders)
         gl.uniform1f(uDeltaTime, deltaTime); //puts the variance in the shader
         gl.uniform1f(vRandVelMin, vMin);
         gl.uniform1f(vRandVelMax, vMax);
-        gl.uniform2f(vOrigin, origin[0], origin[1]);
+        gl.uniform2fv(vOrigin, origin);
         gl.uniform1f(vVelDir, baseDeg);
         gl.uniform1f(vMaxDirVar, degMaxVar);
         gl.uniform1f(vRandLifeMax, tvMax);
@@ -340,7 +340,8 @@ function main(shaders)
         for(let i = 0; i < planets.length; i++){
 
             const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
-            gl.uniform4f(uPlanets, planets[i][0], planets[i][1], planets[i][2], planets[i][3]);
+            gl.uniform4fv(uPlanets, planets[i]);
+            //console.log("added planet with " + planets[i][0] + " " + planets[i][1] + " " + planets[i][2] + " " + planets[i][3]);
 
         }
 
@@ -395,7 +396,7 @@ function main(shaders)
         for(let i = 0; i < planets.length; i++){
 
             const ufPlanets = gl.getUniformLocation(fieldProgram, "ufPlanets[" + i + "]");
-            gl.uniform4f(ufPlanets, planets[i][0], planets[i][1], planets[i][2], planets[i][3]);
+            gl.uniform4fv(ufPlanets, planets);
 
         }
 
