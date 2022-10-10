@@ -5,9 +5,7 @@ precision mediump float;
 attribute vec2 vPosition;
 
 const int MAX_PLANETS=10;
-
-uniform float uRadius[MAX_PLANETS];
-uniform vec2 uPosition[MAX_PLANETS];
+uniform vec4 uPlanets[MAX_PLANETS];
 
 
 
