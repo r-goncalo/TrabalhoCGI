@@ -336,6 +336,20 @@ function main(shaders)
         gl.uniform1f(vMaxDirVar, degMaxVar);
         gl.uniform1f(vRandLifeMax, tvMax);
         gl.uniform1f(vRandLifeMin, tvMin);
+
+        for(let i = 0; i < planets.length; i++){
+
+            const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
+            gl.uniform4f(uPlanets, planets[i][0], planets[i][1], planets[i][2], planets[i][3]);
+
+        }
+
+        for(let i = planets.length; i < MAX_PLANETS; i++){
+
+            const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
+            gl.uniform4f(uPlanets, 0, 0, 0, 0);
+
+        }
         
         // Setup attributes
         const vPosition = gl.getAttribLocation(updateProgram, "vPosition");
@@ -377,11 +391,20 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
-//        const vXScale = gl.getUniformLocation(fieldProgram, "vXScale");
-//        const vYScale = gl.getUniformLocation(fieldProgram, "vYScale");
+     
+        for(let i = 0; i < planets.length; i++){
 
-//        gl.uniform1f(vXScale, xScale);
-//        gl.uniform1f(vYScale, yScale);
+            const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
+            gl.uniform4f(uPlanets, planets[i][0], planets[i][1], planets[i][2], planets[i][3]);
+
+        }
+
+        for(let i = planets.length; i < MAX_PLANETS; i++){
+
+            const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
+            gl.uniform4f(uPlanets, 0, 0, 0, 0);
+
+        }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
         gl.enableVertexAttribArray(vPosition);
