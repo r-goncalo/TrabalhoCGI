@@ -34,6 +34,11 @@ var mousePos = vec2(0, 0); //probably unecessary and to remove
 const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
+var timeCreatingPlanet = 0; //aux to calc rad of planet
+const radiusPerTime = 0.1; //how much radius per time
+var planetBeingCreated = false;
+var planetBeingCreatedPos = vec2(0, 0);
+
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
 const ScaleFactor = 6371000;
@@ -62,11 +67,6 @@ var degMaxVar = Math.PI; //maximum variance of baseDeg to new particles, changes
 const degMaxMin = -Math.PI;
 const degMaxMax = Math.PI;
 const degVarChange = 0.05;
-
-var timeCreatingPlanet = 0; //aux to calc rad of planet
-const radiusPerTime = 0.1; //how much radius per time
-var planetBeingCreated = false;
-var planetBeingCreatedPos = vec2(0, 0);
 
 function main(shaders)
 {
@@ -394,15 +394,15 @@ function main(shaders)
      
         for(let i = 0; i < planets.length; i++){
 
-            const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
-            gl.uniform4f(uPlanets, planets[i][0], planets[i][1], planets[i][2], planets[i][3]);
+            const ufPlanets = gl.getUniformLocation(fieldProgram, "ufPlanets[" + i + "]");
+            gl.uniform4f(ufPlanets, planets[i][0], planets[i][1], planets[i][2], planets[i][3]);
 
         }
 
         for(let i = planets.length; i < MAX_PLANETS; i++){
 
-            const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
-            gl.uniform4f(uPlanets, 0, 0, 0, 0);
+            const ufPlanets = gl.getUniformLocation(fieldProgram, "ufPlanets[" + i + "]");
+            gl.uniform4f(ufPlanets, 0, 0, 0, 0);
 
         }
 
