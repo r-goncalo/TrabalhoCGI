@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from '../../libs/utils.js';
-import { vec2, flatten, subtract, dot } from '../../libs/MV.js';
+import { vec2, vec4, flatten, subtract, dot } from '../../libs/MV.js';
 
 // Buffers: particles before update, particles after update, quad vertices
 let inParticlesBuffer, outParticlesBuffer, quadBuffer;
@@ -30,6 +30,10 @@ var yScale;
 
 var mousePos = vec2(0, 0); //probably unecessary and to remove
 
+
+const MAX_PLANETS = 10;
+var planets = []; // an array of vec 4 (position, radius, mass)
+
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
 const ScaleFactor = 6371000;
@@ -58,6 +62,11 @@ var degMaxVar = Math.PI; //maximum variance of baseDeg to new particles, changes
 const degMaxMin = -Math.PI;
 const degMaxMax = Math.PI;
 const degVarChange = 0.05;
+
+var timeCreatingPlanet = 0; //aux to calc rad of planet
+const radiusPerTime = 0.1; //how much radius per time
+var planetBeingCreated = false;
+var planetBeingCreatedPos = vec2(0, 0);
 
 function main(shaders)
 {
@@ -186,6 +195,9 @@ function main(shaders)
     
     //what shoud this code do when the mouse is pressed
     canvas.addEventListener("mousedown", function(event) {
+
+        if(!planetBeingCreated) { startCreatingPlanet(); }
+
     });
 
 
@@ -207,6 +219,7 @@ function main(shaders)
 
     //what should this code do when the mouse seizes to be pressed
     canvas.addEventListener("mouseup", function(event) {
+        if(planetBeingCreated){ stopCreatingPlanet();}
     })
 
     
@@ -285,6 +298,8 @@ function main(shaders)
             deltaTime = timestamp/1000 - time;
             time = timestamp/1000;
         }
+
+        if(planetBeingCreated) {timeCreatingPlanet += 1;}
 
         window.requestAnimationFrame(animate);
 
@@ -395,6 +410,32 @@ function main(shaders)
     function calcPlanetMass(radius){
 
         return Math.pow(radius, 3) * BaseDensBig * Math.PI * 4 / 3
+
+    }
+
+    function startCreatingPlanet(){
+
+        planetBeingCreated = true;
+        planetBeingCreatedPos = mousePos;
+        
+
+    }
+
+    function stopCreatingPlanet(){
+
+        planetBeingCreated = false;
+        createPlanet(planetBeingCreatedPos, timeCreatingPlanet * radiusPerTime, calcPlanetMass(timeCreatingPlanet * radiusPerTime));
+        timeCreatingPlanet = 0;
+    }
+
+    function createPlanet(position, radius, mass){
+
+        if(planets.length < 10){
+
+            planets.push(vec4(position[0], position[1], radius, mass));
+            console.log("Planet created with Pos: " + position + " radius: " + radius + " masss: " + mass);
+
+        }
 
     }
 
