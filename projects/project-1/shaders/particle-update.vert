@@ -47,11 +47,35 @@ highp float rand(vec2 co)
     return fract(sin(sn) * c);
 }
 
+//bellow the functions are in this way because of an error "index expression must be constant"
+
+float accToPlanetX(int indexPlanet){
+
+
+   if(vPosition[0] -  uPlanets[indexPlanet][0] != 0.0){
+
+     return  abs(vPosition[0] - uPlanets[indexPlanet][0]) / (pow(vPosition[0] - uPlanets[indexPlanet][0], 3.0) * pow(distMult, 2.0));
+   
+   }
+   else{ return 0.0;}
+
+}
+
+float accToPlanetY(int indexPlanet){
+
+
+   if(vPosition[1] -  uPlanets[indexPlanet][1] != 0.0){
+
+     return  abs(vPosition[1] - uPlanets[indexPlanet][1]) / (pow(vPosition[1] - uPlanets[indexPlanet][1], 3.0) * pow(distMult, 2.0));
+   
+   }
+   else{ return 0.0;}
+
+}
 
 vec2 accToPlanet(int index){
 
-   return vec2(abs(vPosition[0] - uPlanets[index][0]) / (pow(vPosition[0] - uPlanets[index][0], 3.0) * pow(distMult, 2.0)),
-               abs(vPosition[1] - uPlanets[index][1]) / (pow(vPosition[1] - uPlanets[index][1], 3.0) * pow(distMult, 2.0)))
+   return vec2(accToPlanetX(index), accToPlanetY(index))
                * gravConst * partMass * uPlanets[index][3];
 
 }
@@ -70,17 +94,17 @@ void main() {
       accel = accel + accToPlanet(i);
    }
 
-   vVelocityOut = vVelocity + accel * uDeltaTime;
+   vVelocityOut = vVelocity + (accel * uDeltaTime);
       
    if (vAgeOut >= vLifeOut) {
 
-      vLifeOut = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut);
+      vLifeOut = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut * vAgeOut + vVelocity);
       vAgeOut = 0.0;
       vPositionOut = origin;
 
 
-      highp float _velDir = velDir + rand(vVelocity) * maxDirVar;
-      highp float _vel = randVelMin + (randVelMax - randVelMin) * rand(vVelocityOut);
+      highp float _velDir = velDir + rand(vVelocity + vPosition) * maxDirVar;
+      highp float _vel = randVelMin + (randVelMax - randVelMin) * rand(vVelocityOut*vLifeOut + vPositionOut);
       vVelocityOut = vec2(cos(_velDir) * _vel, sin(_velDir) * _vel);
 
 
