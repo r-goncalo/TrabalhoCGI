@@ -75,14 +75,32 @@ float accToPlanetY(int indexPlanet){
 }
 
 
+float gravAccToPlanet(int index){
+
+
+
+
+   return gravConst * uPlanets[index][3] / pow(distMult *  length (vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1])), 2.0);
+
+   
+
+}
+
 vec2 accToPlanet(int index){
 
 
+   if(vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1]) != vec2(0.0, 0.0)){
 
+   return normalize(vec2(uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1]))
+            * gravAccToPlanet(index);
+
+   }else {return vec2(0.0, 0.0);}
+
+/*
     return vec2(accToPlanetX(index), accToPlanetY(index))
                * gravConst * uPlanets[index][3];
    
-
+*/
 /*
 
    if(length(vPosition - vec2(uPlanets[index][0], uPlanets[index][1])) != 0.0){
@@ -115,6 +133,7 @@ void main() {
    for(int i = 0; i < MAX_PLANETS; i++){
 
       accel = accel + accToPlanet(i);
+      //accel = normalize(vec2( uPlanets[i][0] - vPosition[0], uPlanets[i][1] - vPosition[1]));
    }
 
     vVelocityOut = vVelocity + (accel * uDeltaTime);
@@ -127,8 +146,8 @@ void main() {
       vPositionOut = origin;
 
 
-      highp float _velDir = velDir + rand(vVelocity + vPosition) * maxDirVar;
-      highp float _vel = randVelMin + (randVelMax - randVelMin) * rand(vVelocityOut*vLifeOut + vPositionOut);
+      highp float _velDir = velDir + (-1.0 + 2.0 * rand(vVelocity + vPosition)) * maxDirVar;
+      highp float _vel = randVelMin + (randVelMax - randVelMin) * rand(vVelocityOut * vLifeOut + vPositionOut);
       vVelocityOut = vec2(cos(_velDir) * _vel, sin(_velDir) * _vel);
 
 
