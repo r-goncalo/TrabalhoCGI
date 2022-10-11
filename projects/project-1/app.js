@@ -233,8 +233,8 @@ function main(shaders)
         const mx = event.offsetX;
         const my = event.offsetY;
 
-        const x = ((mx / canvas.width * 2) - 1);
-        const y = (((canvas.height - my)/canvas.height * 2) -1);
+        const x = ((mx / canvas.width * 2) - 1) * xLimit;
+        const y = (((canvas.height - my)/canvas.height * 2) -1) * yLimit;
 
         //console.log("True X: " + mx + " True Y: " + my);
 
