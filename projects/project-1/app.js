@@ -23,7 +23,7 @@ const xLimit = 1.5;
 const xScale = 1/xLimit;
 var yLimit; //calculated before first render, it's supposed to mantain the square form because squares are nice
 var yScale;
-
+var xYRatio; //initialized in the begining
 
 
 //all variables bellow this comment lack due implementation in the code
@@ -77,6 +77,7 @@ function main(shaders)
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    xYRatio = canvas.height / canvas.width;
     yLimit = (canvas.height/canvas.width) * xLimit;
     yScale = 1/yLimit;
 
@@ -89,6 +90,7 @@ function main(shaders)
     const updateProgram = buildProgramFromSources(gl, shaders["particle-update.vert"], shaders["particle-update.frag"], ["vPositionOut", "vAgeOut", "vLifeOut", "vVelocityOut"]);
 
     gl.viewport(0,0,canvas.width, canvas.height);
+    //gl.viewport(0,0,canvas.width * xScale, canvas.height * yScale);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     // Enable Alpha blending
@@ -103,6 +105,8 @@ function main(shaders)
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         gl.viewport(0,0,canvas.width, canvas.height);
+        yLimit = (canvas.height/canvas.width) * xLimit;
+        yScale = 1/yLimit;
 
     });
 
@@ -256,8 +260,8 @@ function main(shaders)
 
         for(let i=0; i<nParticles; ++i) {
             // position
-            const x = (Math.random()-0.5) * xScale;
-            const y = (Math.random()-0.5) * yScale;
+            const x = (Math.random()-0.5);// * xScale;
+            const y = (Math.random()-0.5);// * yScale;
 
             data.push(x); data.push(y);
             
@@ -421,6 +425,12 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(renderProgram, "vPosition");
+        //const uxScale = gl.getUniformLocation(renderProgram, "uxScale");
+        //const uyScale = gl.getUniformLocation(renderProgram, "uyScale");
+
+        //gl.uniform1f(uxScale, xScale);
+        //gl.uniform1f(uyScale, yScale);
+
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
