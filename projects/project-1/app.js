@@ -14,7 +14,10 @@ let drawField = true;
 
 let time = undefined;
 
+//PROFESSOR
 //Origin de particulas para todas as particulas no app.js; e no mesmo sitio
+//Atualizar o y no canvas; x e fixo
+
 
 //the coordinates will be considered X: -1 to 1 and Y: -1 to 1 when rendering
 //we want to think of them as X: -1.5 to 1.5 (rendering square and a half) and adjust Y to mantain porpotions
@@ -443,6 +446,43 @@ function main(shaders)
         gl.drawArrays(gl.POINTS, 0, nParticles);
     }
 
+    function drawPlanets(positionX, positionY, radius)
+    {
+        gl.useProgram(renderProgram);
+        
+        
+        const vertices = [];
+        
+        function generateVertices()
+        {
+        let angle = 0;
+        for(let i=0; i<100; i++) {
+            // Generate start position
+            vertices.push(vec2(positionX + radius, positionY));
+            // Generate end position
+            angle += 2*Math.PI/100;
+            vertices.push(vec2(Math.cos(angle), Math.sin(angle)));
+        }
+
+        //each vertice ends up with 4 floats, two positions
+        }
+        generateVertices();
+
+        
+        const aBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
+
+        const vPosition = gl.getAttribLocation(renderProgram, "vPosition");
+        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(vPosition);
+
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        window.requestAnimationFrame(animate);
+
+    }
+
 
     function calcPlanetMass(radiusInReferencial){
 
@@ -472,6 +512,7 @@ function main(shaders)
             planets.push(vec4(position[0], position[1], radius, mass));
             console.log("Planet created with Pos: " + position + " radius: " + radius + " mass: " + mass);
 
+            drawPlanets(position[0], position[1], radius);
         }
 
     }
