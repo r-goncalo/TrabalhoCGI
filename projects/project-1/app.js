@@ -404,7 +404,7 @@ function main(shaders)
         for(let i = 0; i < planets.length; i++){
 
             const ufPlanets = gl.getUniformLocation(fieldProgram, "ufPlanets[" + i + "]");
-            gl.uniform4fv(ufPlanets, planets);
+            gl.uniform4fv(ufPlanets, planets[i]);
 
         }
 

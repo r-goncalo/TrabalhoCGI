@@ -24,6 +24,7 @@ vec3 hsv2rgb(vec3 c)
 }
 
 void main() {
+
     
     float maxLength = 0.0;
     
@@ -51,9 +52,17 @@ void main() {
 
    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
 
-
-
     gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
     //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+    
 
+    
+
+/*
+    if(ufPlanets[0] != vec4(0.0, 0.0, 0.0, 0.0)){
+
+        gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+
+    }else {gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);}
+*/
 }
