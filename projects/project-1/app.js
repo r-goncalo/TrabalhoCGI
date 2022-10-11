@@ -7,7 +7,7 @@ let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 // Particle system constants
 
 // Total number of particles
-const N_PARTICLES = 100000;
+const N_PARTICLES = 10000;
 
 let drawPoints = true;
 let drawField = true;
@@ -454,7 +454,7 @@ function main(shaders)
 
     function createPlanet(position, radius, mass){
 
-        if(planets.length < 10){
+        if(planets.length < MAX_PLANETS){
 
             planets.push(vec4(position[0], position[1], radius, mass));
             console.log("Planet created with Pos: " + position + " radius: " + radius + " mass: " + mass);
