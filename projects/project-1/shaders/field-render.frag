@@ -11,6 +11,8 @@ const int MAX_PLANETS = 10;
 uniform vec4 ufPlanets[MAX_PLANETS];
 
 
+
+
 //Varying para a escala
 
 //Vai buscar o varying ao vertex shader para pintar cada pixel do varying das coordenadas do mundo
@@ -52,7 +54,8 @@ void main() {
 
    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
 
-    gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
+    gl_FragColor = vec4(rgbGeneratedColor, sin(length(acc)));
+    //gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
     //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
     
 
