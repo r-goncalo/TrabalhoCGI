@@ -2,17 +2,7 @@ precision highp float;
 
 varying vec2 fPosition;
 
-<<<<<<< Updated upstream
-//Varying para a escala
 
-//Vai buscar o varying ao vertex shader para pintar cada pixel do varying das coordenadas do mundo
-
-void main() {
-    
-    gl_FragColor = fColor;
-    //gl_FragColor = vec4(0.1, 0.1, 0.1, 1.0); //O ultimo numero e a transparencia 
-    
-=======
 const float distMult = 6571000.0;
 const float partMass = 1.0;
 const float gravConst = 0.0000000000667;
@@ -20,6 +10,10 @@ const float gravConst = 0.0000000000667;
 const int MAX_PLANETS = 10;
 uniform vec4 ufPlanets[MAX_PLANETS];
 
+
+//Varying para a escala
+
+//Vai buscar o varying ao vertex shader para pintar cada pixel do varying das coordenadas do mundo
 
 
 vec3 hsv2rgb(vec3 c)
@@ -60,7 +54,6 @@ void main() {
 
 
     gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
->>>>>>> Stashed changes
     //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
 
 }
