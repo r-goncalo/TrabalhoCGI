@@ -16,11 +16,10 @@ uniform float randLifeMin;
 
 const float distMult = 6571000.0;
 const float partMass = 1.0;
-//const float gravConst = 0.0000000000667;
-const float gravConst = 0.667;
+const float gravConst = 0.0000000000667;
 
 const int MAX_PLANETS = 10;
-uniform vec4 uPlanets[MAX_PLANETS];
+uniform vec4 uPlanets[MAX_PLANETS]; //position, radius, mass
 
 
 /* Inputs. These reflect the state of a single particle before the update. */
@@ -92,33 +91,14 @@ vec2 accToPlanet(int index){
    if(vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1]) != vec2(0.0, 0.0)){
 
    return normalize(vec2(uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1]))
-            * gravAccToPlanet(index);
+           * gravConst * uPlanets[index][3] / pow(distMult *  length (vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1])), 2.0);
+
 
    }else {return vec2(0.0, 0.0);}
 
-/*
-    return vec2(accToPlanetX(index), accToPlanetY(index))
-               * gravConst * uPlanets[index][3];
-   
-*/
-/*
-
-   if(length(vPosition - vec2(uPlanets[index][0], uPlanets[index][1])) != 0.0){
-
-      return normalize(vec2(uPlanets[index][0], uPlanets[index][1]) - vPosition) *
-            gravConst * uPlanets[index][3]
-            / pow( distMult, 2.0) * vec2(sqrt(pow(uPlanets[index][0] - vPosition[0], 2.0)), 
-                                          sqrt(pow(uPlanets[index][1] - vPosition[1], 2.0 )));
-
-   }else {
-
-      return vec2(0.0, 0.0);
-
-   }
-
-*/
 
 }
+
 
 void main() {
 
@@ -133,11 +113,9 @@ void main() {
    for(int i = 0; i < MAX_PLANETS; i++){
 
       accel = accel + accToPlanet(i);
-      //accel = normalize(vec2( uPlanets[i][0] - vPosition[0], uPlanets[i][1] - vPosition[1]));
    }
 
     vVelocityOut = vVelocity + (accel * uDeltaTime);
-   //vVelocityOut = vec2(uPlanets[0][0], uPlanets[0][1]) * uPlanets[0][3] / 1000.0;
 
    if (vAgeOut >= vLifeOut) {
 

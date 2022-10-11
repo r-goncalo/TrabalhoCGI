@@ -7,7 +7,7 @@ let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 // Particle system constants
 
 // Total number of particles
-const N_PARTICLES = 1000;
+const N_PARTICLES = 100000;
 
 let drawPoints = true;
 let drawField = true;
@@ -431,9 +431,9 @@ function main(shaders)
     }
 
 
-    function calcPlanetMass(radius){
+    function calcPlanetMass(radiusInReferencial){
 
-        return Math.pow(radius, 3) * BaseDensBig * Math.PI * 4 / 3
+        return Math.pow(radiusInReferencial * ScaleFactor, 3) * BaseDensBig * Math.PI * 4 / 3
 
     }
 
