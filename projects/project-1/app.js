@@ -39,7 +39,7 @@ const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
 var timeCreatingPlanet = 0; //aux to calc rad of planet
-const radiusPerTime = 0.1; //how much radius per time
+const radiusPerTime = 0.005; //how much radius per time
 var planetBeingCreated = false;
 var planetBeingCreatedPos = vec2(0, 0);
 
@@ -175,6 +175,7 @@ function main(shaders)
             case 'q':
 
                 tvMin = Math.min(tvMinMax, tvMin + tvChange, tvMax);
+                
                 console.log("Min Life: " + tvMin);
 
                 break;
@@ -197,6 +198,8 @@ function main(shaders)
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
+                break;
+
 
         }
     })
@@ -317,6 +320,11 @@ function main(shaders)
         if(drawField) drawQuad();
         updateParticles(deltaTime);
         if(drawPoints) drawParticles(outParticlesBuffer, N_PARTICLES);
+        //if(planetBeingCreated) createPlanet(planetBeingCreatedPos, 7, 300000);
+            
+            
+        //Crio o planeta a toa e guardo em varias variaveis 
+        //Chamar o animate
 
         swapParticlesBuffers();
     }
@@ -448,19 +456,18 @@ function main(shaders)
 
     function drawPlanets(positionX, positionY, radius)
     {
-        gl.useProgram(renderProgram);
-        
+        gl.useProgram(fieldProgram);
         
         const vertices = [];
         
         function generateVertices()
         {
         let angle = 0;
-        for(let i=0; i<100; i++) {
+        for(let i=0; i<180; i++) {
             // Generate start position
             vertices.push(vec2(positionX + radius, positionY));
             // Generate end position
-            angle += 2*Math.PI/100;
+            angle += 2*Math.PI/180;
             vertices.push(vec2(Math.cos(angle), Math.sin(angle)));
         }
 
@@ -473,13 +480,11 @@ function main(shaders)
         gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
 
-        const vPosition = gl.getAttribLocation(renderProgram, "vPosition");
+        const vPosition = gl.getAttribLocation(fieldProgram, "vPosition");
         gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vPosition);
 
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        window.requestAnimationFrame(animate);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.length/2);
 
     }
 
@@ -499,7 +504,7 @@ function main(shaders)
     }
 
     function stopCreatingPlanet(){
-
+        //E suposto ser um console.log para estas merdas
         planetBeingCreated = false;
         createPlanet(planetBeingCreatedPos, timeCreatingPlanet * radiusPerTime, calcPlanetMass(timeCreatingPlanet * radiusPerTime));
         timeCreatingPlanet = 0;

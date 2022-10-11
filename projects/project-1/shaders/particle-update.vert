@@ -54,13 +54,15 @@ vec2 accToPlanet(int index){
    if(vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1]) != vec2(0.0, 0.0)){
 
    return normalize(vec2(uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1]))
-           * gravConst * uPlanets[index][3] / pow(distMult *  length (vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1])), 2.0);
+           * gravConst * uPlanets[index][3] / ( pow(distMult *  length (vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1])), 2.0));
 
 
    }else {return vec2(0.0, 0.0);}
 
 
 }
+
+
 
 
 void main() {
@@ -70,7 +72,6 @@ void main() {
    vAgeOut = vAge + uDeltaTime;
    vLifeOut = vLife;
 
-
    vec2 accel = vec2(0.0, 0.0);
 
    for(int i = 0; i < MAX_PLANETS; i++){
@@ -79,6 +80,14 @@ void main() {
    }
 
     vVelocityOut = vVelocity + (accel * uDeltaTime);
+ 
+   //RITA: MUDAR ISTO!!!
+    for(int i = 0; i<MAX_PLANETS;i++){
+      if(vPositionOut == vec2(uPlanets[i][0], uPlanets[i][1])){
+         vAgeOut = vLifeOut;
+         break;
+      }
+   }
 
    if (vAgeOut >= vLifeOut) {
 
@@ -94,4 +103,5 @@ void main() {
 
    }
 
+   
 }
