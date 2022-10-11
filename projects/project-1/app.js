@@ -260,8 +260,8 @@ function main(shaders)
 
         for(let i=0; i<nParticles; ++i) {
             // position
-            const x = (Math.random()-0.5);// * xScale;
-            const y = (Math.random()-0.5);// * yScale;
+            const x = (Math.random()-0.5) * xLimit * 2;
+            const y = (Math.random()-0.5) * yLimit * 2;
 
             data.push(x); data.push(y);
             
@@ -425,11 +425,11 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(renderProgram, "vPosition");
-        //const uxScale = gl.getUniformLocation(renderProgram, "uxScale");
-        //const uyScale = gl.getUniformLocation(renderProgram, "uyScale");
+        const uxScale = gl.getUniformLocation(renderProgram, "uxScale");
+        const uyScale = gl.getUniformLocation(renderProgram, "uyScale");
 
-        //gl.uniform1f(uxScale, xScale);
-        //gl.uniform1f(uyScale, yScale);
+        gl.uniform1f(uxScale, xScale);
+        gl.uniform1f(uyScale, yScale);
 
 
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
