@@ -41,16 +41,23 @@ vec2 accToPlanet(int index){
 void main()
 {
     gl_Position = vec4(vPosition, 0.0, 1.0);
+
+    float maxLength = 0.0;
     
     vec2 acc = vec2(0.0, 0.0);
 
        for(int i = 0; i < MAX_PLANETS; i++){
 
-      acc = acc + accToPlanet(i);
-   }
+        acc = acc + accToPlanet(i);
+
+        if(length(acc) > maxLength){ maxLength = length(acc);}
+
+    }
+
+
 
    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1]), 1.0, 1.0));
-   fColor = vec4(rgbGeneratedColor, length(acc));
+   fColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
 
 
 }

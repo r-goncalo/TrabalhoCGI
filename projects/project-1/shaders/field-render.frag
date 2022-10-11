@@ -11,4 +11,6 @@ void main() {
     gl_FragColor = fColor;
     //gl_FragColor = vec4(0.1, 0.1, 0.1, 1.0); //O ultimo numero e a transparencia 
     
+    //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+
 }
