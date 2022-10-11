@@ -2,7 +2,7 @@ precision highp float;
 
 
 // Vertex position in World Coordinates
-attribute vec2 vPosition;
+attribute vec2 vPosition; //coordenadas do buildquad
 
 const float distMult = 6571000.0;
 const float partMass = 1.0;
@@ -34,7 +34,11 @@ vec2 accToPlanet(int index){
 
 }
 
-void main() 
+//Fazer aqui a escala -  passar as coordenadas dos triangulos q cobrem o mundo todo (buildQuad)
+//varying vec2 - para cada pixel se tenha o valor q corresponda a coordenadas do mundo
+//Escala e uniform
+
+void main()
 {
     gl_Position = vec4(vPosition, 0.0, 1.0);
     

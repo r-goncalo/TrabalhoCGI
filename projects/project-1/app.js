@@ -14,6 +14,7 @@ let drawField = true;
 
 let time = undefined;
 
+//Origin de particulas para todas as particulas no app.js; e no mesmo sitio
 
 //the coordinates will be considered X: -1 to 1 and Y: -1 to 1 when rendering
 //we want to think of them as X: -1.5 to 1.5 (rendering square and a half) and adjust Y to mantain porpotions
