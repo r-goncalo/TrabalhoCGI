@@ -436,6 +436,8 @@ function main(shaders)
 
         gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 24, 0);
         gl.enableVertexAttribArray(vPosition);
+        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 24, 0);
+        gl.enableVertexAttribArray(vPosition);
 
         gl.drawArrays(gl.POINTS, 0, nParticles);
     }
