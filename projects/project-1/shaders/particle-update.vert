@@ -47,43 +47,6 @@ highp float rand(vec2 co)
     return fract(sin(sn) * c);
 }
 
-//bellow the functions are in this way because of an error "index expression must be constant"
-
-float accToPlanetX(int indexPlanet){
-
-
-   if(vPosition[0] -  uPlanets[indexPlanet][0] != 0.0){
-
-     return  abs(vPosition[0] - uPlanets[indexPlanet][0]) / (pow( uPlanets[indexPlanet][0] - vPosition[0], 3.0) * pow(distMult, 2.0));
-   
-   }
-   else{ return 0.0;}
-
-}
-
-float accToPlanetY(int indexPlanet){
-
-
-   if(vPosition[1] -  uPlanets[indexPlanet][1] != 0.0){
-
-     return  abs(vPosition[1] - uPlanets[indexPlanet][1]) / (pow(uPlanets[indexPlanet][1] - vPosition[1], 3.0) * pow(distMult, 2.0));
-   
-   }
-   else{ return 0.0;}
-
-}
-
-
-float gravAccToPlanet(int index){
-
-
-
-
-   return gravConst * uPlanets[index][3] / pow(distMult *  length (vec2( uPlanets[index][0] - vPosition[0], uPlanets[index][1] - vPosition[1])), 2.0);
-
-   
-
-}
 
 vec2 accToPlanet(int index){
 
