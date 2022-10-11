@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 varying vec2 vPositionOut; // "varying" means out
 varying float vAgeOut;
