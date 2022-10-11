@@ -269,12 +269,12 @@ function main(shaders)
             data.push(0.0);
 
             // life
-            const life = 6.0 + Math.random();
+            const life = tvMin + Math.random() * tvMax;
             data.push(life);
 
             // velocity
-            data.push(0.1*(Math.random()-0.5));
-            data.push(0.1*(Math.random()-0.5));
+            data.push(0.0);
+            data.push(0.0);
         }
 
         inParticlesBuffer = gl.createBuffer();
