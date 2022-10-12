@@ -27,7 +27,6 @@ const xLimit = 1.5;
 const xScale = 1/xLimit;
 var yLimit; //calculated before first render, it's supposed to mantain the square form because squares are nice
 var yScale;
-var xYRatio; //initialized in the begining
 
 
 //all variables bellow this comment lack due implementation in the code
@@ -39,7 +38,8 @@ const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
 var timeCreatingPlanet = 0; //aux to calc rad of planet
-const radiusPerTime = 0.005; //how much radius per time
+//const radiusPerTime = 0.005; //how much radius per time
+const radiusPerTime = 0.05;
 var planetBeingCreated = false;
 var planetBeingCreatedPos = vec2(0, 0);
 
@@ -81,7 +81,6 @@ function main(shaders)
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    xYRatio = canvas.height / canvas.width;
     yLimit = (canvas.height/canvas.width) * xLimit;
     yScale = 1/yLimit;
 
@@ -408,6 +407,13 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
+
+
+        const ufxScale = gl.getUniformLocation(renderProgram, "ufxScale");
+        const ufyScale = gl.getUniformLocation(renderProgram, "ufyScale");
+
+        gl.uniform1f(ufxScale, xScale);
+        gl.uniform1f(ufyScale, yScale);
      
         for(let i = 0; i < planets.length; i++){
 
@@ -454,18 +460,22 @@ function main(shaders)
         gl.drawArrays(gl.POINTS, 0, nParticles);
     }
 
+    /*
+
     function drawPlanets(positionX, positionY, radius)
     {
         gl.useProgram(fieldProgram);
         
         const vertices = [];
         
+        
+
         function generateVertices()
         {
         let angle = 0;
         for(let i=0; i<180; i++) {
             // Generate start position
-            vertices.push(vec2(positionX + radius, positionY));
+            vertices.push(vec2( (positionX + radius), positionY));
             // Generate end position
             angle += 2*Math.PI/180;
             vertices.push(vec2(Math.cos(angle), Math.sin(angle)));
@@ -486,8 +496,14 @@ function main(shaders)
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.length/2);
 
+        const ufxScale = gl.getUniformLocation(renderProgram, "ufxScale");
+        const ufyScale = gl.getUniformLocation(renderProgram, "ufyScale");
+
+        gl.uniform1f(ufxScale, xScale);
+        gl.uniform1f(ufyScale, yScale);
     }
 
+    */
 
     function calcPlanetMass(radiusInReferencial){
 
@@ -504,10 +520,11 @@ function main(shaders)
     }
 
     function stopCreatingPlanet(){
-        //E suposto ser um console.log para estas merdas
+
         planetBeingCreated = false;
         createPlanet(planetBeingCreatedPos, timeCreatingPlanet * radiusPerTime, calcPlanetMass(timeCreatingPlanet * radiusPerTime));
         timeCreatingPlanet = 0;
+
     }
 
     function createPlanet(position, radius, mass){
@@ -517,7 +534,7 @@ function main(shaders)
             planets.push(vec4(position[0], position[1], radius, mass));
             console.log("Planet created with Pos: " + position + " radius: " + radius + " mass: " + mass);
 
-            drawPlanets(position[0], position[1], radius);
+            //drawPlanets(position[0], position[1], radius); isto é para renderizar, tem de ser feito a cada frame
         }
 
     }

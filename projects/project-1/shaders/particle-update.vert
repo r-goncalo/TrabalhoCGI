@@ -81,6 +81,7 @@ void main() {
 
     vVelocityOut = vVelocity + (accel * uDeltaTime);
  
+ /*
    //RITA: MUDAR ISTO!!!
     for(int i = 0; i<MAX_PLANETS;i++){
       if(vPositionOut == vec2(uPlanets[i][0], uPlanets[i][1])){
@@ -89,6 +90,7 @@ void main() {
       }
    }
 
+*/
    if (vAgeOut >= vLifeOut) {
 
       vLifeOut = randLifeMin + (randLifeMax - randLifeMin) * rand(vPositionOut * vAgeOut + vVelocity);
