@@ -532,7 +532,7 @@ function main(shaders)
 
         planetBeingCreated = false;
         //createPlanet(planetBeingCreatedPos, timeCreatingPlanet * radiusPerTime, calcPlanetMass(timeCreatingPlanet * radiusPerTime));
-        console.log(planets[planets.length - 1]);
+        //console.log(planets[planets.length - 1]);
 
     }
 /*
