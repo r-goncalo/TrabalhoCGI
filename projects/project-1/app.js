@@ -217,7 +217,6 @@ function main(shaders)
     canvas.addEventListener("mousemove", function(event) {
 
         mousePos = getCursorPosition(canvas, event);
-        //console.log("X: " + mousePos[0] + " Y: " + mousePos[1]);
         
         if(event.shiftKey){
 
@@ -243,8 +242,6 @@ function main(shaders)
 
         const x = ((mx / canvas.width * 2) - 1) * xLimit;
         const y = (((canvas.height - my)/canvas.height * 2) -1) * yLimit;
-
-        //console.log("True X: " + mx + " True Y: " + my);
 
         return vec2(x,y);
     }
@@ -321,11 +318,7 @@ function main(shaders)
         if(drawField) drawQuad();
         updateParticles(deltaTime);
         if(drawPoints) drawParticles(outParticlesBuffer, N_PARTICLES);
-        //if(planetBeingCreated) createPlanet(planetBeingCreatedPos, 7, 300000);
-            
-            
-        //Crio o planeta a toa e guardo em varias variaveis 
-        //Chamar o animate
+    
 
         swapParticlesBuffers();
     }

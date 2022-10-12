@@ -62,9 +62,6 @@ vec2 accToPlanet(int index){
 
 }
 
-
-
-
 void main() {
 
    /* Update parameters according to our simple rules.*/
@@ -100,8 +97,6 @@ void main() {
       highp float _velDir = velDir + (-1.0 + 2.0 * rand(vVelocity + vPosition)) * maxDirVar;
       highp float _vel = randVelMin + (randVelMax - randVelMin) * rand(vVelocityOut * vLifeOut + vPositionOut);
       vVelocityOut = vec2(cos(_velDir) * _vel, sin(_velDir) * _vel);
-
-
    }
 
    
