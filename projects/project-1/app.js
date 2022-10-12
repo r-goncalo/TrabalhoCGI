@@ -72,6 +72,8 @@ const degMaxMin = -Math.PI;
 const degMaxMax = Math.PI;
 const degVarChange = 0.05;
 
+const XSCALE = 1.5;
+
 function main(shaders)
 {
     // Generate the canvas element to fill the entire page
@@ -408,7 +410,13 @@ function main(shaders)
 
         // Setup attributes
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
-     
+        
+        const xScale = gl.getUniformLocation(fieldProgram, "xScale");
+        const yScale = gl.getUniformLocation(fieldProgram, "yScale");
+
+        gl.uniform1f(xScale, XSCALE);
+        gl.uniform1f(yScale, yLimit);
+
         for(let i = 0; i < planets.length; i++){
 
             const ufPlanets = gl.getUniformLocation(fieldProgram, "ufPlanets[" + i + "]");
