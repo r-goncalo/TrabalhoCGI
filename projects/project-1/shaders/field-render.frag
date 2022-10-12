@@ -10,8 +10,8 @@ const float gravConst = 0.0000000000667;
 const int MAX_PLANETS = 10;
 uniform vec4 ufPlanets[MAX_PLANETS];
 
-uniform float ufxScale;
-uniform float ufyScale;
+//uniform float ufxScale;
+//uniform float ufyScale;
 
 
 

@@ -417,8 +417,8 @@ function main(shaders)
         const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
 
 
-        const ufxScale = gl.getUniformLocation(renderProgram, "ufxScale");
-        const ufyScale = gl.getUniformLocation(renderProgram, "ufyScale");
+        const ufxScale = gl.getUniformLocation(fieldProgram, "ufxScale");
+        const ufyScale = gl.getUniformLocation(fieldProgram, "ufyScale");
 
         gl.uniform1f(ufxScale, xScale);
         gl.uniform1f(ufyScale, yScale);
