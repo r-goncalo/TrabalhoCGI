@@ -27,10 +27,11 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
+
 void main() {
 
     
-    float maxLength = 0.0;
+    //float maxLength = 0.0;
     
     vec2 acc = vec2(0.0, 0.0);
     vec2 auxA = vec2(0.0, 0.0);
@@ -47,13 +48,12 @@ void main() {
 
                 acc = acc + auxA;
             
-                if(length(auxA) > maxLength){ maxLength = length(auxA);}
+                //if(length(auxA) > maxLength){ maxLength = length(auxA);}
 
             }
 
 
          }
-
 
 
 /*
@@ -76,10 +76,31 @@ void main() {
          }
 
 */
+/*
+    for(int i = 0; i < MAX_PLANETS; i++){
 
-   vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
 
-    gl_FragColor = vec4(rgbGeneratedColor, sin(length(acc)));
+            if(vec2( (ufPlanets[i][0] - fPosition[0]), ufPlanets[i][1] - fPosition[1]) != vec2(0.0, 0.0)){
+
+                auxA = normalize(vec2((ufPlanets[i][0] - fPosition[0])/ufxScale, (ufPlanets[i][1] - fPosition[1])/ufyScale))
+                    * gravConst * ufPlanets[i][3] / pow(distMult *  length (vec2( (ufPlanets[i][0] - fPosition[0])/ufxScale, (ufPlanets[i][1] - fPosition[1])/ufyScale)), 2.0);
+
+
+                acc = acc + auxA;
+            
+                if(length(auxA) > maxLength){ maxLength = length(auxA);}
+
+            }
+
+
+         }
+
+*/
+
+    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
+
+    //vec3 rgbGeneratedColor = hsv2rgb(vec3(ufyScale, 1.0, 1.0));
+    gl_FragColor = vec4(rgbGeneratedColor, abs(sin(1.0/length(acc)) * length(acc)));
     //gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
     //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
     

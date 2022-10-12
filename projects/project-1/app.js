@@ -38,7 +38,7 @@ const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
 //const radiusPerTime = 0.005; //how much radius per time
-const radiusPerTime = 0.05;
+const radiusPerTime = 0.02;
 var planetBeingCreated = false;
 
 
@@ -82,6 +82,8 @@ function main(shaders)
 
     yLimit = (canvas.height/canvas.width) * xLimit;
     yScale = 1/yLimit;
+    console.log("xLimit: " + xLimit);
+    console.log("yLimit: " + yLimit);
 
     /** type {WebGL2RenderingContext} */
     const gl = setupWebGL(canvas, {alpha: true});
@@ -109,6 +111,8 @@ function main(shaders)
         gl.viewport(0,0,canvas.width, canvas.height);
         yLimit = (canvas.height/canvas.width) * xLimit;
         yScale = 1/yLimit;
+        console.log("xLimit: " + xLimit);
+        console.log("yLimit: " + yLimit);
 
     });
 
