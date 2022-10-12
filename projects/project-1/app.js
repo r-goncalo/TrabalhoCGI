@@ -46,7 +46,7 @@ var planetBeingCreatedPos = vec2(0, 0);
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
 const ScaleFactor = 6371000;
-const partMass = 1;
+
 
 var tvMin = 2; // the minimum life time of a particle, 'q' increases and 'a' decreases
 const tvMinMin = 1;
@@ -72,8 +72,6 @@ const degMaxMin = -Math.PI;
 const degMaxMax = Math.PI;
 const degVarChange = 0.05;
 
-const XSCALE = 1.5;
-
 function main(shaders)
 {
     // Generate the canvas element to fill the entire page
@@ -96,7 +94,7 @@ function main(shaders)
     const updateProgram = buildProgramFromSources(gl, shaders["particle-update.vert"], shaders["particle-update.frag"], ["vPositionOut", "vAgeOut", "vLifeOut", "vVelocityOut"]);
 
     gl.viewport(0,0,canvas.width, canvas.height);
-    //gl.viewport(0,0,canvas.width * xScale, canvas.height * yScale);
+
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     // Enable Alpha blending
@@ -200,6 +198,7 @@ function main(shaders)
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
+                origin = mousePos;
                 break;
 
 
@@ -414,7 +413,7 @@ function main(shaders)
         const xScale = gl.getUniformLocation(fieldProgram, "xScale");
         const yScale = gl.getUniformLocation(fieldProgram, "yScale");
 
-        gl.uniform1f(xScale, XSCALE);
+        gl.uniform1f(xScale, xLimit);
         gl.uniform1f(yScale, yLimit);
 
         for(let i = 0; i < planets.length; i++){
@@ -462,41 +461,6 @@ function main(shaders)
         gl.drawArrays(gl.POINTS, 0, nParticles);
     }
 
-    function drawPlanets(positionX, positionY, radius)
-    {
-        gl.useProgram(fieldProgram);
-        
-        const vertices = [];
-        
-        function generateVertices()
-        {
-        let angle = 0;
-        for(let i=0; i<180; i++) {
-            // Generate start position
-            vertices.push(vec2(positionX + radius, positionY));
-            // Generate end position
-            angle += 2*Math.PI/180;
-            vertices.push(vec2(Math.cos(angle), Math.sin(angle)));
-        }
-
-        //each vertice ends up with 4 floats, two positions
-        }
-        generateVertices();
-
-        
-        const aBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, aBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
-
-        const vPosition = gl.getAttribLocation(fieldProgram, "vPosition");
-        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(vPosition);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.length/2);
-
-    }
-
-
     function calcPlanetMass(radiusInReferencial){
 
         return Math.pow(radiusInReferencial * ScaleFactor, 3) * BaseDensBig * Math.PI * 4 / 3
@@ -524,8 +488,6 @@ function main(shaders)
 
             planets.push(vec4(position[0], position[1], radius, mass));
             console.log("Planet created with Pos: " + position + " radius: " + radius + " mass: " + mass);
-
-            drawPlanets(position[0], position[1], radius);
         }
 
     }
