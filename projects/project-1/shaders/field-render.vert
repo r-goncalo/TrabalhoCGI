@@ -16,11 +16,12 @@ varying vec2 fPosition;
 void main()
 {
 
-    gl_Position = vec4(vPosition[0] * ufxScale, vPosition[1] * ufyScale, 0.0, 1.0);
+    //gl_Position = vec4(vPosition[0] * ufxScale, vPosition[1] * ufyScale, 0.0, 1.0);
     //gl_Position = vec4(vPosition[0] * (1.0/ufxScale), vPosition[1] * (1.0/ufyScale), 0.0, 1.0);
-   //gl_Position = vec4(vPosition, 0.0, 1.0);
+    gl_Position = vec4(vPosition, 0.0, 1.0);
     //fPosition = vec2(vPosition[0] * (1.0/ufxScale), vPosition[1] * (1.0/ufyScale));
     fPosition = vPosition;
+    //fPosition = vec2(vPosition[0] * ufxScale, vPosition[1] * ufyScale);
 
 
 }

@@ -10,6 +10,8 @@ const float gravConst = 0.0000000000667;
 const int MAX_PLANETS = 10;
 uniform vec4 ufPlanets[MAX_PLANETS];
 
+uniform float ufxScale;
+uniform float ufyScale;
 
 
 
@@ -32,7 +34,9 @@ void main() {
     
     vec2 acc = vec2(0.0, 0.0);
     vec2 auxA = vec2(0.0, 0.0);
-       for(int i = 0; i < MAX_PLANETS; i++){
+
+
+    for(int i = 0; i < MAX_PLANETS; i++){
 
 
             if(vec2( ufPlanets[i][0] - fPosition[0], ufPlanets[i][1] - fPosition[1]) != vec2(0.0, 0.0)){
@@ -51,6 +55,27 @@ void main() {
          }
 
 
+
+/*
+    for(int i = 0; i < MAX_PLANETS; i++){
+
+
+            if(vec2( (ufPlanets[i][0] - fPosition[0]), ufPlanets[i][1] - fPosition[1]) != vec2(0.0, 0.0)){
+
+                auxA = normalize(vec2((ufPlanets[i][0] - fPosition[0])*ufxScale, (ufPlanets[i][1] - fPosition[1])*ufyScale))
+                    * gravConst * ufPlanets[i][3] / pow(distMult *  length (vec2( (ufPlanets[i][0] - fPosition[0])*ufxScale, (ufPlanets[i][1] - fPosition[1])*ufyScale)), 2.0);
+
+
+                acc = acc + auxA;
+            
+                if(length(auxA) > maxLength){ maxLength = length(auxA);}
+
+            }
+
+
+         }
+
+*/
 
    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
 
