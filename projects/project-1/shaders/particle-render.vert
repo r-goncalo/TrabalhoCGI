@@ -11,7 +11,7 @@ uniform float uxScale;
 uniform float uyScale;
 
 void main() {
-  gl_PointSize = 2.0;
+  gl_PointSize = 0.2;
   gl_Position = vec4(vPosition[0] * uxScale, vPosition[1] * uyScale, 0.0, 1.0);
   fLeft = (vLife - vAge)/vLife;
 

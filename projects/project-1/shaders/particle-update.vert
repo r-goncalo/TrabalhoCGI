@@ -84,7 +84,7 @@ void main() {
       if(pow( pow(uPlanets[i][0]-vPositionOut[0], 2.0) +  pow(uPlanets[i][1]-vPositionOut[1], 2.0),0.5) <= uPlanets[i][2])
       {
          //vAgeOut = vLifeOut;
-         vAgeOut += (vLife - vAge) * rand(accel * uDeltaTime) * length(accel) / 10.0;
+         vAgeOut += (vLife - vAge)/2.0 + ((vLife - vAge) * rand(accel * vPosition *  uDeltaTime) * length(accel)); //trying progressive killing
          break;
       }
    }
