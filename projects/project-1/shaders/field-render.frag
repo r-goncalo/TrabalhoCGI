@@ -54,7 +54,7 @@ void main() {
 
    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
 
-    gl_FragColor = vec4(rgbGeneratedColor, sin(length(acc)));
+    gl_FragColor = vec4(rgbGeneratedColor, abs(sin(1.0/length(acc)) * length(acc)));
     //gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
     //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
     
