@@ -38,7 +38,7 @@ var mousePos = vec2(0, 0); //probably unecessary and to remove
 const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
-const radiusPerTime = 0.02; //how much radius per time
+const radiusPerTime = 0.01; //how much radius per time
 var planetBeingCreated = false;
 
 const GravConst = 6.67 * Math.pow(10, -11);
@@ -308,7 +308,7 @@ function main(shaders)
         if(planetBeingCreated) {
 
             planets[planets.length - 1][2] += radiusPerTime;
-            planets[planets.length - 1][3] += calcPlanetMass(radiusPerTime);
+            planets[planets.length - 1][3] = calcPlanetMass(planets[planets.length - 1][2]);
 
         }
 
