@@ -83,7 +83,8 @@ void main() {
     for(int i = 0; i<MAX_PLANETS;i++){
       if(pow( pow(uPlanets[i][0]-vPositionOut[0], 2.0) +  pow(uPlanets[i][1]-vPositionOut[1], 2.0),0.5) <= uPlanets[i][2])
       {
-         vAgeOut = vLifeOut;
+         //vAgeOut = vLifeOut;
+         vAgeOut += (vLife - vAge) * rand(accel * uDeltaTime) * length(accel) / 10.0;
          break;
       }
    }
