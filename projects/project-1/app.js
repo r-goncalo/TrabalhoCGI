@@ -7,7 +7,7 @@ let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 // Particle system constants
 
 // Total number of particles
-const N_PARTICLES = 50000;
+const N_PARTICLES = 10000;
 
 let drawPoints = true;
 let drawField = true;
@@ -38,10 +38,8 @@ var mousePos = vec2(0, 0); //probably unecessary and to remove
 const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
-var timeCreatingPlanet = 0; //aux to calc rad of planet
-const radiusPerTime = 0.005; //how much radius per time
+const radiusPerTime = 0.001; //how much radius per time
 var planetBeingCreated = false;
-var planetBeingCreatedPos = vec2(0, 0);
 
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
@@ -198,7 +196,6 @@ function main(shaders)
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
-                origin = mousePos;
                 break;
 
 
@@ -208,7 +205,7 @@ function main(shaders)
     //what shoud this code do when the mouse is pressed
     canvas.addEventListener("mousedown", function(event) {
 
-        if(!planetBeingCreated) { startCreatingPlanet(); }
+        if(!planetBeingCreated && planets.length < MAX_PLANETS) { startCreatingPlanet(); }
 
     });
 
@@ -308,7 +305,11 @@ function main(shaders)
             time = timestamp/1000;
         }
 
-        if(planetBeingCreated) {timeCreatingPlanet += 1;}
+        if(planetBeingCreated) {
+
+            planets[planets.length - 1][2] += radiusPerTime * ScaleFactor;
+            planets[planets.length - 1][3] += calcPlanetMass(radiusPerTime * ScaleFactor);
+        }
 
         window.requestAnimationFrame(animate);
 
@@ -462,28 +463,17 @@ function main(shaders)
 
     function startCreatingPlanet(){
 
+        planets.push(vec4(mousePos[0], mousePos[1], radiusPerTime * ScaleFactor, calcPlanetMass(radiusPerTime * ScaleFactor)));
         planetBeingCreated = true;
-        planetBeingCreatedPos = mousePos;
-        
 
     }
 
     function stopCreatingPlanet(){
-        //E suposto ser um console.log para estas merdas
+
         planetBeingCreated = false;
-        createPlanet(planetBeingCreatedPos, timeCreatingPlanet * radiusPerTime, calcPlanetMass(timeCreatingPlanet * radiusPerTime));
-        timeCreatingPlanet = 0;
-    }
-
-    function createPlanet(position, radius, mass){
-
-        if(planets.length < MAX_PLANETS){
-
-            planets.push(vec4(position[0], position[1], radius, mass));
-            console.log("Planet created with Pos: " + position + " radius: " + radius + " mass: " + mass);
-        }
 
     }
+
 
 }
 
