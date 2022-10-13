@@ -7,7 +7,7 @@ let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 // Particle system constants
 
 // Total number of particles
-const N_PARTICLES = 10000;
+const N_PARTICLES = 50000;
 
 let drawPoints = true;
 let drawField = true;
@@ -38,7 +38,7 @@ var mousePos = vec2(0, 0); //probably unecessary and to remove
 const MAX_PLANETS = 10;
 var planets = []; // an array of vec 4 (position, radius, mass)
 
-const radiusPerTime = 0.01; //how much radius per time
+const radiusPerTime = 0.02; //how much radius per time
 var planetBeingCreated = false;
 
 const GravConst = 6.67 * Math.pow(10, -11);
@@ -309,6 +309,7 @@ function main(shaders)
 
             planets[planets.length - 1][2] += radiusPerTime;
             planets[planets.length - 1][3] += calcPlanetMass(radiusPerTime);
+
         }
 
         window.requestAnimationFrame(animate);
@@ -470,6 +471,7 @@ function main(shaders)
 
     function stopCreatingPlanet(){
 
+        console.log("Planet created: " + planets[planets.length - 1]);
         planetBeingCreated = false;
 
     }

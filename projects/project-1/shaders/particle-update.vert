@@ -78,6 +78,7 @@ void main() {
 
     vVelocityOut = vVelocity + (accel * uDeltaTime);
  
+ /*
    //Particulas desaparecem quando vao contra o planeta
     for(int i = 0; i<MAX_PLANETS;i++){
       if(pow( pow(uPlanets[i][0]-vPositionOut[0], 2.0) +  pow(uPlanets[i][1]-vPositionOut[1], 2.0),0.5) <= uPlanets[i][2])
@@ -86,6 +87,7 @@ void main() {
          break;
       }
    }
+*/
 
    if (vAgeOut >= vLifeOut) {
 
