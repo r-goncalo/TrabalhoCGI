@@ -307,7 +307,7 @@ function main(shaders)
 
         if(planetBeingCreated) {
 
-            planets[planets.length - 1][2] += radiusPerTime * ScaleFactor;
+            planets[planets.length - 1][2] += radiusPerTime;
             planets[planets.length - 1][3] += calcPlanetMass(radiusPerTime * ScaleFactor);
         }
 
@@ -463,7 +463,7 @@ function main(shaders)
 
     function startCreatingPlanet(){
 
-        planets.push(vec4(mousePos[0], mousePos[1], radiusPerTime * ScaleFactor, calcPlanetMass(radiusPerTime * ScaleFactor)));
+        planets.push(vec4(mousePos[0], mousePos[1], radiusPerTime, calcPlanetMass(radiusPerTime * ScaleFactor)));
         planetBeingCreated = true;
 
     }
