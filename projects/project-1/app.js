@@ -135,12 +135,12 @@ function main(shaders)
 
                 if(event.shiftKey){
 
-                    vMin -= vChange;
+                    vMin = Math.max(vMin - vChange, 0);
                     console.log("Min Rand Vel: " + vMin);
 
                 }else{
 
-                    vMax = Math.max( vMax - vChange, vMin);
+                    vMax = Math.max( vMax - vChange, vMin, 0);
                     console.log("Max Rand Vel: " + vMax);
 
                 }
