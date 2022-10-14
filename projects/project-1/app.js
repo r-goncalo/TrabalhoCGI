@@ -306,6 +306,7 @@ function main(shaders)
             time = timestamp/1000;
         }
 
+        //Caso se comece a criar o planeta, o planeta vai crescendo gradualmente
         if(planetBeingCreated) {
 
             planets[planets.length - 1][2] += radiusPerTime;

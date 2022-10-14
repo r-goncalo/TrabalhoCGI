@@ -43,30 +43,16 @@ void main() {
 
                 acc = acc + auxA;
             
+            //REVER A IMPORTANCIA DESTE LENGTH
                 if(length(auxA) > maxLength){ maxLength = length(auxA);}
 
             }
          }
 
 
+//Angulo que se traduz na cor e a opacidade varia de acordo com a magnitude
    vec3 rgbGeneratedColor = hsv2rgb(vec3(atan(acc[0], acc[1])/(radians(360.0)), 1.0, 1.0));
-
+    
     gl_FragColor = vec4(rgbGeneratedColor,  5.0 * abs(sin(1.0/length(acc)) * length(acc)));
 
-    //Angulo se traduza na cor e a opacidade varia de acordo com a magnitude
-
-
-    //gl_FragColor = vec4(rgbGeneratedColor, length(acc)/maxLength);
-    //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
-    
-
-    
-
-/*
-    if(ufPlanets[0] != vec4(0.0, 0.0, 0.0, 0.0)){
-
-        gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
-
-    }else {gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);}
-*/
 }
