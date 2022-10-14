@@ -196,6 +196,7 @@ function main(shaders)
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
+                origin = mousePos;
                 break;
 
 
