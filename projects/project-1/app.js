@@ -7,7 +7,7 @@ let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 // Particle system constants
 
 // Total number of particles
-const N_PARTICLES = 500000;
+const N_PARTICLES = 500000; // funciona com 1000000 (e mais) em computadores mais fortes
 
 let drawPoints = true;
 let drawField = true;
@@ -40,6 +40,8 @@ var planets = []; // an array of vec 4 (position, radius, mass)
 
 const radiusPerTime = 0.01; //how much radius per time
 var planetBeingCreated = false;
+
+var planetsKill = true; //if planets kill particles by accelerating their aging
 
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
@@ -192,11 +194,14 @@ function main(shaders)
             case '0':
                 drawField = !drawField;
                 break;
+            case '1':
+                planetsKill = !planetsKill;
+                break;
             case '9':
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
-                origin = mousePos;
+                //origin = mousePos; //é chato porque para mexer na velocidade minima tem de se clicar no shift
                 break;
 
 
@@ -338,6 +343,7 @@ function main(shaders)
         const vMaxDirVar = gl.getUniformLocation(updateProgram, "maxDirVar");
         const vRandLifeMax = gl.getUniformLocation(updateProgram, "randLifeMax");
         const vRandLifeMin = gl.getUniformLocation(updateProgram, "randLifeMin");
+        const uPlanetsKill = gl.getUniformLocation(updateProgram, "uPlanetsKill");
 
         gl.useProgram(updateProgram);
 
@@ -350,6 +356,7 @@ function main(shaders)
         gl.uniform1f(vMaxDirVar, degMaxVar);
         gl.uniform1f(vRandLifeMax, tvMax);
         gl.uniform1f(vRandLifeMin, tvMin);
+        gl.uniform1i(uPlanetsKill, planetsKill);
 
         for(let i = 0; i < planets.length; i++){
 

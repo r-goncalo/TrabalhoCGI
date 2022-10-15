@@ -28,8 +28,6 @@ vec3 hsv2rgb(vec3 c)
 void main() {
 
     
-    float maxLength = 0.0;
-    
     vec2 acc = vec2(0.0, 0.0);
     vec2 auxA = vec2(0.0, 0.0);
        for(int i = 0; i < MAX_PLANETS; i++){
@@ -42,10 +40,6 @@ void main() {
 
 
                 acc = acc + auxA;
-            
-            //REVER A IMPORTANCIA DESTE LENGTH
-                if(length(auxA) > maxLength){ maxLength = length(auxA);}
-
             }
          }
 
