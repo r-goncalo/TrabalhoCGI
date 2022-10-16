@@ -14,9 +14,6 @@ let drawField = true;
 
 let time = undefined;
 
-//PROFESSOR
-//Origin de particulas para todas as particulas no app.js; e no mesmo sitio
-//Atualizar o y no canvas; x e fixo
 
 
 //the coordinates will be considered X: -1 to 1 and Y: -1 to 1 when rendering
@@ -362,8 +359,6 @@ function main(shaders)
 
             const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
             gl.uniform4fv(uPlanets, planets[i]);
-            //console.log("added planet with " + planets[i][0] + " " + planets[i][1] + " " + planets[i][2] + " " + planets[i][3]);
-
         }
 
         for(let i = planets.length; i < MAX_PLANETS; i++){

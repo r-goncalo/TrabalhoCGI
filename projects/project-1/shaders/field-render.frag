@@ -12,12 +12,6 @@ uniform vec4 ufPlanets[MAX_PLANETS];
 
 
 
-
-//Varying para a escala
-
-//Vai buscar o varying ao vertex shader para pintar cada pixel do varying das coordenadas do mundo
-
-
 vec3 hsv2rgb(vec3 c)
 {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
