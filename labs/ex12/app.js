@@ -33,7 +33,7 @@ function render(time)
 
     for(let i = 0; i < instances.length; i++){
 
-        switch(instances[i]){
+    /*    switch(instances[i]){
 
             case "CUBE":
                 CUBE.draw(gl, program, gl.LINES);
@@ -43,7 +43,10 @@ function render(time)
                 break;
             default:
                 break;
-        }
+        } */
+
+        //console.log(instances[i]);
+        instances[i].draw(gl, program, gl.LINES);
 
     }
 
@@ -94,21 +97,18 @@ function setup(shaders)
     document.getElementById("add_cube").addEventListener("click", function() {
 
         console.log("Cube added");
-        instances.push("CUBE");
+        
+        //instances.push("CUBE");
 
-    });
-
-    document.getElementById("add_cube").addEventListener("click", function() {
-
-        console.log("Cube added");
-        instances.push("CUBE");
+        instances.push({draw:CUBE.draw});
 
     });
 
     document.getElementById("add_sphere").addEventListener("click", function() {
 
         console.log("Sphere added");
-        instances.push("SPHERE");
+        instances.push({draw:SPHERE.draw});
+        //instances.push("SPHERE");
 
     });
 
