@@ -1,5 +1,5 @@
 import { loadShadersFromURLS, setupWebGL, buildProgramFromSources } from '../../libs/utils.js';
-import { mat4, vec3, flatten, lookAt, ortho, mult } from '../../libs/MV.js';
+import { mat4, vec3, flatten, lookAt, ortho, mult, translate, rotateZ, rotateY, rotateX, scalem  } from '../../libs/MV.js';
 
 import * as SPHERE from './js/sphere.js';
 import * as CUBE from './js/cube.js';
@@ -19,6 +19,17 @@ const edge = 2.0;
 //array of [<types added, "CUBE" or "SPHERE">, <transformMatrix>]
 let instances = [];
 
+let mModel;
+
+let trans = {
+
+    pos:{x:document.getElementById("px"), y:document.getElementById("py"), z:document.getElementById("pz")},
+    sca:{x:document.getElementById("sx"), y:document.getElementById("sy"), z:document.getElementById("sz")},
+    rot:{x:document.getElementById("rx"), y:document.getElementById("ry"), z:document.getElementById("rz")}
+
+
+}
+
 
 function render(time)
 {
@@ -29,6 +40,16 @@ function render(time)
     gl.useProgram(program);
 
     const uCtm = gl.getUniformLocation(program, "uCtm");
+
+    mModel = mult(translate(trans.pos.x.value, trans.pos.y.value, trans.pos.z.value),
+                mult(rotateZ(trans.rot.z.value),
+                    mult(rotateY(trans.rot.y.value),
+                        mult(rotateX(trans.rot.z.value),
+                            scalem(trans.sca.x.value, trans.sca.y.value, trans.sca.z.value)
+                            )
+                        )
+                    )
+                );
     
 
     for(let i = 0; i < instances.length; i++){
@@ -88,7 +109,8 @@ function setup(shaders)
         
         //instances.push("CUBE");
 
-        instances.push({draw:CUBE.draw, matrix:mat4()});
+        //instances.push({draw:CUBE.draw, matrix:mat4()});
+        addShape(CUBE);
 
     });
 
@@ -96,10 +118,52 @@ function setup(shaders)
 
         console.log("Sphere added");
 
-        instances.push({draw:SPHERE.draw, matrix:mat4()});
+        //instances.push({draw:SPHERE.draw, matrix:mat4()});
+        addShape(SPHERE);
         //instances.push("SPHERE");
 
     });
+
+    document.getElementById("transform_container").addEventListener("change", function() {
+
+        instances[instances.length - 1].matrix = mModel;
+
+
+    });
+
+    function addShape(type){
+
+        resetTransValues();
+        instances.push({draw:type.draw, matrix:mModel});
+
+
+    }
+
+    function resetTransValues(){
+
+
+
+        trans.pos.x.value = 0;
+        trans.pos.y.value = 0;
+        trans.pos.z.value = 0;
+        trans.sca.x.value = 1.0;
+        trans.sca.y.value = 1.0;
+        trans.sca.z.value = 1.0;
+        trans.rot.x.value = 1.0;
+        trans.rot.y.value = 0.0;
+        trans.rot.z.value = 0.0;
+
+        mModel = mult(translate(trans.pos.x.value, trans.pos.y.value, trans.pos.z.value),
+        mult(rotateZ(trans.rot.z.value),
+            mult(rotateY(trans.rot.y.value),
+                mult(rotateX(trans.rot.z.value),
+                    scalem(trans.sca.x.value, trans.sca.y.value, trans.sca.z.value)
+                    )
+                )
+            )
+        );
+
+    }
 
 
     window.requestAnimationFrame(render);
