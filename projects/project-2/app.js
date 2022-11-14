@@ -3,13 +3,18 @@ import { ortho, lookAt, flatten } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
+import * as CYLINDER from '../../libs/objects/cylinder.js';
+import * as CUBE from '../../libs/objects/cube.js';
+
 
 let gl;
-const VP_DISTANCE = 5;
+const VP_DISTANCE = 500;
 let time = 0;           // Global simulation time in days
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
-let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
-let animation = true;   // Animation is running
+
+let maxHeliTilt = 30;
+let heliTiltChange = 0.5;
+
 
 
 function setup(shaders)
@@ -24,7 +29,6 @@ function setup(shaders)
 
     let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
 
-    mode = gl.LINES; 
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -73,6 +77,7 @@ function setup(shaders)
     })
     
     /*
+
     canvas.addEventListener("mousedown", function(event) {
     });
 
@@ -84,6 +89,7 @@ function setup(shaders)
     
     canvas.addEventListener("mouseup", function(event) {
     })
+    
     */
 
     //DO EXERCICIO 18
