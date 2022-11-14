@@ -11,7 +11,7 @@ let gl;
 const VP_DISTANCE = 500;
 let time = 0;           // Global simulation time in days
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
-
+let mode;
 let maxHeliTilt = 30;
 let heliTiltChange = 0.5;
 
@@ -19,6 +19,7 @@ let heliTiltChange = 0.5;
 
 function setup(shaders)
 {
+    
     //DO EXERCICIO 18
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
@@ -29,6 +30,7 @@ function setup(shaders)
 
     let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
 
+    let mode = gl.LINES;
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -89,7 +91,7 @@ function setup(shaders)
     
     canvas.addEventListener("mouseup", function(event) {
     })
-    
+
     */
 
     //DO EXERCICIO 18
@@ -111,29 +113,61 @@ function setup(shaders)
         mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
     }
 
+
+        
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    CUBE.init(gl);
+    gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
+    
+    window.requestAnimationFrame(render);
+
+
+
     function uploadModelView()
     {
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
     }
 
-    function HelicopterParts()
-    {}
+    function helicopter(){
+
+
+
+    }
+
+    function ground(){
+
+
+        multScale([1000, 1000, 1000]);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        //draws a cube with the transformations it has in the modelview
+        CUBE.draw(gl, program, mode);
+
+    }
 
     function render()
     {
-        if(animation) time += speed;
+
+        time += speed;
         window.requestAnimationFrame(render);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
         gl.useProgram(program);
         
+        //ModelView Transf -> Proj Transf -> Perspective div -> Clip -> Projection along Z -> Viewport Transf
+
+
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
+        
         loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
-        //HelicopterParts();
-        //pushMatrix();
+        ground();
+
+        
     }
 }
 
