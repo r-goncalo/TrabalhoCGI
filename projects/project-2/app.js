@@ -50,33 +50,36 @@ function main(shaders)
     window.addEventListener("keydown", function(event) {
         console.log(event.key);
         switch(event.key) {
+            //Descola
             case "PageUp":
                 break;
+            //Volta para baixo
             case "PageDown":
                 break;
-            case "ArrowUp":
+            //tecla W - malha de arame
+            case 'W':
                 break;
-            case "ArrowDown":
+            //tecla S - superficies preenchidas
+            case 'S':
                 break;
-            case "ArrowLeft":
+            //A tecla 1 devera voltar a usar a projecao axonometrica
+            case '1':
                 break;
-            case "ArrowRight":
+            //Vista de frente ou alçado principal
+            case '2':
                 break;
-            case 'q':
+            //Vista de cima ou planta
+            case '3':
                 break;
-            case 'a':
+            //Vista lateral direita ou alçado lateral direito
+            case '4':
                 break;
-            case 'w':
+            //Desafio - Colocar uma camara adicional, posicionada no helicoptero e apontando para a frente
+            case '5':
                 break;
-            case 's':
-                break;
-            case '0':
-                drawField = !drawField;
-                break;
-            case '9':
-                drawPoints  = !drawPoints;
-                break; 
-            case 'Shift':
+            
+
+
         }
     })
     
