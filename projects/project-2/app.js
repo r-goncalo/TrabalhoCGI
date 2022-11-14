@@ -3,6 +3,9 @@ import { ortho, lookAt, flatten } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
 
 
+let gl;
+
+
 function setup(shaders)
 {
     //DO EXERCICIO 18
