@@ -15,9 +15,8 @@ let mProjection;
 
 const edge = 2.0;
 
-
-//array of [<types added, "CUBE" or "SPHERE">, <transformMatrix>]
 let instances = [];
+
 
 
 function render(time)
@@ -29,15 +28,9 @@ function render(time)
     gl.useProgram(program);
 
     const uCtm = gl.getUniformLocation(program, "uCtm");
-    
+    gl.uniformMatrix4fv(uCtm, false, flatten(mult(mProjection, mult(mView, mat4()))));
 
-    for(let i = 0; i < instances.length; i++){
-
-        gl.uniformMatrix4fv(uCtm, false, flatten(mult(mProjection, mult(mView, instances[i].matrix))));
-        instances[i].draw(gl, program, gl.LINES);
-
-    }
-
+    CUBE.draw(gl, program, gl.LINES);
 }
 
 
@@ -80,25 +73,6 @@ function setup(shaders)
         setupProjection();
     
         gl.viewport(0,0,canvas.width, canvas.height);
-    });
-
-    document.getElementById("add_cube").addEventListener("click", function() {
-
-        console.log("Cube added");
-        
-        //instances.push("CUBE");
-
-        instances.push({draw:CUBE.draw, matrix:mat4()});
-
-    });
-
-    document.getElementById("add_sphere").addEventListener("click", function() {
-
-        console.log("Sphere added");
-
-        instances.push({draw:SPHERE.draw, matrix:mat4()});
-        //instances.push("SPHERE");
-
     });
 
 

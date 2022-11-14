@@ -1,5 +1,5 @@
 import { loadShadersFromURLS, setupWebGL, buildProgramFromSources } from '../../libs/utils.js';
-import { mat4, vec3, flatten, lookAt, ortho, mult, translate, rotateZ, rotateY, rotateX, scalem  } from '../../libs/MV.js';
+import { mat4, vec3, flatten, lookAt, ortho, mult, translate, scalem, rotateX, rotateY, rotateZ } from '../../libs/MV.js';
 
 import * as SPHERE from './js/sphere.js';
 import * as CUBE from './js/cube.js';
@@ -15,21 +15,10 @@ let mProjection;
 
 const edge = 2.0;
 
-
-//array of [<types added, "CUBE" or "SPHERE">, <transformMatrix>]
 let instances = [];
+let cnt=0;
 
-let mModel;
-
-let trans = {
-
-    pos:{x:document.getElementById("px"), y:document.getElementById("py"), z:document.getElementById("pz")},
-    sca:{x:document.getElementById("sx"), y:document.getElementById("sy"), z:document.getElementById("sz")},
-    rot:{x:document.getElementById("rx"), y:document.getElementById("ry"), z:document.getElementById("rz")}
-
-
-}
-
+const interfaceElems = ['px', 'py', 'pz', 'sx', 'sy', 'sz', 'rx', 'ry', 'rz'];
 
 function render(time)
 {
@@ -41,24 +30,10 @@ function render(time)
 
     const uCtm = gl.getUniformLocation(program, "uCtm");
 
-    mModel = mult(translate(trans.pos.x.value, trans.pos.y.value, trans.pos.z.value),
-                mult(rotateZ(trans.rot.z.value),
-                    mult(rotateY(trans.rot.y.value),
-                        mult(rotateX(trans.rot.z.value),
-                            scalem(trans.sca.x.value, trans.sca.y.value, trans.sca.z.value)
-                            )
-                        )
-                    )
-                );
-    
-
-    for(let i = 0; i < instances.length; i++){
-
-        gl.uniformMatrix4fv(uCtm, false, flatten(mult(mProjection, mult(mView, instances[i].matrix))));
-        instances[i].draw(gl, program, gl.LINES);
-
+    for(let p of instances) {
+        gl.uniformMatrix4fv(uCtm, false, flatten(mult(mProjection, mult(mView, p.m))));
+        p.obj(gl, program, gl.LINES)
     }
-
 }
 
 
@@ -94,6 +69,63 @@ function setup(shaders)
         }
 
     }
+
+    function setupInterfaceState(enabled) {
+        interfaceElems.forEach( 
+            id => document.getElementById(id).disabled = !enabled
+        )
+
+        document.getElementById('remove_instance').disabled = !enabled;
+    }
+
+    function resetTransform() {
+        const vals = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0];
+        interfaceElems.forEach((id, idx) => document.getElementById(id).value = vals[idx])
+    }
+
+    function rebuildMModel() {
+
+        const vals = interfaceElems.map(id => parseFloat(document.getElementById(id).value))
+
+        const [px, py, pz, sx, sy, sz, rx, ry, rz] = vals;
+
+        const t = translate(px, py, pz);
+        const r = mult(rotateZ(rz), mult(rotateY(ry), rotateX(rx))); 
+        const s = scalem(sx, sy, sz);
+        const m = mult(t, mult(r, s));
+
+        instances[instances.length-1].m = m; 
+    }
+
+    document.getElementById("add_cube").addEventListener("click", function() {
+        instances.push({obj: CUBE.draw, m: mat4()})
+        const option = new Option( "Cube" + cnt++);
+        document.getElementById("object_instances").add(option);
+
+        resetTransform();
+        setupInterfaceState(true);
+    })
+
+    document.getElementById("add_sphere").addEventListener("click", function() {
+        instances.push({obj: SPHERE.draw, m: mat4()})
+        const option = new Option( "Sphere" + cnt++);
+        document.getElementById("object_instances").add(option);
+
+        resetTransform();
+        setupInterfaceState(true);
+    })
+
+    document.getElementById('remove_instance').addEventListener("click", function() {
+        const instance_list = document.getElementById('object_instances');
+        const pos = instance_list.selectedIndex;
+        if(pos != -1) {
+            instances.splice(pos, 1);
+        }
+        instance_list.remove(pos);
+        instance_list.selectedIndex = Math.max(0, pos-1);
+        setupInterfaceState(instance_list.options.length != 0);
+    })
+
     window.addEventListener("resize", function() {
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = window.innerHeight;
@@ -103,79 +135,13 @@ function setup(shaders)
         gl.viewport(0,0,canvas.width, canvas.height);
     });
 
-    document.getElementById("add_cube").addEventListener("click", function() {
+    setupInterfaceState(false);
 
-        console.log("Cube added");
-        
-        //instances.push("CUBE");
-
-        //instances.push({draw:CUBE.draw, matrix:mat4()});
-        addShape(CUBE);
-
-    });
-
-    document.getElementById("add_sphere").addEventListener("click", function() {
-
-        console.log("Sphere added");
-
-        //instances.push({draw:SPHERE.draw, matrix:mat4()});
-        addShape(SPHERE);
-        //instances.push("SPHERE");
-
-    });
-
-    document.getElementById("transform_container").addEventListener("change", function() {
-
-        instances[instances.length - 1].matrix = mModel;
-
-
-    });
-
-    function addShape(type){
-
-        resetTransValues();
-        instances.push({draw:type.draw, matrix:mModel,
-        trans:{
-
-            pos:{x:0, y:0, z:0},
-            sca:{x:1, y:1, z:1},
-            rot:{x:1, y:0, z:0}
-
-        
-        }
-        
-        
-        });
-
-
-    }
-
-
-    function resetTransValues(){
-
-
-
-        trans.pos.x.value = 0;
-        trans.pos.y.value = 0;
-        trans.pos.z.value = 0;
-        trans.sca.x.value = 1.0;
-        trans.sca.y.value = 1.0;
-        trans.sca.z.value = 1.0;
-        trans.rot.x.value = 1.0;
-        trans.rot.y.value = 0.0;
-        trans.rot.z.value = 0.0;
-
-        mModel = mult(translate(trans.pos.x.value, trans.pos.y.value, trans.pos.z.value),
-        mult(rotateZ(trans.rot.z.value),
-            mult(rotateY(trans.rot.y.value),
-                mult(rotateX(trans.rot.z.value),
-                    scalem(trans.sca.x.value, trans.sca.y.value, trans.sca.z.value)
-                    )
-                )
-            )
-        );
-
-    }
+    interfaceElems.forEach(
+        id => document.getElementById(id).addEventListener("change", function() {
+            rebuildMModel();
+        })
+    );
 
 
     window.requestAnimationFrame(render);

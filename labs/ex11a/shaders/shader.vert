@@ -4,5 +4,5 @@ uniform float uT;
 
 void main() 
 {
-    gl_Position = mix(vPosStart, vPosEnd, uT); //mix function varies one and the other with vel depending on uT
+    gl_Position = mix(vPosStart, vPosEnd, uT);
 }

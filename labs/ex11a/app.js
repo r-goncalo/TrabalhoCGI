@@ -35,8 +35,6 @@ function setup(shaders)
             angle += 2*Math.PI/count;
             vertices.push(vec2(Math.cos(angle), Math.sin(angle)));
         }
-
-        //each vertice ends up with 4 floats, two positions
     }
 
     generateVertices(N_VERTICES);
