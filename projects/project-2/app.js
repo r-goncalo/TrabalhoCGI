@@ -115,8 +115,8 @@ function setup(shaders)
 
         loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
-        HelicopterParts();
-        pushMatrix();
+        //HelicopterParts();
+        //pushMatrix();
     }
 }
 
