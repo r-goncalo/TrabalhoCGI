@@ -12,6 +12,12 @@ uniform vec4 ufPlanets[MAX_PLANETS];
 
 
 
+
+//Varying para a escala
+
+//Vai buscar o varying ao vertex shader para pintar cada pixel do varying das coordenadas do mundo
+
+
 vec3 hsv2rgb(vec3 c)
 {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -21,6 +27,8 @@ vec3 hsv2rgb(vec3 c)
 
 void main() {
 
+    
+    float maxLength = 0.0;
     
     vec2 acc = vec2(0.0, 0.0);
     vec2 auxA = vec2(0.0, 0.0);
@@ -34,6 +42,10 @@ void main() {
 
 
                 acc = acc + auxA;
+            
+            //REVER A IMPORTANCIA DESTE LENGTH
+                if(length(auxA) > maxLength){ maxLength = length(auxA);}
+
             }
          }
 

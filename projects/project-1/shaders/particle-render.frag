@@ -1,6 +1,6 @@
 precision highp float;
 
-varying float fLeft;  // % of time left to live
+varying float fLeft;  //a variable for each vertex?
 
 
 void main() {

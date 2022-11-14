@@ -20,7 +20,7 @@ const float gravConst = 0.0000000000667;
 
 const int MAX_PLANETS = 10;
 uniform vec4 uPlanets[MAX_PLANETS]; //position, radius, mass
-uniform bool uPlanetsKill;
+
 
 /* Inputs. These reflect the state of a single particle before the update. */
 
@@ -79,14 +79,12 @@ void main() {
     vVelocityOut = vVelocity + (accel * uDeltaTime);
  
  
-   if(uPlanetsKill){ 
-      for(int i = 0; i < MAX_PLANETS;i++){
 
-       if(pow( pow(uPlanets[i][0]-vPositionOut[0], 2.0) +  pow(uPlanets[i][1]-vPositionOut[1], 2.0),0.5) <= uPlanets[i][2])
-       {
-            vAgeOut += (vLife - vAge)/2.0 + ((vLife - vAge) * rand(accel * vPosition *  uDeltaTime) * length(accel)); //trying progressive killing
-            break;
-       }
+    for(int i = 0; i<MAX_PLANETS;i++){
+      if(pow( pow(uPlanets[i][0]-vPositionOut[0], 2.0) +  pow(uPlanets[i][1]-vPositionOut[1], 2.0),0.5) <= uPlanets[i][2])
+      {
+         vAgeOut += (vLife - vAge)/2.0 + ((vLife - vAge) * rand(accel * vPosition *  uDeltaTime) * length(accel)); //trying progressive killing
+         break;
       }
    }
 

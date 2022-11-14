@@ -7,13 +7,16 @@ let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 // Particle system constants
 
 // Total number of particles
-const N_PARTICLES = 500000; // funciona com 1000000 (e mais) em computadores mais fortes
+const N_PARTICLES = 500000;
 
 let drawPoints = true;
 let drawField = true;
 
 let time = undefined;
 
+//PROFESSOR
+//Origin de particulas para todas as particulas no app.js; e no mesmo sitio
+//Atualizar o y no canvas; x e fixo
 
 
 //the coordinates will be considered X: -1 to 1 and Y: -1 to 1 when rendering
@@ -37,8 +40,6 @@ var planets = []; // an array of vec 4 (position, radius, mass)
 
 const radiusPerTime = 0.01; //how much radius per time
 var planetBeingCreated = false;
-
-var planetsKill = true; //if planets kill particles by accelerating their aging
 
 const GravConst = 6.67 * Math.pow(10, -11);
 const BaseDensBig = 5510;
@@ -191,14 +192,11 @@ function main(shaders)
             case '0':
                 drawField = !drawField;
                 break;
-            case '1':
-                planetsKill = !planetsKill;
-                break;
             case '9':
                 drawPoints  = !drawPoints;
                 break; 
             case 'Shift':
-                //origin = mousePos; //é chato porque para mexer na velocidade minima tem de se clicar no shift
+                origin = mousePos;
                 break;
 
 
@@ -340,7 +338,6 @@ function main(shaders)
         const vMaxDirVar = gl.getUniformLocation(updateProgram, "maxDirVar");
         const vRandLifeMax = gl.getUniformLocation(updateProgram, "randLifeMax");
         const vRandLifeMin = gl.getUniformLocation(updateProgram, "randLifeMin");
-        const uPlanetsKill = gl.getUniformLocation(updateProgram, "uPlanetsKill");
 
         gl.useProgram(updateProgram);
 
@@ -353,12 +350,13 @@ function main(shaders)
         gl.uniform1f(vMaxDirVar, degMaxVar);
         gl.uniform1f(vRandLifeMax, tvMax);
         gl.uniform1f(vRandLifeMin, tvMin);
-        gl.uniform1i(uPlanetsKill, planetsKill);
 
         for(let i = 0; i < planets.length; i++){
 
             const uPlanets = gl.getUniformLocation(updateProgram, "uPlanets[" + i + "]");
             gl.uniform4fv(uPlanets, planets[i]);
+            //console.log("added planet with " + planets[i][0] + " " + planets[i][1] + " " + planets[i][2] + " " + planets[i][3]);
+
         }
 
         for(let i = planets.length; i < MAX_PLANETS; i++){
