@@ -2,8 +2,14 @@ import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../
 import { ortho, lookAt, flatten } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
 
+import * as SPHERE from '../../libs/objects/sphere.js';
 
 let gl;
+const VP_DISTANCE = 5;
+let time = 0;           // Global simulation time in days
+let speed = 1/60.0;     // Speed (how many days added to time on each render pass
+let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
+let animation = true;   // Animation is running
 
 
 function setup(shaders)
@@ -66,6 +72,7 @@ function setup(shaders)
         }
     })
     
+    /*
     canvas.addEventListener("mousedown", function(event) {
     });
 
@@ -74,9 +81,10 @@ function setup(shaders)
 
         console.log(p);
     });
-
+    
     canvas.addEventListener("mouseup", function(event) {
     })
+    */
 
     //DO EXERCICIO 18
 
