@@ -1,52 +1,32 @@
-import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from '../../libs/utils.js';
-import { vec2, flatten, subtract, dot } from '../../libs/MV.js';
+import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
+import { ortho, lookAt, flatten } from "../../libs/MV.js";
+import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
 
-// Buffers: particles before update, particles after update, quad vertices
-let inParticlesBuffer, outParticlesBuffer, quadBuffer;
 
-// Particle system constants
-
-// Total number of particles
-const N_PARTICLES = 1000;
-
-let drawPoints = true;
-let drawField = true;
-
-let time = undefined;
-
-function main(shaders)
+function setup(shaders)
 {
-    // Generate the canvas element to fill the entire page
-    const canvas = document.createElement("canvas");
-    document.body.appendChild(canvas);
+    //DO EXERCICIO 18
+    let canvas = document.getElementById("gl-canvas");
+    let aspect = canvas.width / canvas.height;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    gl = setupWebGL(canvas);
 
-    /** type {WebGL2RenderingContext} */
-    const gl = setupWebGL(canvas, {alpha: true});
+    let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
-    // Initialize GLSL programs    
-    const fieldProgram = buildProgramFromSources(gl, shaders["field-render.vert"], shaders["field-render.frag"]);
-    const renderProgram = buildProgramFromSources(gl, shaders["particle-render.vert"], shaders["particle-render.frag"]);
-    const updateProgram = buildProgramFromSources(gl, shaders["particle-update.vert"], shaders["particle-update.frag"], ["vPositionOut", "vAgeOut", "vLifeOut", "vVelocityOut"]);
+    let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
 
-    gl.viewport(0,0,canvas.width, canvas.height);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    mode = gl.LINES; 
 
-    // Enable Alpha blending
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); 
-
-    buildQuad();
-    buildParticleSystem(N_PARTICLES);
-
+    resize_canvas();
+    window.addEventListener("resize", resize_canvas);
     window.addEventListener("resize", function(event) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         gl.viewport(0,0,canvas.width, canvas.height);
     });
 
+
+    //DO PROJETO 1
     window.addEventListener("keydown", function(event) {
         console.log(event.key);
         switch(event.key) {
@@ -95,170 +75,51 @@ function main(shaders)
     canvas.addEventListener("mouseup", function(event) {
     })
 
+    //DO EXERCICIO 18
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    SPHERE.init(gl);
+    gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
     
-    function getCursorPosition(canvas, event) {
-  
-       
-        const mx = event.offsetX;
-        const my = event.offsetY;
-
-        const x = ((mx / canvas.width * 2) - 1);
-        const y = (((canvas.height - my)/canvas.height * 2) -1);
-
-        return vec2(x,y);
-    }
-
-    window.requestAnimationFrame(animate);
-
-    function buildQuad() {
-        const vertices = [-1.0, 1.0, -1.0, -1.0, 1.0, -1.0,
-                          -1.0, 1.0,  1.0, -1.0, 1.0,  1.0];
-        
-        quadBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
-
-    }
-
-    function buildParticleSystem(nParticles) {
-        const data = [];
-
-        for(let i=0; i<nParticles; ++i) {
-            // position
-            const x = Math.random()-0.5;
-            const y = Math.random()-0.5;
-
-            data.push(x); data.push(y);
-            
-            // age
-            data.push(0.0);
-
-            // life
-            const life = 6.0 + Math.random();
-            data.push(life);
-
-            // velocity
-            data.push(0.1*(Math.random()-0.5));
-            data.push(0.1*(Math.random()-0.5));
-        }
-
-        inParticlesBuffer = gl.createBuffer();
-        outParticlesBuffer = gl.createBuffer();
-
-        // Input buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, inParticlesBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(data), gl.STREAM_DRAW);
-
-        // Output buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, outParticlesBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(data), gl.STREAM_DRAW);
-    }
-
-
-
-    function animate(timestamp)
+    window.requestAnimationFrame(render);
+    
+    function resize_canvas(event)
     {
-        let deltaTime = 0;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        if(time === undefined) {        // First time
-            time = timestamp/1000;
-            deltaTime = 0;
-        } 
-        else {                          // All other times
-            deltaTime = timestamp/1000 - time;
-            time = timestamp/1000;
-        }
+        aspect = canvas.width / canvas.height;
 
-        window.requestAnimationFrame(animate);
-
-        // Clear framebuffer
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        if(drawField) drawQuad();
-        updateParticles(deltaTime);
-        if(drawPoints) drawParticles(outParticlesBuffer, N_PARTICLES);
-
-        swapParticlesBuffers();
+        gl.viewport(0,0,canvas.width, canvas.height);
+        mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
     }
 
-    function updateParticles(deltaTime)
+    function uploadModelView()
     {
-        // Setup uniforms
-        const uDeltaTime = gl.getUniformLocation(updateProgram, "uDeltaTime");
-        
-        gl.useProgram(updateProgram);
-
-        gl.uniform1f(uDeltaTime, deltaTime);
-        
-        // Setup attributes
-        const vPosition = gl.getAttribLocation(updateProgram, "vPosition");
-        const vAge = gl.getAttribLocation(updateProgram, "vAge");
-        const vLife = gl.getAttribLocation(updateProgram, "vLife");
-        const vVelocity = gl.getAttribLocation(updateProgram, "vVelocity");
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, inParticlesBuffer);
-        
-        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 24, 0);
-        gl.vertexAttribPointer(vAge, 1, gl.FLOAT, false, 24, 8);
-        gl.vertexAttribPointer(vLife, 1, gl.FLOAT, false, 24, 12);
-        gl.vertexAttribPointer(vVelocity, 2, gl.FLOAT, false, 24, 16);
-        
-        gl.enableVertexAttribArray(vPosition);
-        gl.enableVertexAttribArray(vAge);
-        gl.enableVertexAttribArray(vLife);
-        gl.enableVertexAttribArray(vVelocity);
-
-        gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, outParticlesBuffer);
-        gl.enable(gl.RASTERIZER_DISCARD);
-        gl.beginTransformFeedback(gl.POINTS);
-        gl.drawArrays(gl.POINTS, 0, N_PARTICLES);
-        gl.endTransformFeedback();
-        gl.disable(gl.RASTERIZER_DISCARD);
-        gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
     }
 
-    function swapParticlesBuffers()
+    function HelicopterParts()
+    {}
+
+    function render()
     {
-        let auxBuffer = inParticlesBuffer;
-        inParticlesBuffer = outParticlesBuffer;
-        outParticlesBuffer = auxBuffer;
-    }
+        if(animation) time += speed;
+        window.requestAnimationFrame(render);
 
-    function drawQuad() {
-
-        gl.useProgram(fieldProgram);
-
-        // Setup attributes
-        const vPosition = gl.getAttribLocation(fieldProgram, "vPosition"); 
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
-        gl.enableVertexAttribArray(vPosition);
-        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
-    }
+        gl.useProgram(program);
+        
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-    function drawParticles(buffer, nParticles)
-    {
+        loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
-        gl.useProgram(renderProgram);
-
-        // Setup attributes
-        const vPosition = gl.getAttribLocation(renderProgram, "vPosition");
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 24, 0);
-        gl.enableVertexAttribArray(vPosition);
-
-        gl.drawArrays(gl.POINTS, 0, nParticles);
+        HelicopterParts();
+        pushMatrix();
     }
 }
 
 
-loadShadersFromURLS([
-    "field-render.vert", "field-render.frag",
-    "particle-update.vert", "particle-update.frag", 
-    "particle-render.vert", "particle-render.frag"
-    ]
-).then(shaders=>main(shaders));
+const urls = ["shader.vert", "shader.frag"];
+loadShadersFromURLS(urls).then(shaders => setup(shaders))
