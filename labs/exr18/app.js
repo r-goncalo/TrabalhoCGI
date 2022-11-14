@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
 import { ortho, lookAt, flatten } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multScale, pushMatrix, popMatrix } from "../../libs/stack.js";
+import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 
@@ -11,8 +11,6 @@ let time = 0;           // Global simulation time in days
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
-
-let speedMultiplier = 1.0; //easy way to study the animation
 
 const PLANET_SCALE = 10;    // scale that will apply to each planet and satellite
 const ORBIT_SCALE = 1/60;   // scale that will apply to each orbit around the sun
@@ -107,33 +105,7 @@ function setup(shaders)
     {
         // Don't forget to scale the sun, rotate it around the y axis at the correct speed
         multScale([SUN_DIAMETER, SUN_DIAMETER, SUN_DIAMETER]);
-        multRotationY(speedMultiplier * 360 * time/SUN_DAY);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere representing the sun
-        SPHERE.draw(gl, program, mode);
-    }
-
-    function Venus()
-    {
-        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
-        multScale([VENUS_DIAMETER, VENUS_DIAMETER, VENUS_DIAMETER]);
-        multRotationY(speedMultiplier * 360 * time/VENUS_DAY);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere representing the sun
-        SPHERE.draw(gl, program, mode);
-    }
-
-    function Mercury()
-    {
-        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
-        multScale([SUN_DIAMETER, SUN_DIAMETER, SUN_DIAMETER]);
-        multRotationY(speedMultiplier * 360 * time/SUN_DAY);
+        multRotationY(360*time/SUN_DAY);
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
@@ -156,7 +128,6 @@ function setup(shaders)
         loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
         Sun();
-        pushMatrix();
     }
 }
 
