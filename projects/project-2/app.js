@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
 import { ortho, lookAt, flatten } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
+import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CYLINDER from '../../libs/objects/cylinder.js';
@@ -121,6 +121,12 @@ function setup(shaders)
     
     window.requestAnimationFrame(render);
 
+    function defineColor(color){
+
+        const fNormal = gl.getUniformLocation(program, "mProjection");
+        
+
+    }
 
 
     function uploadModelView()
@@ -128,7 +134,29 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
     }
 
+    function topHelices(){
+
+
+    }
+
+    function mainBody(){
+
+
+    }
+
+    function foot(){
+
+
+    }
+
+    function base(){
+
+
+    }
+
     function helicopter(){
+
+
 
 
 
@@ -137,13 +165,72 @@ function setup(shaders)
     function ground(){
 
 
-        multScale([1000, 1000, 1000]);
+        //the ground is 1000^2 meters, with 5 height
+
+        multTranslation([0, 0,-5]);
+        multScale([100, 5, 5]);
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
         //draws a cube with the transformations it has in the modelview
         CUBE.draw(gl, program, mode);
+
+    }
+
+    function xGuide(){
+
+
+        //the ground is 1000^2 meters, with 5 height
+
+        multTranslation([0, 0,-5]);
+        multScale([1000, 5, 5]);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        //draws a cube with the transformations it has in the modelview
+        CUBE.draw(gl, program, mode);
+
+    }
+
+    function yGuide(){
+
+
+        //the ground is 1000^2 meters, with 5 height
+
+        multTranslation([0, 0,-5]);
+        multScale([5, 1000, 5]);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        //draws a cube with the transformations it has in the modelview
+        CUBE.draw(gl, program, mode);
+
+    }
+
+    function zGuide(){
+
+
+        //the ground is 1000^2 meters, with 5 height
+
+        multTranslation([0, 0,-5]);
+        multScale([5, 5, 1000]);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        //draws a cube with the transformations it has in the modelview
+        CUBE.draw(gl, program, mode);
+
+    }
+
+    function world(){
+
+        multRotationX(time/2);
+        multRotationZ(time/3);
+
 
     }
 
@@ -165,7 +252,25 @@ function setup(shaders)
         
         loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
-        ground();
+
+        //transformationsOverWholeWorld
+
+        world();
+        pushMatrix();
+            xGuide();
+        popMatrix();
+        pushMatrix();
+            yGuide();
+        popMatrix();
+        pushMatrix();
+            zGuide();
+        popMatrix();
+        pushMatrix();
+//            ground();
+        popMatrix();
+        pushMatrix();
+            helicopter();
+        popMatrix();
 
         
     }
