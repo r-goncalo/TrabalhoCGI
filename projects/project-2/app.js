@@ -15,7 +15,8 @@ let mode;
 let maxHeliTilt = 30;
 let heliTiltChange = 0.5;
 
-
+let cameras = [[[0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]], [[80,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]]];
+let currentCamera = 1;
 
 function setup(shaders)
 {
@@ -124,7 +125,7 @@ function setup(shaders)
     function defineColor(color){
 
         const fNormal = gl.getUniformLocation(program, "mProjection");
-        
+
 
     }
 
@@ -225,7 +226,22 @@ function setup(shaders)
         CUBE.draw(gl, program, mode);
 
     }
+    
+    function referencial(){
 
+        pushMatrix();
+            xGuide();
+        popMatrix();
+        pushMatrix();
+            yGuide();
+        popMatrix();
+        pushMatrix();
+            zGuide();
+        popMatrix();
+        
+    }
+
+    //changes in the whole world
     function world(){
 
         multRotationX(time/2);
@@ -250,21 +266,13 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
         
-        loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
-
+        loadMatrix(lookAt(cameras[currentCamera][0], cameras[currentCamera][1], cameras[currentCamera][2]));
+        //loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
         //transformationsOverWholeWorld
 
         world();
-        pushMatrix();
-            xGuide();
-        popMatrix();
-        pushMatrix();
-            yGuide();
-        popMatrix();
-        pushMatrix();
-            zGuide();
-        popMatrix();
+        referencial();
         pushMatrix();
 //            ground();
         popMatrix();
