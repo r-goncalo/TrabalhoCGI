@@ -9,7 +9,7 @@ import * as CUBE from '../../libs/objects/cube.js';
 
 let gl;
 const VP_DISTANCE = 500;
-let time = 0;           // Global simulation time in days
+let time = 0;           // Global simulation time
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 let mode;
 let maxHeliTilt = 30;
@@ -17,6 +17,9 @@ let heliTiltChange = 0.5;
 
 let cameras = [[[0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]], [[80,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]]];
 let currentCamera = 1;
+
+
+
 
 function setup(shaders)
 {
@@ -227,6 +230,7 @@ function setup(shaders)
 
     }
     
+    //a refer to know the coordinates
     function referencial(){
 
         pushMatrix();
