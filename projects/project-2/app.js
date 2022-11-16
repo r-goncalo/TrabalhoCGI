@@ -356,7 +356,7 @@ function setup(shaders)
         addActiveInstanceSon("Helicopter",
         modelHelicopter,
         animateHelicopter,
-        [300, 400, 300], //300 far in X and Z axis, flying 400 meters high
+        [0, 0, 0], //300 far in X and Z axis, flying 400 meters high
         "World");
 
         //the helicopter was too small, increasing its size to 3x
@@ -364,6 +364,7 @@ function setup(shaders)
 
     
         console.log(instanceTree);
+        console.log(instanceDic);
 
     }
 
