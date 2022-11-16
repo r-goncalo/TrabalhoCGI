@@ -125,9 +125,10 @@ function setup(shaders)
     
     window.requestAnimationFrame(render);
 
-    function defineColor(color){
+    function defineColor(red, green, blue){
 
-        const fNormal = gl.getUniformLocation(program, "mProjection");
+        const solidColor = gl.getUniformLocation(program, "solidColor");
+        gl.uniform3f(solidColor, red, green, blue);
 
 
     }
@@ -171,8 +172,8 @@ function setup(shaders)
 
         //the ground is 1000^2 meters, with 5 height
 
-        multTranslation([0, 0,-5]);
-        multScale([100, 5, 5]);
+        multTranslation([0, -5, 0]);
+        multScale([1000, 5, 1000]);
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
@@ -193,6 +194,9 @@ function setup(shaders)
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
+        defineColor(1, 0, 0);
+
+
         //draws a cube with the transformations it has in the modelview
         CUBE.draw(gl, program, mode);
 
@@ -209,6 +213,9 @@ function setup(shaders)
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
+        defineColor(0, 0, 1);
+
+
         //draws a cube with the transformations it has in the modelview
         CUBE.draw(gl, program, mode);
 
@@ -224,6 +231,8 @@ function setup(shaders)
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
+
+        defineColor(0, 1, 0);
 
         //draws a cube with the transformations it has in the modelview
         CUBE.draw(gl, program, mode);
@@ -275,10 +284,14 @@ function setup(shaders)
 
         //transformationsOverWholeWorld
 
-        world();
-        referencial();
+        //world();
+
         pushMatrix();
-//            ground();
+            referencial();
+        popMatrix();
+
+        pushMatrix();
+            ground();
         popMatrix();
         pushMatrix();
             helicopter();
