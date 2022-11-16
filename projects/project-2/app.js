@@ -12,8 +12,6 @@ const VP_DISTANCE = 500; //500 meters far
 let time = 0;           // Global simulation time
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 let mode;
-let maxHeliTilt = 30;
-let heliTiltChange = 0.5;
 
 
 //the cameras we'll have, composed of function that return a view matrix
@@ -285,34 +283,40 @@ function setup(shaders)
 
         function modelTailPoint(){
 
-            multRotationZ(-75);
-            //multTranslation([0, 1, 0]);
-         
-            //multScale([2, 0.5, 0.5]); 
-            multScale([10, 1, 1]); 
+            multScale([2, 0.5, 0.5]); 
             uploadModelView();
             defineColor(1, 1, 1); //red
             SPHERE.draw(gl, program, mode);
 
         }
 
-    function modelHelicopter(){
+        function modelSpike(){
 
-        pushMatrix()
-            modelMainBody();
-        popMatrix();
-        pushMatrix();
-            multTranslation([-4, 0, 0]);
-            pushMatrix();
-                modelTail();
-            popMatrix();
-            multTranslation([-3, 0, 0]);
-            pushMatrix();
-                modelTailPoint();
-            popMatrix();
-        popMatrix(); 
-        
+            multScale([0.2, 2, 0.2]); 
+            uploadModelView();
+            defineColor(1, 0, 1); 
+            SPHERE.draw(gl, program, mode);
+
+        }
+
+        function helicopterHelice(){
+
+            multScale([4, 0.1, 0.3]); 
+            uploadModelView();
+            defineColor(0, 0, 1); 
+            SPHERE.draw(gl, program, mode);
+
+        }
+    
+    
+    let hHeliceRotSpeed = 10;
+
+    function animateHelicopterHeliceRotation(){
+
+        this.rotation[1] = (this.rotation[1] + hHeliceRotSpeed) % (720); 
+
     }
+
 
     function animateHelicopter(){
 
@@ -321,9 +325,50 @@ function setup(shaders)
                       this.coord[1],
                       helicopterDistance * Math.sin(time * helicopterSpeed)];
 
-        this.rotation[1] = time * helicopterSpeed; //why isn't this working?
+        this.rotation[0] = time * helicopterSpeed; //why isn't this working?
+
+
 
     }
+
+    function setupHelicopter(){
+
+        addActiveInstanceSon("Helicopter",
+        modelMainBody,
+        animateHelicopter,
+        [0, 400, 0], //only the Y matters because of the animation
+        "World");
+
+            addInstanceSon("HelicopterTail",
+            modelTail,
+            [-4, 0, 0],
+            "Helicopter");
+
+                addInstanceSon("HelicopterTailPoint",
+                modelTailPoint,
+                [-3, 0.5, 0],
+                "HelicopterTail");
+
+                instanceDic["HelicopterTailPoint"].rotation[2] = -75;
+
+            addActiveInstanceSon("HelicopterSpike",
+            modelSpike,
+            animateHelicopterHeliceRotation,
+            [0, 2, 0],
+            "Helicopter");
+
+                addInstanceSon("HelicopterHelice1",
+                helicopterHelice,
+                [2, 0.5, 0],
+                "HelicopterSpike");
+
+                addInstanceSon("HelicopterHelice2",
+                helicopterHelice,
+                [-2, 0.5, 0],
+                "HelicopterSpike");
+
+    }
+    
 
     /*
         *****END OF SETUP HELICOPTER***
@@ -353,14 +398,10 @@ function setup(shaders)
         [0, 0, 0],
         "World");
 
-        addActiveInstanceSon("Helicopter",
-        modelHelicopter,
-        animateHelicopter,
-        [300, 400, 300], //300 far in X and Z axis, flying 400 meters high
-        "World");
+        setupHelicopter();
 
         //the helicopter was too small, increasing its size to 3x
-        scaleInstanceByValue("Helicopter", 10);
+        scaleInstanceByValue("Helicopter", 30);
 
     
         console.log(instanceTree);
@@ -380,7 +421,7 @@ function setup(shaders)
     function camera0(){return {eye: [0,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
     function camera1(){return {eye: [80,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
     function camera3(){return {eye: [100,VP_DISTANCE * 0.5,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
-    function camera4(){return {eye: [-100,VP_DISTANCE * 0.5,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
+    function camera4(){return {eye: [-100,VP_DISTANCE * 0.2,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
 
     cameras = [camera0, camera1, camera3, camera4];
     currentCamera = 1;
@@ -400,7 +441,9 @@ function setup(shaders)
                 multRotationY(instanceNodes[i].rotation[1]);
                 multRotationZ(instanceNodes[i].rotation[2]);
                 multScale(instanceNodes[i].scale);
-                instanceNodes[i].model();
+                pushMatrix();
+                    instanceNodes[i].model();
+                popMatrix();
                 recursiveModelConstruction(instanceNodes[i].filhos);
             popMatrix();
 
