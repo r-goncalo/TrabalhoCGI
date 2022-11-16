@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, mult } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -8,7 +8,7 @@ import * as CUBE from '../../libs/objects/cube.js';
 
 
 let gl;
-const VP_DISTANCE = 500;
+const VP_DISTANCE = 500; //500 meters far
 let time = 0;           // Global simulation time
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 let mode;
@@ -21,29 +21,41 @@ let cameras = [];
 let currentCamera;
 
 
-//instanceTree will be composed by {model : function, filhos : [] }
+//instanceTree will be composed by {model : function,  coord: [x, y, z], rotation : [x, y, z] filhos : [] }
 let instanceTree = [];
 
 //used to find instances by name
 let instanceDic = {};
 
 //activeInstances will point to members of the instanceTree that also have the function animate()
+//note: the instances will be able to use "this" becase they're called from the body of the instance
 let activeInstances = [];
 
-function addInstance(nameStr, modelFun){
+function addInstance(nameStr, modelFun, initialCoord){
 
-    let instance = { model : modelFun, filhos : []};
+    let instance = { model : modelFun, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
     instanceDic[nameStr] = instance;
     instanceTree.push(instance);
 
 }
 
-function addInstanceSon(nameStr, modelFun, parentName){
+function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
-    let instance = { model : modelFun, filhos : []};
+    let instance = { model : modelFun, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
     instanceDic[nameStr] = instance;
     instanceParent.filhos.push(instance);
+
+}
+
+
+function addActiveInstanceSon(nameStr, modelFun, animateFun, initialCoord, parentName){
+
+    let instanceParent = instanceDic[parentName];
+    let instance = { model : modelFun, coord : initialCoord, animate : animateFun, rotation : [0, 0, 0], filhos : []};
+    instanceDic[nameStr] = instance;
+    instanceParent.filhos.push(instance);
+    activeInstances.push(instance);
 
 }
 
@@ -228,7 +240,33 @@ function setup(shaders)
         *****SETUP HELICOPTER***
     */
 
+    let helicopterSpeed = 0.5;
+    let helicopterDistance = 300;
+    
+        function modelMainBody(){
 
+            multScale([20, 10, 10]); //the main body is 20 meters, its a giant helicopter
+            uploadModelView();
+            defineColor(1, 0, 0); //red
+            SPHERE.draw(gl, program, mode);
+
+        }
+
+    function modelHelicopter(){
+
+        modelMainBody();
+
+    }
+
+    function animateHelicopter(){
+
+
+        this.coord = [helicopterDistance * Math.cos(time * helicopterSpeed),
+                      this.coord[1],
+                      helicopterDistance * Math.sin(time * helicopterSpeed)];
+        this.rotation[0] = time * helicopterSpeed;
+
+    }
 
     /*
         *****END OF SETUP HELICOPTER***
@@ -239,19 +277,29 @@ function setup(shaders)
 
 
         addInstance("World",
-                    function(){});
+                    function(){},
+                    [0, 0, 0]);
     
         addInstanceSon("Ground",
                     function(){
                         multTranslation([0, -5, 0]);
                         multScale([1000, 5, 1000]);
                         uploadModelView();
+                        defineColor(1, 1, 1); //white
                         CUBE.draw(gl, program, mode);
                     },
+                    [0, 0, 0],
                     "World");
 
         addInstanceSon("Referencial",
         referencial,
+        [0, 0, 0],
+        "World");
+
+        addActiveInstanceSon("Helicopter",
+        modelMainBody,
+        animateHelicopter,
+        [300, 400, 300], //300 far in X and Z axis, flying 400 meters high
         "World");
     
         console.log(instanceTree);
@@ -284,6 +332,10 @@ function setup(shaders)
         for(let i = 0; i < instanceNodes.length; i++){
 
             pushMatrix();
+                multRotationX(instanceNodes[i].rotation[0]);
+                multRotationY(instanceNodes[i].rotation[1]);
+                multRotationZ(instanceNodes[i].rotation[2]);
+                multTranslation(instanceNodes[i].coord);
                 instanceNodes[i].model();
                 recursiveModelConstruction(instanceNodes[i].filhos);
             popMatrix();
@@ -314,6 +366,12 @@ function setup(shaders)
 
 
         recursiveModelConstruction(instanceTree);
+
+        for(let i = 0; i < activeInstances.length; i++){
+
+            activeInstances[i].animate();
+
+        }
 
 
         
