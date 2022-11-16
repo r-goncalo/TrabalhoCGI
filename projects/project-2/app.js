@@ -15,11 +15,37 @@ let mode;
 let maxHeliTilt = 30;
 let heliTiltChange = 0.5;
 
-let cameras = [[[0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]], [[80,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]]];
-let currentCamera = 1;
+
+//the cameras we'll have, composed of function that return a view matrix
+let cameras = [];
+let currentCamera;
 
 
+//instanceTree will be composed by {model : function, filhos : [] }
+let instanceTree = [];
 
+//used to find instances by name
+let instanceDic = {};
+
+//activeInstances will point to members of the instanceTree that also have the function animate()
+let activeInstances = [];
+
+function addInstance(nameStr, modelFun){
+
+    let instance = { model : modelFun, filhos : []};
+    instanceDic[nameStr] = instance;
+    instanceTree.push(instance);
+
+}
+
+function addInstanceSon(nameStr, modelFun, parentName){
+
+    let instanceParent = instanceDic[parentName];
+    let instance = { model : modelFun, filhos : []};
+    instanceDic[nameStr] = instance;
+    instanceParent.filhos.push(instance);
+
+}
 
 function setup(shaders)
 {
@@ -124,6 +150,8 @@ function setup(shaders)
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
     
     window.requestAnimationFrame(render);
+    
+    
 
     function defineColor(red, green, blue){
 
@@ -139,129 +167,132 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
     }
 
-    function topHelices(){
+    /*
+        *****SETUP INITIAL INSTANCES***
+    */
 
+    /*
+        *****SETUP REFERENCIAL***
+    */
 
-    }
+        function xGuide(){
 
-    function mainBody(){
-
-
-    }
-
-    function foot(){
-
-
-    }
-
-    function base(){
-
-
-    }
-
-    function helicopter(){
-
-
-
-
-
-    }
-
-    function ground(){
-
-
-        //the ground is 1000^2 meters, with 5 height
-
-        multTranslation([0, -5, 0]);
-        multScale([1000, 5, 1000]);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        //draws a cube with the transformations it has in the modelview
-        CUBE.draw(gl, program, mode);
-
-    }
-
-    function xGuide(){
-
-
-        //the ground is 1000^2 meters, with 5 height
-
-        multTranslation([0, 0,-5]);
-        multScale([1000, 5, 5]);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        defineColor(1, 0, 0);
-
-
-        //draws a cube with the transformations it has in the modelview
-        CUBE.draw(gl, program, mode);
-
-    }
-
-    function yGuide(){
-
-
-        //the ground is 1000^2 meters, with 5 height
-
-        multTranslation([0, 0,-5]);
-        multScale([5, 1000, 5]);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        defineColor(0, 0, 1);
-
-
-        //draws a cube with the transformations it has in the modelview
-        CUBE.draw(gl, program, mode);
-
-    }
-
-    function zGuide(){
-
-
-        //the ground is 1000^2 meters, with 5 height
-
-        multTranslation([0, 0,-5]);
-        multScale([5, 5, 1000]);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        defineColor(0, 1, 0);
-
-        //draws a cube with the transformations it has in the modelview
-        CUBE.draw(gl, program, mode);
-
-    }
+            multTranslation([0, 0,-5]);
+            multScale([1000, 5, 5]);
+            uploadModelView();
+            defineColor(1, 0, 0); //red
+            CUBE.draw(gl, program, mode);
     
-    //a refer to know the coordinates
-    function referencial(){
-
-        pushMatrix();
-            xGuide();
-        popMatrix();
-        pushMatrix();
-            yGuide();
-        popMatrix();
-        pushMatrix();
-            zGuide();
-        popMatrix();
+        }
+    
+        function yGuide(){
+    
+            multTranslation([0, 0,-5]);
+            multScale([5, 1000, 5]);
+            uploadModelView();
+            defineColor(0, 0, 1);//blue
+            CUBE.draw(gl, program, mode);
+    
+        }
+    
+        function zGuide(){
+            multTranslation([0, 0,-5]);
+            multScale([5, 5, 1000]);
+            uploadModelView();
+            defineColor(0, 1, 0);//green
+            CUBE.draw(gl, program, mode);
+        }
         
+        //a refer to know the coordinates
+        function referencial(){
+    
+            pushMatrix();
+                xGuide();
+            popMatrix();
+            pushMatrix();
+                yGuide();
+            popMatrix();
+            pushMatrix();
+                zGuide();
+            popMatrix();
+            
+        }
+
+    /*
+        ***** END OF SETUP REFERENCIAL***
+    */
+
+
+
+    /*
+        *****SETUP HELICOPTER***
+    */
+
+
+
+    /*
+        *****END OF SETUP HELICOPTER***
+    */
+   
+        
+    function setupInstances(){
+
+
+        addInstance("World",
+                    function(){});
+    
+        addInstanceSon("Ground",
+                    function(){
+                        multTranslation([0, -5, 0]);
+                        multScale([1000, 5, 1000]);
+                        uploadModelView();
+                        CUBE.draw(gl, program, mode);
+                    },
+                    "World");
+
+        addInstanceSon("Referencial",
+        referencial,
+        "World");
+    
+        console.log(instanceTree);
+
     }
 
-    //changes in the whole world
-    function world(){
+    setupInstances();
 
-        multRotationX(time/2);
-        multRotationZ(time/3);
+    /*
+        *****END OF SETUP INITIAL INSTANCES***
+    */
+
+    /*
+        *****SETUP CAMERAS***
+    */
+   
+    function camera0(){return {eye: [0,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
+    function camera1(){return {eye: [80,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};};
+
+    cameras = [camera0, camera1];
+    currentCamera = 1;
+
+    /*
+        *****END OF SETUP CAMERAS***
+    */    
+
+
+    function recursiveModelConstruction(instanceNodes){
+
+        for(let i = 0; i < instanceNodes.length; i++){
+
+            pushMatrix();
+                instanceNodes[i].model();
+                recursiveModelConstruction(instanceNodes[i].filhos);
+            popMatrix();
+
+        }
 
 
     }
+
 
     function render()
     {
@@ -278,24 +309,12 @@ function setup(shaders)
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        
-        loadMatrix(lookAt(cameras[currentCamera][0], cameras[currentCamera][1], cameras[currentCamera][2]));
-        //loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
+        let camera = cameras[currentCamera]();
+        loadMatrix(lookAt(camera.eye, camera.at, camera.up));
 
-        //transformationsOverWholeWorld
 
-        //world();
+        recursiveModelConstruction(instanceTree);
 
-        pushMatrix();
-            referencial();
-        popMatrix();
-
-        pushMatrix();
-            ground();
-        popMatrix();
-        pushMatrix();
-            helicopter();
-        popMatrix();
 
         
     }
