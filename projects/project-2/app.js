@@ -21,7 +21,7 @@ let cameras = [];
 let currentCamera;
 
 
-//instanceTree will be composed by {model : function,  coord: [x, y, z], rotation : [x, y, z] filhos : [] }
+//instanceTree will be composed by {model : function,  coord: [x, y, z], rotation : [x, y, z], scale : [x, y, z] filhos : [] }
 let instanceTree = [];
 
 //used to find instances by name
@@ -33,7 +33,7 @@ let activeInstances = [];
 
 function addInstance(nameStr, modelFun, initialCoord){
 
-    let instance = { model : modelFun, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
+    let instance = { model : modelFun, coord : initialCoord, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
     instanceDic[nameStr] = instance;
     instanceTree.push(instance);
 
@@ -42,7 +42,7 @@ function addInstance(nameStr, modelFun, initialCoord){
 function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
-    let instance = { model : modelFun, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
+    let instance = { model : modelFun, coord : initialCoord, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
     instanceDic[nameStr] = instance;
     instanceParent.filhos.push(instance);
 
@@ -52,10 +52,16 @@ function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
 function addActiveInstanceSon(nameStr, modelFun, animateFun, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
-    let instance = { model : modelFun, coord : initialCoord, animate : animateFun, rotation : [0, 0, 0], filhos : []};
+    let instance = { model : modelFun, coord : initialCoord, animate : animateFun, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
     instanceDic[nameStr] = instance;
     instanceParent.filhos.push(instance);
     activeInstances.push(instance);
+
+}
+
+function setInstanceScale(instanceName, newScale){
+
+    instanceDic[instanceName].scale = newScale;
 
 }
 
@@ -245,7 +251,26 @@ function setup(shaders)
     
         function modelMainBody(){
 
-            multScale([20, 10, 10]); //the main body is 20 meters, its a giant helicopter
+            multScale([5, 3, 3]); //the main body is 20 meters, its a giant helicopter
+            uploadModelView();
+            defineColor(1, 0, 0); //red
+            SPHERE.draw(gl, program, mode);
+
+        }
+
+        function modelTail(){
+
+            multScale([6, 1, 1]); 
+            uploadModelView();
+            defineColor(1, 0, 0); //red
+            SPHERE.draw(gl, program, mode);
+
+        }
+
+        function modelTailPoint(){
+
+            multRotationX(75);
+            multScale([2, 0.5, 0.5]); 
             uploadModelView();
             defineColor(1, 0, 0); //red
             SPHERE.draw(gl, program, mode);
@@ -254,8 +279,20 @@ function setup(shaders)
 
     function modelHelicopter(){
 
-        modelMainBody();
-
+        pushMatrix()
+            modelMainBody();
+        popMatrix();
+        pushMatrix()
+            multTranslation([-4, 0, 0]);
+            pushMatrix();
+                modelTail();
+            popMatrix();
+            multTranslation([-3, 0, 0]);
+            pushMatrix();
+                modelTailPoint();
+            popMatrix();
+        popMatrix(); 
+        
     }
 
     function animateHelicopter(){
@@ -264,7 +301,8 @@ function setup(shaders)
         this.coord = [helicopterDistance * Math.cos(time * helicopterSpeed),
                       this.coord[1],
                       helicopterDistance * Math.sin(time * helicopterSpeed)];
-        this.rotation[0] = time * helicopterSpeed;
+
+        this.rotation[1] = time * helicopterSpeed; //why isn't this working?
 
     }
 
@@ -297,10 +335,13 @@ function setup(shaders)
         "World");
 
         addActiveInstanceSon("Helicopter",
-        modelMainBody,
+        modelHelicopter,
         animateHelicopter,
         [300, 400, 300], //300 far in X and Z axis, flying 400 meters high
         "World");
+
+        //the helicopter was too small, increasing its size to 3x
+        setInstanceScale("Helicopter", [3, 3, 3]);
     
         console.log(instanceTree);
 
@@ -332,10 +373,11 @@ function setup(shaders)
         for(let i = 0; i < instanceNodes.length; i++){
 
             pushMatrix();
+                multTranslation(instanceNodes[i].coord);
                 multRotationX(instanceNodes[i].rotation[0]);
                 multRotationY(instanceNodes[i].rotation[1]);
                 multRotationZ(instanceNodes[i].rotation[2]);
-                multTranslation(instanceNodes[i].coord);
+                multScale(instanceNodes[i].scale);
                 instanceNodes[i].model();
                 recursiveModelConstruction(instanceNodes[i].filhos);
             popMatrix();
