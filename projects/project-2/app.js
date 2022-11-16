@@ -65,6 +65,18 @@ function setInstanceScale(instanceName, newScale){
 
 }
 
+function scaleInstanceByValue(instanceName, value){
+
+    instanceDic[instanceName].scale = 
+        [
+            instanceDic[instanceName].scale[0] * value,
+            instanceDic[instanceName].scale[1] * value,
+            instanceDic[instanceName].scale[2] * value,
+
+        ];
+
+}
+
 function setup(shaders)
 {
     
@@ -119,6 +131,10 @@ function setup(shaders)
                 break;
             //Desafio - Colocar uma camara adicional, posicionada no helicoptero e apontando para a frente
             case '5':
+                break;
+            case '-': //cycle through all available cameras
+                currentCamera = (currentCamera + 1) % cameras.length;
+                console.log("Current camera: " + currentCamera);
                 break;
             
 
@@ -269,10 +285,13 @@ function setup(shaders)
 
         function modelTailPoint(){
 
-            multRotationX(75);
-            multScale([2, 0.5, 0.5]); 
+            multRotationZ(-75);
+            //multTranslation([0, 1, 0]);
+         
+            //multScale([2, 0.5, 0.5]); 
+            multScale([10, 1, 1]); 
             uploadModelView();
-            defineColor(1, 0, 0); //red
+            defineColor(1, 1, 1); //red
             SPHERE.draw(gl, program, mode);
 
         }
@@ -282,7 +301,7 @@ function setup(shaders)
         pushMatrix()
             modelMainBody();
         popMatrix();
-        pushMatrix()
+        pushMatrix();
             multTranslation([-4, 0, 0]);
             pushMatrix();
                 modelTail();
@@ -341,7 +360,8 @@ function setup(shaders)
         "World");
 
         //the helicopter was too small, increasing its size to 3x
-        setInstanceScale("Helicopter", [3, 3, 3]);
+        scaleInstanceByValue("Helicopter", 10);
+
     
         console.log(instanceTree);
 
@@ -358,9 +378,11 @@ function setup(shaders)
     */
    
     function camera0(){return {eye: [0,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
-    function camera1(){return {eye: [80,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};};
+    function camera1(){return {eye: [80,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
+    function camera3(){return {eye: [100,VP_DISTANCE * 0.5,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
+    function camera4(){return {eye: [-100,VP_DISTANCE * 0.5,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
 
-    cameras = [camera0, camera1];
+    cameras = [camera0, camera1, camera3, camera4];
     currentCamera = 1;
 
     /*
