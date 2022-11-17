@@ -168,6 +168,13 @@ function instanceTrueCoord(instance){
 
 }
 
+function makeInstanceResponsive(instance, reactFun){
+
+    instance.react = reactFun;
+    reactiveInstances.push(instance);
+
+}
+
 function deleteInstance(instance){
 
     let instanceParent = instance.Pai;
@@ -178,6 +185,18 @@ function deleteInstance(instance){
     }else {
 
         instanceTree.pop(instance);
+
+    }
+
+    if(instance.animate != undefined){
+
+        activeInstances.pop(instance);
+
+    }
+
+    if(instance.react != undefined){
+
+        reactiveInstances.pop(instance);
 
     }
 
@@ -404,6 +423,8 @@ function setup(shaders)
     let groundHeight = 0;
 
 
+    function setupGround(){}
+
     /*
         *****SETUP BUILDINGS***
     */
@@ -446,7 +467,7 @@ function setup(shaders)
 
     function modelBox(){
 
-        multScale([1, 1, 1]);
+        multScale([4, 5, 3]);
 
     }
 
@@ -459,7 +480,7 @@ function setup(shaders)
         }
 
         if(this.coord[1] > groundHeight)
-            this.coord[1] -= this.speed;
+            this.coord[1] = this.coord[1] - this.speed;
 
     }
 
@@ -468,12 +489,15 @@ function setup(shaders)
         let boxInstance = addActiveInstance("Box",
         initialCoord,
         modelBox,
-        defineColor(color),
+        color,
         CUBE.draw,
         animateBox);
 
         boxInstance.speed = boxSpeed;
         boxInstance.timeCreated = time;
+
+        console.log("Box created: " + boxInstance.coord);
+
 
     }
 
@@ -534,21 +558,6 @@ function setup(shaders)
 
     function animateHelicopter(){
 
-/*
-        let angle = (time * this.speed) % 720;
-        let angleInRad = angle * (Math.PI/180);
-
-        this.coord[0] = this.distance * Math.cos(angleInRad);
-        this.coord[2] = this.distance * Math.sin(angleInRad);
-
-        this.rotation[1] = -90 - angle; //why isn't this working?
-
-*/
-
-        //let angle = (time * this.speed) % 720;
-
-        console.log(this.coord);
-
         let angle;
         if(this.coord[0] != 0){
             angle = Math.abs(Math.atan((this.coord[2])/this.coord[0]));
@@ -565,9 +574,7 @@ function setup(shaders)
                 angle = Math.PI;
             else
                 angle = -Math.PI
-
-        console.log("Coord " + this.coord + " Angle: " + angle);
-
+    
         let angleInDeg = angle * (180/Math.PI);
 
         this.coord[0] += this.speed * Math.cos(Math.PI/2 + angle);
@@ -579,6 +586,17 @@ function setup(shaders)
 
     }
 
+    function helicopterReact(keyReceived){
+
+        console.log(this.name + " received input " + keyReceived + " to compare to " + this.boxKey);
+        if(keyReceived == this.boxKey){
+
+            createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.speed);
+
+        }
+
+    }
+
     function helicopterCamera(){ 
 
 
@@ -587,17 +605,21 @@ function setup(shaders)
     }
 
 
-    function createHelicopter(helicopterDistance, helicopterSpeed, helicopterHeight, colorData){
+    function createHelicopter(initialCoord, helicopterSpeed, helBoxKey, colorData){
 
         let helicoinstance = addActiveInstance("Helicopter",
-        [100, helicopterHeight, 0],
+        initialCoord,
         modelMainBody,
         colorData["Body"],
         SPHERE.draw,
         animateHelicopter);
 
-        helicoinstance.distance = helicopterDistance;
         helicoinstance.speed = helicopterSpeed;
+
+        helicoinstance.boxKey = helBoxKey;
+        helicoinstance.boxColor = colorData["Box"];
+
+        makeInstanceResponsive(helicoinstance, helicopterReact);
 
             let hTail = addModeledInstanceSon("HelicopterTail",
             [-4, 0, 0],
@@ -649,7 +671,8 @@ function setup(shaders)
             helicoinstance.name,
             helicopterCamera);
 
-        scaleInstanceByValue(helicoinstance, 30);
+        return helicoinstance;
+
 
     }
     
@@ -711,22 +734,15 @@ function setup(shaders)
 
         setupCameras();
 
-/*
-        addInstance("Ground",
-                    function(){
-                        multTranslation([0, -5, 0]);
-                        multScale([1000, 5, 1000]);
-                        uploadModelView();
-                        defineColor(1, 1, 1); //white
-                        CUBE.draw(gl, program, drawModes[currentDrawMode]);
-                    },
-                    [0, 0, 0]);
-*/
 
-
-        createHelicopter(100, 0.1, 100, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145]});
+        let helicoinstance = createHelicopter([100, 100, 0], 0.1, 'm', {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});
         
-        //createHelicopter(200, 5, 200, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
+        scaleInstanceByValue(helicoinstance, 5);
+
+        helicoinstance = createHelicopter([0, 300, 200], 10, 'n', {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});
+
+        scaleInstanceByValue(helicoinstance, 10);
+
 
         console.log(instanceTree);
 
@@ -792,9 +808,12 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
         let camera = cameras[currentCamera].camera();
-        //console.log(camera);
-        loadMatrix(lookAt(camera.eye, camera.at, camera.up));
-
+        
+        /*
+            THIS -camera.at[1] IS AN HOTFIX, WHY THE HELL IS IT NEEDED
+        */
+        //loadMatrix(lookAt(camera.eye, -camera.at, camera.up));
+        loadMatrix(lookAt(camera.eye, [camera.at[0], -camera.at[1], camera.at[2]], camera.up));
 
 
 
