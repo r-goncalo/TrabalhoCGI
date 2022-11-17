@@ -32,6 +32,9 @@ let instanceDic = {};
 //note: the instances will be able to use "this" becase they're called from the body of the instance
 let activeInstances = [];
 
+//instancesWithTheMethod react(event.key), to react when a key is pressed
+let reactiveInstances = [];
+
 function generateInstanceName(newName){
 
     let toReturn = newName;
@@ -256,6 +259,13 @@ function setup(shaders)
 
 
         }
+
+        for(let i = 0; i < reactiveInstances.length; i++){
+
+            reactiveInstances[i].react(event.key);
+
+        }
+
     })
     
     /*
@@ -391,6 +401,8 @@ function setup(shaders)
         *****SETUP GROUND***
     */
 
+    let groundHeight = 0;
+
 
     /*
         *****SETUP BUILDINGS***
@@ -424,6 +436,52 @@ function setup(shaders)
 
     */
 
+    /*
+
+    ****SETUP BOXES***
+
+    */
+
+    let timeToLive = 5;
+
+    function modelBox(){
+
+        multScale([1, 1, 1]);
+
+    }
+
+    function animateBox(){
+
+        if(time - this.timeCreated > timeToLive){
+
+            deleteInstance(this);
+
+        }
+
+        if(this.coord[1] > groundHeight)
+            this.coord[1] -= this.speed;
+
+    }
+
+    function createBox(initialCoord, color, boxSpeed){
+
+        let boxInstance = addActiveInstance("Box",
+        initialCoord,
+        modelBox,
+        defineColor(color),
+        CUBE.draw,
+        animateBox);
+
+        boxInstance.speed = boxSpeed;
+        boxInstance.timeCreated = time;
+
+    }
+
+    /*
+
+    ****END OF SETUP BOXES***
+
+    */
     
         function modelMainBody(){
 
@@ -476,19 +534,52 @@ function setup(shaders)
 
     function animateHelicopter(){
 
+/*
         let angle = (time * this.speed) % 720;
         let angleInRad = angle * (Math.PI/180);
 
-        this.coord = [this.distance * Math.cos(angleInRad),
-                      this.coord[1],
-                      this.distance * Math.sin(angleInRad)];
+        this.coord[0] = this.distance * Math.cos(angleInRad);
+        this.coord[2] = this.distance * Math.sin(angleInRad);
 
         this.rotation[1] = -90 - angle; //why isn't this working?
+
+*/
+
+        //let angle = (time * this.speed) % 720;
+
+        console.log(this.coord);
+
+        let angle;
+        if(this.coord[0] != 0){
+            angle = Math.abs(Math.atan((this.coord[2])/this.coord[0]));
+                if(this.coord[0] < 0 && this.coord[2] > 0)
+                    angle = Math.PI - angle;
+
+                else if(this.coord[0] < 0 && this.coord[2] < 0)
+                    angle = Math.PI  + angle;
+                
+                else if(this.coord[0] > 0 && this.coord[2] < 0)
+                    angle = Math.PI * 2 - angle;
+        }else
+            if(this.coord[2] > 0)
+                angle = Math.PI;
+            else
+                angle = -Math.PI
+
+        console.log("Coord " + this.coord + " Angle: " + angle);
+
+        let angleInDeg = angle * (180/Math.PI);
+
+        this.coord[0] += this.speed * Math.cos(Math.PI/2 + angle);
+        this.coord[2] += this.speed * Math.sin(Math.PI/2 + angle);
+
+        this.rotation[1] = -90 - angleInDeg; //why isn't this working?
+
 
 
     }
 
-    function helicopterCamera(){
+    function helicopterCamera(){ 
 
 
         return {eye: [0, 0, 0], at: instanceTrueCoord(this), up: [0,1,0]};
@@ -499,7 +590,7 @@ function setup(shaders)
     function createHelicopter(helicopterDistance, helicopterSpeed, helicopterHeight, colorData){
 
         let helicoinstance = addActiveInstance("Helicopter",
-        [0, helicopterHeight, 0],
+        [100, helicopterHeight, 0],
         modelMainBody,
         colorData["Body"],
         SPHERE.draw,
@@ -633,7 +724,7 @@ function setup(shaders)
 */
 
 
-        createHelicopter(0, 0, 0, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145]});
+        createHelicopter(100, 0.1, 100, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145]});
         
         //createHelicopter(200, 5, 200, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
 
@@ -709,7 +800,7 @@ function setup(shaders)
 
         //renderization
         referencial();
-        //recursiveModelConstruction(instanceTree);
+        recursiveModelConstruction(instanceTree);
 
         for(let i = 0; i < activeInstances.length; i++){
 
