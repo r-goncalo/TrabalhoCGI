@@ -22,7 +22,7 @@ let drawModes = [];
 let currentDrawMode = 0;
 
 
-//instanceTree will be composed by {name : string, model : function,  coord: [x, y, z], rotation : [x, y, z], scale : [x, y, z], filhos : [], Pai : instance }
+//instanceTree will be composed by {name : string, model : function,  coord: [x, y, z], rotation : [x, y, z], scale : [x, y, z], filhos : [], Pai : instance, color : [r, g, b] }
 let instanceTree = [];
 
 //used to find instances by name
@@ -47,11 +47,11 @@ function generateInstanceName(newName){
 }
 
 //uma instancia destas tem Pai = undefined
-function addInstance(nameStr, modelFun, initialCoord){
+function addInstance(nameStr, initialCoord){
 
     let newName = generateInstanceName(nameStr);
 
-    let instance = { name : newName, model : modelFun, coord : initialCoord, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
+    let instance = { name : newName, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
     instanceDic[newName] = instance;
     instanceTree.push(instance);
 
@@ -60,12 +60,15 @@ function addInstance(nameStr, modelFun, initialCoord){
 
 }
 
-function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
+function addInstanceSon(nameStr, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
     
     
-    let instance = addInstance(nameStr, modelFun, initialCoord);
+    let newName = generateInstanceName(nameStr);
+
+    let instance = { name : newName, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
+    instanceDic[newName] = instance;
 
     instance.Pai = instanceParent;
     instanceParent.filhos.push(instance);
@@ -75,10 +78,35 @@ function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
 
 }
 
-function addActiveInstance(nameStr, modelFun, animateFun, initialCoord){
+function addModeledInstance(nameStr, initialCoord, modelFun, colorArray, drawFun){
+
+    let instance = addInstance(nameStr, initialCoord);
+    instance.model = modelFun;
+    instance.color = colorArray;
+    instance.draw = drawFun;
+    instance.scale = [1, 1, 1];
+
+    return instance;
+
+}
+
+function addModeledInstanceSon(nameStr, initialCoord, parentName, modelFun, colorArray, drawFun){
+
+    let instance = addInstanceSon(nameStr, initialCoord, parentName);
+    instance.model = modelFun;
+    instance.color = colorArray;
+    instance.draw = drawFun;
+    instance.scale = [1, 1, 1];
+
+    return instance;
 
 
-    let instance = addInstance(nameStr, modelFun, initialCoord);
+}
+
+function addActiveInstance(nameStr, initialCoord, modelFun, colorArray, drawFun, animateFun){
+
+
+    let instance = addModeledInstance(nameStr, initialCoord, modelFun, colorArray, drawFun);
     instance.animate = animateFun;
     activeInstances.push(instance);
 
@@ -87,10 +115,11 @@ function addActiveInstance(nameStr, modelFun, animateFun, initialCoord){
 
 }
 
-function addActiveInstanceSon(nameStr, modelFun, animateFun, initialCoord, parentName){
+function addActiveInstanceSon(nameStr, initialCoord, parentName, modelFun, colorArray, drawFun, animateFun){
 
-    let instance = addInstanceSon(nameStr, modelFun, initialCoord, parentName);
+    let instance = addModeledInstanceSon(nameStr, initialCoord, parentName, modelFun, colorArray, drawFun);
     instance.animate = animateFun;
+    activeInstances.push(instance);
 
     return instance;
 
@@ -98,10 +127,7 @@ function addActiveInstanceSon(nameStr, modelFun, animateFun, initialCoord, paren
 
 function addCameraInstance(nameStr, cameraFun, initialCoord){
 
-    let camera = addInstance(nameStr,
-    function(){},
-    initialCoord);
-    
+    let camera = addInstance(nameStr, initialCoord);
     camera.camera = cameraFun;
     cameras.push(camera);
 
@@ -109,11 +135,10 @@ function addCameraInstance(nameStr, cameraFun, initialCoord){
 
 }
 
-function addCameraInstanceSon(nameStr, cameraFun, initialCoord, parentName){
+function addCameraInstanceSon(nameStr, initialCoord, parentName, cameraFun){
 
     let camera = addInstanceSon(nameStr,
-        function(){},
-        initialCoord,
+        initialCoord, 
         parentName);
         
         camera.camera = cameraFun;
@@ -156,7 +181,6 @@ function scaleInstanceByValue(instance, value){
 function setup(shaders)
 {
     
-    //DO EXERCICIO 18
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
 
@@ -165,8 +189,6 @@ function setup(shaders)
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
     let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
-
-    let mode = gl.LINES;
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -255,7 +277,7 @@ function setup(shaders)
 
 
     //this will define the color of the sky
-    gl.clearColor(0.1, 0.3, 0.8, 1.0);
+    gl.clearColor(56, 56, 56, 1.0);
     CUBE.init(gl);
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
     
@@ -263,10 +285,10 @@ function setup(shaders)
     
     
 
-    function defineColor(red, green, blue){
+    function defineColor(colors){
 
         const solidColor = gl.getUniformLocation(program, "solidColor");
-        gl.uniform3f(solidColor, red, green, blue);
+        gl.uniform3f(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
 
 
     }
@@ -296,33 +318,33 @@ function setup(shaders)
 
     /*
         *****SETUP REFERENCIAL***
+
+        It is not an instance, is simply rendered
+
     */
 
         function xGuide(){
 
-            multTranslation([0, 0,-5]);
             multScale([1000, 5, 5]);
             uploadModelView();
-            defineColor(1, 0, 0); //red
+            defineColor(255, 0, 0); //red
             CUBE.draw(gl, program, drawModes[currentDrawMode]);
     
         }
     
         function yGuide(){
     
-            multTranslation([0, 0,-5]);
             multScale([5, 1000, 5]);
             uploadModelView();
-            defineColor(0, 0, 1);//blue
+            defineColor(0, 0, 255);//blue
             CUBE.draw(gl, program, drawModes[currentDrawMode]);
     
         }
     
         function zGuide(){
-            multTranslation([0, 0,-5]);
             multScale([5, 5, 1000]);
             uploadModelView();
-            defineColor(0, 1, 0);//green
+            defineColor(0, 255, 0);//green
             CUBE.draw(gl, program, drawModes[currentDrawMode]);
         }
         
@@ -341,14 +363,7 @@ function setup(shaders)
             
         }
 
-    
-        function setupReferencial(){
-
-            addInstance("Referencial",
-            referencial,
-            [0, 0, 0]);
-
-        }
+  
 
     /*
         ***** END OF SETUP REFERENCIAL***
@@ -385,51 +400,45 @@ function setup(shaders)
 
         It also has a camera
 
+        The color data is
+            "Body" : [r, g, b]
+            "Spike" : [r, g, b]
+            "Helice" : [r, g, b]
+
     */
 
     
         function modelMainBody(){
 
             multScale([5, 3, 3]); //the main body is 20 meters, its a giant helicopter
-            uploadModelView();
-            defineColor(1, 0, 0); //red
-            SPHERE.draw(gl, program, drawModes[currentDrawMode]);
+
 
         }
 
         function modelTail(){
 
             multScale([6, 1, 1]); 
-            uploadModelView();
-            defineColor(1, 0, 0); //red
-            SPHERE.draw(gl, program, drawModes[currentDrawMode]);
+
 
         }
 
         function modelTailPoint(){
 
             multScale([2, 0.5, 0.5]); 
-            uploadModelView();
-            defineColor(1, 1, 1); //red
-            SPHERE.draw(gl, program, drawModes[currentDrawMode]);
+
 
         }
 
         function modelSpike(){
 
             multScale([0.2, 2, 0.2]); 
-            uploadModelView();
-            defineColor(1, 0, 1); 
-            SPHERE.draw(gl, program, drawModes[currentDrawMode]);
+
 
         }
 
         function helicopterHelice(){
 
             multScale([4, 0.1, 0.3]); 
-            uploadModelView();
-            defineColor(0, 0, 1); 
-            SPHERE.draw(gl, program, drawModes[currentDrawMode]);
 
         }
     
@@ -452,7 +461,7 @@ function setup(shaders)
                       this.coord[1],
                       this.distance * Math.sin(angleInRad)];
 
-        this.rotation[1] = 180 - angle; //why isn't this working?
+        this.rotation[1] = -90 - angle; //why isn't this working?
 
 
     }
@@ -464,50 +473,63 @@ function setup(shaders)
 
     }
 
-    function setupHelicopter(helicopterDistance, helicopterSpeed, helicopterHeight){
+
+    function createHelicopter(helicopterDistance, helicopterSpeed, helicopterHeight, colorData){
 
         let helicoinstance = addActiveInstance("Helicopter",
+        [0, helicopterHeight, 0],
         modelMainBody,
-        animateHelicopter,
-        [0, helicopterHeight, 0]);
+        colorData["Body"],
+        SPHERE.draw,
+        animateHelicopter);
 
         helicoinstance.distance = helicopterDistance;
         helicoinstance.speed = helicopterSpeed;
 
-            let hTail = addInstanceSon("HelicopterTail",
-            modelTail,
+            let hTail = addModeledInstanceSon("HelicopterTail",
             [-4, 0, 0],
-            helicoinstance.name);
+            helicoinstance.name,
+            modelTail,
+            colorData["Body"],
+            SPHERE.draw);
 
-                let hTailPoint = addInstanceSon("HelicopterTailPoint",
-                modelTailPoint,
+                let hTailPoint = addModeledInstanceSon("HelicopterTailPoint",
                 [-3, 0.5, 0],
-                hTail.name);
+                hTail.name,
+                modelTailPoint,
+                colorData["Body"],
+                SPHERE.draw);
 
                 hTailPoint.rotation[2] = -75;
 
             let hSpike = addActiveInstanceSon("HelicopterSpike",
-            modelSpike,
-            animateHelicopterHeliceRotation,
             [0, 2, 0],
-            helicoinstance.name);
+            helicoinstance.name,
+            modelSpike,
+            colorData["Spike"],
+            SPHERE.draw,
+            animateHelicopterHeliceRotation);
 
-                addInstanceSon("HelicopterHelice1",
-                helicopterHelice,
+                addModeledInstanceSon("HelicopterHelice1",
                 [2, 0.5, 0],
-                hSpike.name);
-
-                addInstanceSon("HelicopterHelice2",
+                hSpike.name,
                 helicopterHelice,
+                colorData["Helice"],
+                SPHERE.draw);
+
+                addModeledInstanceSon("HelicopterHelice2",
                 [-2, 0.5, 0],
-                hSpike.name);
+                hSpike.name,
+                helicopterHelice,
+                colorData["Helice"],
+                SPHERE.draw);
 
             addCameraInstanceSon("HelicopterCamera",
-            helicopterCamera,
             [2.6, 0.5, 0],
-            helicoinstance.name);
+            helicoinstance.name,
+            helicopterCamera);
 
-        scaleInstanceByValue(helicoinstance, 5);
+        scaleInstanceByValue(helicoinstance, 30);
 
     }
     
@@ -522,6 +544,7 @@ function setup(shaders)
 
         function cameraBaseFunction(){
 
+            //console.log(this.coord);
             return {eye: [0, 0, 0], at: [this.coord[0], this.coord[1], this.coord[2]], up: [0,1,0]};
 
         }
@@ -568,8 +591,7 @@ function setup(shaders)
 
         setupCameras();
 
-        setupReferencial();
-
+/*
         addInstance("Ground",
                     function(){
                         multTranslation([0, -5, 0]);
@@ -579,12 +601,12 @@ function setup(shaders)
                         CUBE.draw(gl, program, drawModes[currentDrawMode]);
                     },
                     [0, 0, 0]);
+*/
 
 
-
-        setupHelicopter(300, 30, 400);
+        createHelicopter(300, 30, 400, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
         
-        setupHelicopter(200, 5, 200);
+        createHelicopter(200, 5, 200, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
 
         console.log(instanceTree);
 
@@ -605,14 +627,26 @@ function setup(shaders)
         for(let i = 0; i < instanceNodes.length; i++){
 
             pushMatrix();
+
                 multTranslation(instanceNodes[i].coord);
                 multRotationX(instanceNodes[i].rotation[0]);
                 multRotationY(instanceNodes[i].rotation[1]);
                 multRotationZ(instanceNodes[i].rotation[2]);
-                multScale(instanceNodes[i].scale);
-                pushMatrix();
-                    instanceNodes[i].model();
-                popMatrix();
+
+
+                if(instanceNodes[i].model != undefined){
+
+                    //console.log(instanceNodes[i]);
+                    multScale(instanceNodes[i].scale);
+                    pushMatrix();
+                        instanceNodes[i].model();
+                        uploadModelView();
+                        defineColor(instanceNodes[i].color);
+                        instanceNodes[i].draw(gl, program, drawModes[currentDrawMode]);
+                    popMatrix();
+
+                }
+
                 recursiveModelConstruction(instanceNodes[i].filhos);
             popMatrix();
 
@@ -637,14 +671,22 @@ function setup(shaders)
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        let camera = cameras[currentCamera].camera();;
+        let camera = cameras[currentCamera].camera();
+        //console.log(camera);
         loadMatrix(lookAt(camera.eye, camera.at, camera.up));
 
 
+
+
+        //renderization
+        pushMatrix();
+            referencial();
+        popMatrix();
         recursiveModelConstruction(instanceTree);
 
         for(let i = 0; i < activeInstances.length; i++){
 
+            //console.log(activeInstances[i]);
             activeInstances[i].animate();
 
         }
