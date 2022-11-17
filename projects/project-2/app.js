@@ -165,6 +165,23 @@ function instanceTrueCoord(instance){
 
 }
 
+function deleteInstance(instance){
+
+    let instanceParent = instance.Pai;
+    if(instanceParent != undefined){
+
+        instanceParent.Filhos.pop(instance);
+
+    }else {
+
+        instanceTree.pop(instance);
+
+    }
+
+    instance.Pai = undefined;
+
+}
+
 
 function scaleInstanceByValue(instance, value){
 
@@ -327,7 +344,7 @@ function setup(shaders)
 
             multScale([1000, 5, 5]);
             uploadModelView();
-            defineColor(255, 0, 0); //red
+            defineColor([255, 0, 0]); //red
             CUBE.draw(gl, program, drawModes[currentDrawMode]);
     
         }
@@ -336,7 +353,7 @@ function setup(shaders)
     
             multScale([5, 1000, 5]);
             uploadModelView();
-            defineColor(0, 0, 255);//blue
+            defineColor([0, 0, 255]);//blue
             CUBE.draw(gl, program, drawModes[currentDrawMode]);
     
         }
@@ -344,7 +361,7 @@ function setup(shaders)
         function zGuide(){
             multScale([5, 5, 1000]);
             uploadModelView();
-            defineColor(0, 255, 0);//green
+            defineColor([0, 255, 0]);//green
             CUBE.draw(gl, program, drawModes[currentDrawMode]);
         }
         
@@ -442,6 +459,11 @@ function setup(shaders)
 
         }
     
+        function modelHelicopterBase(){
+
+            multScale([0.1, 1, 0.1]); 
+
+        }
     
     let hHeliceRotSpeed = 10;
 
@@ -524,6 +546,13 @@ function setup(shaders)
                 colorData["Helice"],
                 SPHERE.draw);
 
+            let feet1 = addModeledInstanceSon("HelicopterBase",
+            [2, -0.8, 1],
+            helicoinstance.name,
+            modelHelicopterBase,
+            colorData["Base"],
+            SPHERE.draw);
+
             addCameraInstanceSon("HelicopterCamera",
             [2.6, 0.5, 0],
             helicoinstance.name,
@@ -604,9 +633,9 @@ function setup(shaders)
 */
 
 
-        createHelicopter(300, 30, 400, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
+        createHelicopter(0, 0, 0, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145]});
         
-        createHelicopter(200, 5, 200, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
+        //createHelicopter(200, 5, 200, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255]});
 
         console.log(instanceTree);
 
@@ -679,10 +708,8 @@ function setup(shaders)
 
 
         //renderization
-        pushMatrix();
-            referencial();
-        popMatrix();
-        recursiveModelConstruction(instanceTree);
+        referencial();
+        //recursiveModelConstruction(instanceTree);
 
         for(let i = 0; i < activeInstances.length; i++){
 
