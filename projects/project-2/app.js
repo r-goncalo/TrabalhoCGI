@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, mult, perspective } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -13,7 +13,7 @@ let time = 0;           // Global simulation time
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 
 
-//the cameras we'll have, composed of function that return a view matrix
+//the cameras we'll have, composed of instances with a camera() method
 let cameras = [];
 let currentCamera = 0;
 
@@ -22,7 +22,7 @@ let drawModes = [];
 let currentDrawMode = 0;
 
 
-//instanceTree will be composed by {name : string, model : function,  coord: [x, y, z], rotation : [x, y, z], scale : [x, y, z] filhos : [] }
+//instanceTree will be composed by {name : string, model : function,  coord: [x, y, z], rotation : [x, y, z], scale : [x, y, z], filhos : [], Pai : instance }
 let instanceTree = [];
 
 //used to find instances by name
@@ -46,6 +46,7 @@ function generateInstanceName(newName){
 
 }
 
+//uma instancia destas tem Pai = undefined
 function addInstance(nameStr, modelFun, initialCoord){
 
     let newName = generateInstanceName(nameStr);
@@ -63,11 +64,10 @@ function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
     
-    let newName = generateInstanceName(nameStr);
+    
+    let instance = addInstance(nameStr, modelFun, initialCoord);
 
-    let instance = { name : newName, model : modelFun, coord : initialCoord, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
-
-    instanceDic[newName] = instance;
+    instance.Pai = instanceParent;
     instanceParent.filhos.push(instance);
 
 
@@ -77,12 +77,10 @@ function addInstanceSon(nameStr, modelFun, initialCoord, parentName){
 
 function addActiveInstance(nameStr, modelFun, animateFun, initialCoord){
 
-    let newName = generateInstanceName(nameStr);
 
-    let instance = { name : newName, model : modelFun, animate : animateFun, coord : initialCoord, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
-    instanceDic[newName] = instance;
+    let instance = addInstance(nameStr, modelFun, initialCoord);
+    instance.animate = animateFun;
     activeInstances.push(instance);
-    instanceTree.push(instance);
 
     return instance;
 
@@ -91,32 +89,65 @@ function addActiveInstance(nameStr, modelFun, animateFun, initialCoord){
 
 function addActiveInstanceSon(nameStr, modelFun, animateFun, initialCoord, parentName){
 
-    let instanceParent = instanceDic[parentName];
-
-    let newName = generateInstanceName(nameStr);
-
-    let instance = { name : newName, model : modelFun, animate : animateFun,  coord : initialCoord, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
-    instanceDic[newName] = instance;
-    instanceParent.filhos.push(instance);
-    activeInstances.push(instance);
+    let instance = addInstanceSon(nameStr, modelFun, initialCoord, parentName);
+    instance.animate = animateFun;
 
     return instance;
 
 }
 
-function setInstanceScale(instanceName, newScale){
+function addCameraInstance(nameStr, cameraFun, initialCoord){
 
-    instanceDic[instanceName].scale = newScale;
+    let camera = addInstance(nameStr,
+    function(){},
+    initialCoord);
+    
+    camera.camera = cameraFun;
+    cameras.push(camera);
+
+    return camera;
 
 }
 
-function scaleInstanceByValue(instanceName, value){
+function addCameraInstanceSon(nameStr, cameraFun, initialCoord, parentName){
 
-    instanceDic[instanceName].scale = 
+    let camera = addInstanceSon(nameStr,
+        function(){},
+        initialCoord,
+        parentName);
+        
+        camera.camera = cameraFun;
+        cameras.push(camera);
+    
+        return camera;
+
+}
+
+function instanceTrueCoord(instance){
+
+    let toReturn = [instance.coord[0], instance.coord[1], instance.coord[2]];
+    
+    let instanceParent = instance.Pai;
+
+    while(instanceParent != undefined){
+
+        toReturn = [toReturn[0] + instanceParent.coord[0], toReturn[1] + instanceParent.coord[1], toReturn[2] + instanceParent.coord[2]];
+        instanceParent = instanceParent.Pai;
+
+    }
+
+    return toReturn;
+
+}
+
+
+function scaleInstanceByValue(instance, value){
+
+        instance.scale = 
         [
-            instanceDic[instanceName].scale[0] * value,
-            instanceDic[instanceName].scale[1] * value,
-            instanceDic[instanceName].scale[2] * value,
+            instance.scale[0] * value,
+            instance.scale[1] * value,
+            instance.scale[2] * value,
 
         ];
 
@@ -352,6 +383,8 @@ function setup(shaders)
             distance : int
             speed : int
 
+        It also has a camera
+
     */
 
     
@@ -409,8 +442,6 @@ function setup(shaders)
 
     }
 
-    let helicopterSpeed = 30;
-    let helicopterDistance = 300;
 
     function animateHelicopter(){
 
@@ -426,12 +457,19 @@ function setup(shaders)
 
     }
 
-    function setupHelicopter(helicopterDistance, helicopterSpeed){
+    function helicopterCamera(){
+
+
+        return {eye: [0, 0, 0], at: instanceTrueCoord(this), up: [0,1,0]};
+
+    }
+
+    function setupHelicopter(helicopterDistance, helicopterSpeed, helicopterHeight){
 
         let helicoinstance = addActiveInstance("Helicopter",
         modelMainBody,
         animateHelicopter,
-        [0, 400, 0]);
+        [0, helicopterHeight, 0]);
 
         helicoinstance.distance = helicopterDistance;
         helicoinstance.speed = helicopterSpeed;
@@ -464,7 +502,12 @@ function setup(shaders)
                 [-2, 0.5, 0],
                 hSpike.name);
 
-        scaleInstanceByValue(helicoinstance.name, 5);
+            addCameraInstanceSon("HelicopterCamera",
+            helicopterCamera,
+            [2.6, 0.5, 0],
+            helicoinstance.name);
+
+        scaleInstanceByValue(helicoinstance, 5);
 
     }
     
@@ -473,10 +516,57 @@ function setup(shaders)
         *****END OF SETUP HELICOPTER***
     */
    
-        
-    function setupInstances(){
+    /*
+        *****SETUP CAMERAS***
+    */
+
+        function cameraBaseFunction(){
+
+            return {eye: [0, 0, 0], at: [this.coord[0], this.coord[1], this.coord[2]], up: [0,1,0]};
+
+        }
+
+
+        function setupBaseCameras(){
+
+            addCameraInstance("Camera",
+            cameraBaseFunction,
+            [0, VP_DISTANCE, VP_DISTANCE]);
+
+            addCameraInstance("Camera",
+            cameraBaseFunction,
+            [80, VP_DISTANCE, VP_DISTANCE]);
+
+            addCameraInstance("Camera",
+            cameraBaseFunction,
+            [100, VP_DISTANCE * 0.5, VP_DISTANCE * 0.5]);
+
+            addCameraInstance("Camera",
+            cameraBaseFunction,
+            [-100, VP_DISTANCE * 0.2, VP_DISTANCE * 0.5]);
+
+
+
+        }
 
     
+
+
+        function setupCameras(){
+
+            setupBaseCameras();    
+        
+            currentCamera = 1;
+        }
+    
+        /*
+            *****END OF SETUP CAMERAS***
+        */ 
+       
+            
+    function setupInstances(){
+
+        setupCameras();
 
         setupReferencial();
 
@@ -492,12 +582,10 @@ function setup(shaders)
 
 
 
-        setupHelicopter(300, 30);
+        setupHelicopter(300, 30, 400);
         
-        setupHelicopter(200, 5);
+        setupHelicopter(200, 5, 200);
 
-
-    
         console.log(instanceTree);
 
     }
@@ -508,21 +596,7 @@ function setup(shaders)
         *****END OF SETUP INITIAL INSTANCES***
     */
 
-    /*
-        *****SETUP CAMERAS***
-    */
    
-    function camera0(){return {eye: [0,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
-    function camera1(){return {eye: [80,VP_DISTANCE,VP_DISTANCE], at: [0,0,0], up: [0,1,0]};}
-    function camera3(){return {eye: [100,VP_DISTANCE * 0.5,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
-    function camera4(){return {eye: [-100,VP_DISTANCE * 0.2,VP_DISTANCE * 0.5], at: [0,0,0], up: [0,1,0]};}
-
-    cameras = [camera0, camera1, camera3, camera4];
-    currentCamera = 1;
-
-    /*
-        *****END OF SETUP CAMERAS***
-    */    
 
         
 
@@ -563,7 +637,7 @@ function setup(shaders)
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        let camera = cameras[currentCamera]();
+        let camera = cameras[currentCamera].camera();;
         loadMatrix(lookAt(camera.eye, camera.at, camera.up));
 
 
