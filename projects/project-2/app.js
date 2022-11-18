@@ -256,12 +256,15 @@ function setup(shaders)
                 break;
             //A tecla 1 devera voltar a usar a projecao axonometrica
             case '1':
+                currentCamera = 1;
                 break;
             //Vista de frente ou alçado principal
             case '2':
+                currentCamera = 2;
                 break;
             //Vista de cima ou planta
             case '3':
+                currentCamera ;
                 break;
             //Vista lateral direita ou alçado lateral direito
             case '4':
@@ -272,6 +275,7 @@ function setup(shaders)
             case '-': //cycle through all available cameras
                 currentCamera = (currentCamera + 1) % cameras.length;
                 console.log("Current camera: " + currentCamera);
+                console.log("all the cameras: " + cameras)
                 break;
             
 
@@ -623,9 +627,22 @@ function setup(shaders)
 
         }
 
+        function modelTailSpike(){
+
+            multScale([0.1, 0.7, 0.2]); 
+
+
+        }
+
         function helicopterHelice(){
 
             multScale([4, 0.1, 0.3]); 
+
+        }
+
+        function helicopterTailHelice(){
+
+            multScale([2, 0.05, 0.15]); 
 
         }
     
@@ -635,7 +652,7 @@ function setup(shaders)
 
         }
     
-    let hHeliceRotSpeed = 10;
+    let hHeliceRotSpeed = 50;
 
     function animateHelicopterHeliceRotation(){
 
@@ -702,7 +719,8 @@ function setup(shaders)
         SPHERE.draw,
         animateHelicopter);
 
-        helicoinstance.speed = helicopterSpeed;
+        helicoinstance.speed = 2;
+        //helicopterSpeed;
 
         helicoinstance.boxKey = helBoxKey;
         helicoinstance.boxColor = colorData["Box"];
@@ -724,6 +742,28 @@ function setup(shaders)
                 SPHERE.draw);
 
                 hTailPoint.rotation[2] = -75;
+
+                let hTailSpike = addActiveInstanceSon("HelicopterTailSpike",
+                [-3.2, 1.5, 0],
+                hTail.name,
+                modelTailSpike,
+                colorData["Spike"],
+                SPHERE.draw,
+                animateHelicopterHeliceRotation);
+
+                addModeledInstanceSon("HelicopterTailHelice1",
+                [1.2, 0.5, 0],
+                hTailSpike.name,
+                helicopterTailHelice,
+                colorData["Helice"],
+                SPHERE.draw);
+
+                addModeledInstanceSon("HelicopterTailHelice2",
+                [-1.2, 0.5, 0],
+                hTailSpike.name,
+                helicopterTailHelice,
+                colorData["Helice"],
+                SPHERE.draw);
 
             let hSpike = addActiveInstanceSon("HelicopterSpike",
             [0, 2, 0],
@@ -834,7 +874,6 @@ function setup(shaders)
         setupGround();
 
         setupBuildings();
-
 
         console.log(instanceTree);
 
