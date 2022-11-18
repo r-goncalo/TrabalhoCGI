@@ -54,7 +54,7 @@ function addInstance(nameStr, initialCoord){
 
     let newName = generateInstanceName(nameStr);
 
-    let instance = { name : newName, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
+    let instance = { name : newName, coord : initialCoord, model : function(){}, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
     instanceDic[newName] = instance;
     instanceTree.push(instance);
 
@@ -70,7 +70,7 @@ function addInstanceSon(nameStr, initialCoord, parentName){
     
     let newName = generateInstanceName(nameStr);
 
-    let instance = { name : newName, coord : initialCoord, rotation : [0, 0, 0], filhos : []};
+    let instance = { name : newName, coord : initialCoord, model : function(){}, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
     instanceDic[newName] = instance;
 
     instance.Pai = instanceParent;
@@ -87,7 +87,6 @@ function addModeledInstance(nameStr, initialCoord, modelFun, colorArray, drawFun
     instance.model = modelFun;
     instance.color = colorArray;
     instance.draw = drawFun;
-    instance.scale = [1, 1, 1];
 
     return instance;
 
@@ -99,7 +98,7 @@ function addModeledInstanceSon(nameStr, initialCoord, parentName, modelFun, colo
     instance.model = modelFun;
     instance.color = colorArray;
     instance.draw = drawFun;
-    instance.scale = [1, 1, 1];
+
 
     return instance;
 
@@ -422,12 +421,101 @@ function setup(shaders)
 
     let groundHeight = 0;
 
+    function modelGround(){
 
-    function setupGround(){}
+        multScale([1000, 0.2, 1000]);
+
+    }
+
+    function setupGround(){
+
+        let groundInstance = addModeledInstance("Ground",
+        [0, 0, 0],
+        modelGround,
+        [193, 209, 119],
+        CUBE.draw);
+
+        return groundInstance;
+
+    }
 
     /*
         *****SETUP BUILDINGS***
     */
+
+
+    function modelBuildingBody(){
+
+        multScale([10, 5, 10]);
+
+
+    }
+
+    function modelBuildingCeiling(){
+
+        multScale([11, 0.5, 11]);
+
+
+    }
+
+
+    function createBuildingBody(buildingInstanceParent, relCoord, colorData){
+
+
+        let buildingBodyInstance = addModeledInstanceSon("BuildingBody",
+        relCoord,
+        buildingInstanceParent.name,
+        modelBuildingBody,
+        colorData["Body"],
+        CUBE.draw);
+
+            let buildingInstanceCeiling = addModeledInstanceSon("BuildingCeiling",
+            [0, 2.5, 0],
+            buildingBodyInstance.name,
+            modelBuildingCeiling,
+            colorData["Ceiling"],
+            CUBE.draw);
+
+
+
+    }
+
+    function createBuilding(initialCoord, colorData, numberOfBlocks){
+
+        let buildingInstance = addInstance("Building",  initialCoord);
+
+        for(let i = 0; i < numberOfBlocks; i++){
+
+            createBuildingBody(buildingInstance, [0, i * 4, 0], colorData);
+
+        }
+
+        return buildingInstance;
+
+    }
+
+
+    function setupBuildings(){
+
+        let buildInstance = createBuilding([60, 0, -80], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 10);
+        scaleInstanceByValue(buildInstance, 2);
+
+        buildInstance = createBuilding([100, 0, 300], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 13);
+        scaleInstanceByValue(buildInstance, 1);
+
+        buildInstance = createBuilding([-400, 0, -270], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 6);
+        scaleInstanceByValue(buildInstance, 5);
+
+        buildInstance = createBuilding([-345, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 10);
+        scaleInstanceByValue(buildInstance, 10);
+
+        buildInstance = createBuilding([-10, 0, -220], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 20);
+        scaleInstanceByValue(buildInstance, 3);
+
+
+    }
+
+
 
         
 
@@ -739,9 +827,13 @@ function setup(shaders)
         
         scaleInstanceByValue(helicoinstance, 5);
 
-        helicoinstance = createHelicopter([0, 300, 200], 10, 'n', {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});
+        helicoinstance = createHelicopter([0, 300, 200], 10, 'n', {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
 
         scaleInstanceByValue(helicoinstance, 10);
+
+        setupGround();
+
+        setupBuildings();
 
 
         console.log(instanceTree);
@@ -769,19 +861,18 @@ function setup(shaders)
                 multRotationY(instanceNodes[i].rotation[1]);
                 multRotationZ(instanceNodes[i].rotation[2]);
 
-
-                if(instanceNodes[i].model != undefined){
-
                     //console.log(instanceNodes[i]);
-                    multScale(instanceNodes[i].scale);
-                    pushMatrix();
-                        instanceNodes[i].model();
+                multScale(instanceNodes[i].scale);
+                pushMatrix();
+                    instanceNodes[i].model();
+
+                    if(instanceNodes[i].color != undefined){
                         uploadModelView();
                         defineColor(instanceNodes[i].color);
                         instanceNodes[i].draw(gl, program, drawModes[currentDrawMode]);
-                    popMatrix();
+                    }
 
-                }
+                popMatrix();
 
                 recursiveModelConstruction(instanceNodes[i].filhos);
             popMatrix();
