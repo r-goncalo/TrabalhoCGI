@@ -887,9 +887,6 @@ function setup(shaders)
         let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, 0.1, 'm', {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
 
-        helicoinstance = createHelicopter([0, 6, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
-        scaleInstanceByValue(helicoinstance, 5);
-
         setupGround();
 
         setupBuildings();
