@@ -766,17 +766,21 @@ function setup(shaders)
 
 
     function animateRotatingHelicopter(){
-        /*
+        
+
         this.angle += this.angleSpeed;
         
-        this.coord[0] = Math.cos(this.angle * this.distance);
-        this.coord[2] = Math.sin(this.angle* this.distance);
+        this.coord[0] = Math.cos(this.angle)  * this.distance;
+        this.coord[2] = Math.sin(this.angle)* this.distance;
         
 
         this.angleSpeed = Math.min(this.angleSpeed + this.angleAcc, helicopterMaxAngleSpeed);
 
         this.angleAcc = Math.max(this.angleAcc - helicopterDrag, 0);
-*/
+
+
+        this.rotation[1] = -90 - this.angle;
+
 
     }
 
