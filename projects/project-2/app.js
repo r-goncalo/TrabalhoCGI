@@ -13,7 +13,7 @@ let time = 0;           // Global simulation time
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 
 
-//the cameras we'll have, composed of instances with a camera() method
+//the cameras we'll have, composed of instances with a threadRenderCamera() method
 let cameras = [];
 let currentCamera = 0;
 
@@ -130,7 +130,7 @@ function addActiveInstanceSon(nameStr, initialCoord, parentName, modelFun, color
 function addCameraInstance(nameStr, cameraFun, initialCoord){
 
     let camera = addInstance(nameStr, initialCoord);
-    camera.camera = cameraFun;
+    camera.threadRenderCamera = cameraFun;
     cameras.push(camera);
 
     return camera;
@@ -833,10 +833,30 @@ function setup(shaders)
         *****SETUP CAMERAS***
     */
 
+
+        //teta, gama (and VP_DISTANCE is the distance)
+        let axonometricCamera = [0, 0];
+
+
+        function axonometricCameraFunction(){
+
+            return {eye: [0, 0, 0], at: [this.coord[0], this.coord[1], this.coord[2]], up: [0,1,0]}
+
+        }
+
+        function setupCustomAxonometricCamera(distance, initialTeta, initialGama){
+
+            let cameraInstance = addCameraInstance("AxonometricCamera",
+            cameraBaseFunction,
+            [0, VP_DISTANCE, VP_DISTANCE]);
+
+        }
+
         function cameraBaseFunction(){
 
             //console.log(this.coord);
-            return {eye: [0, 0, 0], at: [this.coord[0], this.coord[1], this.coord[2]], up: [0,1,0]};
+
+            loadMatrix(lookAt([0, 0, 0], [this.coord[0], -this.coord[1], this.coord[2]], [0,1,0]));
 
         }
 
@@ -853,11 +873,16 @@ function setup(shaders)
 
             addCameraInstance("Camera",
             cameraBaseFunction,
-            [100, VP_DISTANCE * 0.5, VP_DISTANCE * 0.5]);
+            [100, VP_DISTANCE * 0.5, -VP_DISTANCE * 0.5]);
 
             addCameraInstance("Camera",
             cameraBaseFunction,
             [-100, VP_DISTANCE * 0.2, VP_DISTANCE * 0.5]);
+
+            addCameraInstance("TopDownCamera",
+            cameraBaseFunction,
+            [0, VP_DISTANCE, 0]);
+
 
         }
 
@@ -942,6 +967,7 @@ function setup(shaders)
     }
 
 
+
     function render()
     {
 
@@ -957,13 +983,7 @@ function setup(shaders)
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        let camera = cameras[currentCamera].camera();
-        
-        /*
-            THIS -camera.at[1] IS AN HOTFIX, WHY THE HELL IS IT NEEDED
-        */
-        //loadMatrix(lookAt(camera.eye, -camera.at, camera.up));
-        loadMatrix(lookAt(camera.eye, [camera.at[0], -camera.at[1], camera.at[2]], camera.up));
+        cameras[currentCamera].threadRenderCamera();
 
 
 
