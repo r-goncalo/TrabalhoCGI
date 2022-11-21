@@ -174,6 +174,13 @@ function makeInstanceResponsive(instance, reactFun){
 
 }
 
+function makeInstanceActive(instance, animateFun){
+
+    instance.animate = animateFun;
+    activeInstances.push(instance);
+
+}
+
 function deleteInstance(instance){
 
     let instanceParent = instance.Pai;
@@ -661,7 +668,7 @@ function setup(shaders)
     }
 
 
-    function animateHelicopter(){
+    function animateRotatingHelicopter(){
 
         let angle;
         if(this.coord[0] != 0){
@@ -710,22 +717,14 @@ function setup(shaders)
     }
 
 
-    function createHelicopter(initialCoord, helicopterSpeed, helBoxKey, colorData){
+    function createHelicopter(initialCoord, colorData){
 
-        let helicoinstance = addActiveInstance("Helicopter",
+        let helicoinstance = addModeledInstance("Helicopter",
         initialCoord,
         modelMainBody,
         colorData["Body"],
-        SPHERE.draw,
-        animateHelicopter);
+        SPHERE.draw);
 
-        helicoinstance.speed = 2;
-        //helicopterSpeed;
-
-        helicoinstance.boxKey = helBoxKey;
-        helicoinstance.boxColor = colorData["Box"];
-
-        makeInstanceResponsive(helicoinstance, helicopterReact);
 
             let hTail = addModeledInstanceSon("HelicopterTail",
             [-4, 0, 0],
@@ -743,13 +742,12 @@ function setup(shaders)
 
                 hTailPoint.rotation[2] = -75;
 
-                let hTailSpike = addActiveInstanceSon("HelicopterTailSpike",
+                let hTailSpike = addModeledInstanceSon("HelicopterTailSpike",
                 [-3.2, 1.5, 0],
                 hTail.name,
                 modelTailSpike,
                 colorData["Spike"],
-                SPHERE.draw,
-                animateHelicopterHeliceRotation);
+                SPHERE.draw);
 
                 addModeledInstanceSon("HelicopterTailHelice1",
                 [1.2, 0.5, 0],
@@ -765,13 +763,12 @@ function setup(shaders)
                 colorData["Helice"],
                 SPHERE.draw);
 
-            let hSpike = addActiveInstanceSon("HelicopterSpike",
+            let hSpike = addModeledInstanceSon("HelicopterSpike",
             [0, 2, 0],
             helicoinstance.name,
             modelSpike,
             colorData["Spike"],
-            SPHERE.draw,
-            animateHelicopterHeliceRotation);
+            SPHERE.draw);
 
                 addModeledInstanceSon("HelicopterHelice1",
                 [2, 0.5, 0],
@@ -801,6 +798,30 @@ function setup(shaders)
 
         return helicoinstance;
 
+    }
+
+    function createAutoRotMovHelicopter(distance, height, initialAngle, helicopterSpeed, helBoxKey, colorData){
+
+
+        let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), height, distance * Math.sin(initialAngle)], colorData);
+
+        console.log(helicopterInstance);
+
+        makeInstanceActive(helicopterInstance.filhos[0].filhos[1], animateHelicopterHeliceRotation);
+        makeInstanceActive(helicopterInstance.filhos[1], animateHelicopterHeliceRotation);
+
+
+        helicopterInstance.speed = helicopterSpeed;
+
+        helicopterInstance.boxKey = helBoxKey;
+        helicopterInstance.boxColor = colorData["Box"];
+
+        helicopterInstance.distance = distance;
+
+        makeInstanceResponsive(helicopterInstance, helicopterReact);
+        makeInstanceActive(helicopterInstance, animateRotatingHelicopter);
+
+        return helicopterInstance;
 
     }
     
@@ -863,8 +884,10 @@ function setup(shaders)
         setupCameras();
 
 
-        let helicoinstance = createHelicopter([100, 100, 0], 0.1, 'm', {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});
-        
+        let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, 0.1, 'm', {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
+        scaleInstanceByValue(helicoinstance, 5);
+
+        helicoinstance = createHelicopter([0, 6, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
         scaleInstanceByValue(helicoinstance, 5);
 
         setupGround();
