@@ -660,6 +660,9 @@ function setup(shaders)
         }
     
     let hHeliceRotSpeed = 50;
+    let helicopterAcc = 1;
+    let helicopterMaxAngleSpeed = 10;
+    let helicopterDrag = 0.95
 
     function animateHelicopterHeliceRotation(){
 
@@ -667,9 +670,22 @@ function setup(shaders)
 
     }
 
+    function moveAutoRatoHelicopterInCirc(){
+
+
+
+
+    }
+
 
     function animateRotatingHelicopter(){
 
+        this.angle += angleSpeed;
+        
+        this.coord[0] = cos(angle);
+        this.coord[2] = sin(angle);
+
+        /*
         let angle;
         if(this.coord[0] != 0){
             angle = Math.abs(Math.atan((this.coord[2])/this.coord[0]));
@@ -694,7 +710,7 @@ function setup(shaders)
 
         this.rotation[1] = -90 - angleInDeg; //why isn't this working?
 
-
+*/
 
     }
 
@@ -800,23 +816,22 @@ function setup(shaders)
 
     }
 
-    function createAutoRotMovHelicopter(distance, height, initialAngle, helicopterSpeed, helBoxKey, colorData){
+    function createAutoRotMovHelicopter(distance, height, initialAngle, helicopterSpeed, keyData, colorData){
 
 
         let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), height, distance * Math.sin(initialAngle)], colorData);
-
-        console.log(helicopterInstance);
 
         makeInstanceActive(helicopterInstance.filhos[0].filhos[1], animateHelicopterHeliceRotation);
         makeInstanceActive(helicopterInstance.filhos[1], animateHelicopterHeliceRotation);
 
 
-        helicopterInstance.speed = helicopterSpeed;
+        helicopterInstance.angleSpeed = 0;
 
-        helicopterInstance.boxKey = helBoxKey;
+        helicopterInstance.boxKey = keyData["Box"];
         helicopterInstance.boxColor = colorData["Box"];
 
         helicopterInstance.distance = distance;
+        helicopterInstance.angle = initialAngle;
 
         makeInstanceResponsive(helicopterInstance, helicopterReact);
         makeInstanceActive(helicopterInstance, animateRotatingHelicopter);
