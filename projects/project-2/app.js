@@ -659,71 +659,7 @@ function setup(shaders)
 
         }
     
-    let hHeliceRotSpeed = 50;
-    let helicopterAcc = 1;
-    let helicopterMaxAngleSpeed = 10;
-    let helicopterDrag = 0.95
 
-    function animateHelicopterHeliceRotation(){
-
-        this.rotation[1] = (this.rotation[1] + hHeliceRotSpeed) % (720); 
-
-    }
-
-    function moveAutoRatoHelicopterInCirc(){
-
-
-
-
-    }
-
-
-    function animateRotatingHelicopter(){
-
-        this.angle += angleSpeed;
-        
-        this.coord[0] = cos(angle);
-        this.coord[2] = sin(angle);
-
-        /*
-        let angle;
-        if(this.coord[0] != 0){
-            angle = Math.abs(Math.atan((this.coord[2])/this.coord[0]));
-                if(this.coord[0] < 0 && this.coord[2] > 0)
-                    angle = Math.PI - angle;
-
-                else if(this.coord[0] < 0 && this.coord[2] < 0)
-                    angle = Math.PI  + angle;
-                
-                else if(this.coord[0] > 0 && this.coord[2] < 0)
-                    angle = Math.PI * 2 - angle;
-        }else
-            if(this.coord[2] > 0)
-                angle = Math.PI;
-            else
-                angle = -Math.PI
-    
-        let angleInDeg = angle * (180/Math.PI);
-
-        this.coord[0] += this.speed * Math.cos(Math.PI/2 + angle);
-        this.coord[2] += this.speed * Math.sin(Math.PI/2 + angle);
-
-        this.rotation[1] = -90 - angleInDeg; //why isn't this working?
-
-*/
-
-    }
-
-    function helicopterReact(keyReceived){
-
-        console.log(this.name + " received input " + keyReceived + " to compare to " + this.boxKey);
-        if(keyReceived == this.boxKey){
-
-            createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.speed);
-
-        }
-
-    }
 
     function helicopterCamera(){ 
 
@@ -816,7 +752,53 @@ function setup(shaders)
 
     }
 
-    function createAutoRotMovHelicopter(distance, height, initialAngle, helicopterSpeed, keyData, colorData){
+    let hHeliceRotSpeed = 50;
+    let helicopterAngleAccChange = 1;
+    let helicopterMaxAngleAcc = 10;
+    let helicopterMaxAngleSpeed = 10;
+    let helicopterDrag = 0.1
+
+    function animateHelicopterHeliceRotation(){
+
+        this.rotation[1] = (this.rotation[1] + hHeliceRotSpeed) % (720); 
+
+    }
+
+
+    function animateRotatingHelicopter(){
+        /*
+        this.angle += this.angleSpeed;
+        
+        this.coord[0] = Math.cos(this.angle * this.distance);
+        this.coord[2] = Math.sin(this.angle* this.distance);
+        
+
+        this.angleSpeed = Math.min(this.angleSpeed + this.angleAcc, helicopterMaxAngleSpeed);
+
+        this.angleAcc = Math.max(this.angleAcc - helicopterDrag, 0);
+*/
+
+    }
+
+    function helicopterReact(keyReceived){
+
+
+        switch(keyReceived){
+
+            case this.boxKey:
+                createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.speed);
+                break;
+            case this.moveRotKey:
+                this.angleAcc += helicopterAngleAccChange;
+                break;
+            default:
+
+        }
+
+
+    }
+
+    function createAutoRotMovHelicopter(distance, height, initialAngle, keyData, colorData){
 
 
         let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), height, distance * Math.sin(initialAngle)], colorData);
@@ -826,6 +808,8 @@ function setup(shaders)
 
 
         helicopterInstance.angleSpeed = 0;
+        helicopterInstance.angleAcc = 0;
+        helicopterInstance.moveRotKey = keyData["Rot"];
 
         helicopterInstance.boxKey = keyData["Box"];
         helicopterInstance.boxColor = colorData["Box"];
@@ -835,6 +819,7 @@ function setup(shaders)
 
         makeInstanceResponsive(helicopterInstance, helicopterReact);
         makeInstanceActive(helicopterInstance, animateRotatingHelicopter);
+
 
         return helicopterInstance;
 
@@ -899,7 +884,7 @@ function setup(shaders)
         setupCameras();
 
 
-        let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, 0.1, 'm', {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
+        let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, { "Box" : 'm', "Rot" : 'n'}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
 
         setupGround();
