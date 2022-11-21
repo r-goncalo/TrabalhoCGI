@@ -143,7 +143,7 @@ function addCameraInstanceSon(nameStr, initialCoord, parentName, cameraFun){
         initialCoord, 
         parentName);
         
-        camera.camera = cameraFun;
+        camera.threadRenderCamera = cameraFun;
         cameras.push(camera);
     
         return camera;
@@ -664,7 +664,7 @@ function setup(shaders)
     function helicopterCamera(){ 
 
 
-        return {eye: [0, 0, 0], at: instanceTrueCoord(this), up: [0,1,0]};
+        loadMatrix(lookAt([0, 0, 0], [this.coord[0], -this.coord[1], this.coord[2]], [0,1,0]));
 
     }
 
@@ -905,7 +905,7 @@ function setup(shaders)
         setupCameras();
 
 
-        let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, { "Box" : 'm', "Rot" : 'n'}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
+        let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, { "Box" : ' ', "Rot" : 'ArrowLeft'}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
 
         //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
