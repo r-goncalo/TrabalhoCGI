@@ -835,26 +835,19 @@ function setup(shaders)
 
 
         //teta, gama (and VP_DISTANCE is the distance)
-        let axonometricCamera = [0, 0];
+        let axonometricCamera = [10, 10];
 
 
         function axonometricCameraFunction(){
 
-            return {eye: [0, 0, 0], at: [this.coord[0], this.coord[1], this.coord[2]], up: [0,1,0]}
-
-        }
-
-        function setupCustomAxonometricCamera(distance, initialTeta, initialGama){
-
-            let cameraInstance = addCameraInstance("AxonometricCamera",
-            cameraBaseFunction,
-            [0, VP_DISTANCE, VP_DISTANCE]);
+            loadMatrix(lookAt([0, 0, 0], [VP_DISTANCE, 0, 0], [0,1,0]));
+            multRotationY(axonometricCamera[0]);
+            multRotationX(axonometricCamera[1]);
+            multRotationZ(axonometricCamera[1]);
 
         }
 
         function cameraBaseFunction(){
-
-            //console.log(this.coord);
 
             loadMatrix(lookAt([0, 0, 0], [this.coord[0], -this.coord[1], this.coord[2]], [0,1,0]));
 
@@ -862,6 +855,11 @@ function setup(shaders)
 
 
         function setupBaseCameras(){
+
+            
+            let cameraInstance = addCameraInstance("AxonometricCamera",
+            axonometricCameraFunction,
+            [0, VP_DISTANCE, VP_DISTANCE]);
 
             addCameraInstance("Camera",
             cameraBaseFunction,
@@ -893,7 +891,7 @@ function setup(shaders)
 
             setupBaseCameras();    
         
-            currentCamera = 1;
+            currentCamera = 0;
         }
     
         /*
