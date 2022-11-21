@@ -754,8 +754,8 @@ function setup(shaders)
 
     let hHeliceRotSpeed = 50;
     let helicopterAnglePercentageChange = 0.01;
-    let helicopterMaxAngleSpeed = 3;
-    let helicopterAnglePercentageDrag = 0.001;
+    let helicopterMaxAngleSpeed = 5;
+    let helicopterAnglePercentageDrag = 0.0005;
 
     function animateHelicopterHeliceRotation(){
 
@@ -859,8 +859,6 @@ function setup(shaders)
             cameraBaseFunction,
             [-100, VP_DISTANCE * 0.2, VP_DISTANCE * 0.5]);
 
-
-
         }
 
     
@@ -886,9 +884,11 @@ function setup(shaders)
         let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, { "Box" : 'm', "Rot" : 'n'}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
 
-        //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'},         {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
+        //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         //scaleInstanceByValue(helicoinstance, 10);
 
+        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
+        scaleInstanceByValue(helicoinstance, 30);
 
 
         setupGround();
