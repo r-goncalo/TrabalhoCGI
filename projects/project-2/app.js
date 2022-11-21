@@ -753,9 +753,9 @@ function setup(shaders)
     }
 
     let hHeliceRotSpeed = 50;
-    let helicopterAngleAccChange = 0.005;
+    let helicopterAnglePercentageChange = 0.01;
     let helicopterMaxAngleSpeed = 3;
-    let helicopterDrag = 0.005;
+    let helicopterAnglePercentageDrag = 0.001;
 
     function animateHelicopterHeliceRotation(){
 
@@ -767,18 +767,14 @@ function setup(shaders)
     function animateRotatingHelicopter(){
         
 
-        this.angle += this.angleSpeed;
+        this.angle += (this.angleSpeedPerc) * helicopterMaxAngleSpeed;
         
         this.coord[0] = Math.cos(this.angle * (Math.PI/180))  * this.distance;
         this.coord[2] = Math.sin(this.angle * (Math.PI/180))* this.distance;
         
-
-        this.angleSpeed = Math.max(this.angleSpeed + this.angleAcc, 0);
-
-        this.angleAcc = this.angleAcc - (helicopterDrag * (this.angleSpeed / helicopterMaxAngleSpeed));
-
-
         this.rotation[1] = -90 - this.angle;
+
+        this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageDrag);
 
 
     }
@@ -792,7 +788,7 @@ function setup(shaders)
                 createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.speed);
                 break;
             case this.moveRotKey:
-                this.angleAcc += helicopterAngleAccChange;
+                this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
                 break;
             default:
 
@@ -810,8 +806,7 @@ function setup(shaders)
         makeInstanceActive(helicopterInstance.filhos[1], animateHelicopterHeliceRotation);
 
 
-        helicopterInstance.angleSpeed = 0;
-        helicopterInstance.angleAcc = 0;
+        helicopterInstance.angleSpeedPerc = 0;
         helicopterInstance.moveRotKey = keyData["Rot"];
 
         helicopterInstance.boxKey = keyData["Box"];
