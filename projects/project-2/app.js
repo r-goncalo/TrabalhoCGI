@@ -779,13 +779,14 @@ function setup(shaders)
 
     }
 
+
     function helicopterReact(keyReceived){
 
 
         switch(keyReceived){
 
             case this.boxKey:
-                createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.speed);
+                createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.distance * Math.PI * (this.angleSpeedPerc * helicopterMaxAngleSpeed /180));
                 break;
             case this.moveRotKey:
                 this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
