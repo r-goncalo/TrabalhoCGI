@@ -753,10 +753,9 @@ function setup(shaders)
     }
 
     let hHeliceRotSpeed = 50;
-    let helicopterAngleAccChange = 1;
-    let helicopterMaxAngleAcc = 10;
-    let helicopterMaxAngleSpeed = 10;
-    let helicopterDrag = 0.1
+    let helicopterAngleAccChange = 0.005;
+    let helicopterMaxAngleSpeed = 3;
+    let helicopterDrag = 0.005;
 
     function animateHelicopterHeliceRotation(){
 
@@ -770,13 +769,13 @@ function setup(shaders)
 
         this.angle += this.angleSpeed;
         
-        this.coord[0] = Math.cos(this.angle)  * this.distance;
-        this.coord[2] = Math.sin(this.angle)* this.distance;
+        this.coord[0] = Math.cos(this.angle * (Math.PI/180))  * this.distance;
+        this.coord[2] = Math.sin(this.angle * (Math.PI/180))* this.distance;
         
 
-        this.angleSpeed = Math.min(this.angleSpeed + this.angleAcc, helicopterMaxAngleSpeed);
+        this.angleSpeed = Math.max(this.angleSpeed + this.angleAcc, 0);
 
-        this.angleAcc = Math.max(this.angleAcc - helicopterDrag, 0);
+        this.angleAcc = this.angleAcc - (helicopterDrag * (this.angleSpeed / helicopterMaxAngleSpeed));
 
 
         this.rotation[1] = -90 - this.angle;
@@ -890,6 +889,11 @@ function setup(shaders)
 
         let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, { "Box" : 'm', "Rot" : 'n'}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
+
+        //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'},         {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
+        //scaleInstanceByValue(helicoinstance, 10);
+
+
 
         setupGround();
 
