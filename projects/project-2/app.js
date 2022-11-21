@@ -867,10 +867,6 @@ function setup(shaders)
         
         scaleInstanceByValue(helicoinstance, 5);
 
-        helicoinstance = createHelicopter([0, 300, 200], 10, 'n', {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
-
-        scaleInstanceByValue(helicoinstance, 10);
-
         setupGround();
 
         setupBuildings();
