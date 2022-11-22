@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult, perspective } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, mult, perspective, rotate } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -655,7 +655,14 @@ function setup(shaders)
     
         function modelHelicopterBase(){
 
-            multScale([0.1, 1, 0.1]); 
+            multScale([0.2, 0.7, 0.2]); 
+
+
+        }
+
+        function modelHelicopterBaseBar(){
+
+            multScale([3, 0.1, 0.1]);
 
         }
     
@@ -702,14 +709,14 @@ function setup(shaders)
                 SPHERE.draw);
 
                 addModeledInstanceSon("HelicopterTailHelice1",
-                [1.2, 0.5, 0],
+                [1.05, 0.5, 0],
                 hTailSpike.name,
                 helicopterTailHelice,
                 colorData["Helice"],
                 SPHERE.draw);
 
                 addModeledInstanceSon("HelicopterTailHelice2",
-                [-1.2, 0.5, 0],
+                [-1.05, 0.5, 0],
                 hTailSpike.name,
                 helicopterTailHelice,
                 colorData["Helice"],
@@ -737,11 +744,57 @@ function setup(shaders)
                 SPHERE.draw);
 
             let feet1 = addModeledInstanceSon("HelicopterBase",
-            [2, -0.8, 1],
+            [-1, -2, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
             SPHERE.draw);
+
+            let feet2 = addModeledInstanceSon("HelicopterBase",
+            [1, -2, 0.2],
+            helicoinstance.name,
+            modelHelicopterBase,
+            colorData["Base"],
+            SPHERE.draw); 
+
+            feet1.rotation[2] = -10;
+            feet2.rotation[2] = 10;
+
+                let bar1 = addModeledInstanceSon("HelicopterBase", 
+                [1.1, -0.2, 0.05],
+                feet1.name,
+                modelHelicopterBaseBar,
+                colorData["Spike"],
+                CUBE.draw);
+
+                bar1.rotation[2] = 10;
+
+
+            let feet3 = addModeledInstanceSon("HelicopterBase",
+            [-1, -2, -0.2],
+            helicoinstance.name,
+            modelHelicopterBase,
+            colorData["Base"],
+            SPHERE.draw);
+
+                let bar2 = addModeledInstanceSon("HelicopterBase", 
+                [1.1, -0.2, -0.05],
+                feet3.name,
+                modelHelicopterBaseBar,
+                colorData["Spike"],
+                CUBE.draw);
+
+                bar2.rotation[2] = 10;
+
+            let feet4 = addModeledInstanceSon("HelicopterBase",
+            [1, -2, -0.2],
+            helicoinstance.name,
+            modelHelicopterBase,
+            colorData["Base"],
+            SPHERE.draw);
+
+            feet3.rotation[2] = -10;
+            feet4.rotation[2] = 10;
 
             addCameraInstanceSon("HelicopterCamera",
             [2.6, 0.5, 0],
@@ -960,7 +1013,7 @@ function setup(shaders)
 
         setupGround();
 
-        setupBuildings();
+        //setupBuildings();
 
         console.log(instanceTree);
 
