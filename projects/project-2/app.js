@@ -246,7 +246,7 @@ function setup(shaders)
 
     //DO PROJETO 1
     window.addEventListener("keydown", function(event) {
-        console.log(event.key);
+        //console.log(event.key);
         switch(event.key) {
             //Descola
             case "PageUp":
@@ -595,7 +595,7 @@ function setup(shaders)
         boxInstance.speed = boxSpeed;
         boxInstance.timeCreated = time;
 
-        console.log("Box created: " + boxInstance.coord);
+       //console.log("Box created: " + boxInstance.coord);
 
 
     }
@@ -753,6 +753,10 @@ function setup(shaders)
     }
 
     let hHeliceRotSpeed = 50;
+    let hHeliceRotSpeedPerChange = 0.05;
+    let hHeliceRotSpeedPerDrag = 0.01;
+    let maxHelicopterH = 400;
+    let helicopterYSpeed = 1;
     let helicopterAnglePercentageChange = 0.01;
     let helicopterMaxAngleSpeed = 5;
     let helicopterAnglePercentageDrag = 0.0005;
@@ -776,6 +780,12 @@ function setup(shaders)
 
         this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageDrag);
 
+        if(this.onGround){
+
+            this.heliceSpeedPer += helicopterAnglePercentageChange;
+
+        }
+
 
     }
 
@@ -790,14 +800,35 @@ function setup(shaders)
                     createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.distance * Math.PI * (this.angleSpeedPerc * helicopterMaxAngleSpeed /180));
                 break;
             case this.moveRotKey:
-                this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
+
+                if(!this.onGround)
+                    this.angleSpeedPerc = Math.min( this.angleSpeedPerc + hHeliceRotSpeedPerChange, 1);
                 break;
-             case this.moveRotKey:
-                 this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
-                 break;   
-             case this.moveRotKey:
-                 this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
-                 break;         
+
+             case this.moveUpKey:
+
+                if(this.onGround){
+                    this.heliceSpeedPer = this.heliceSpeedPer + hHeliceRotSpeedPerChange;
+                    if(this.heliceSpeedPer >= 1){
+
+                        this.onGround = false;
+                        this.coord[1] = Math.min( this.coord[1] + helicopterYSpeed, maxHelicopterH);
+
+
+                    }
+                    
+                }
+                else
+                    this.coord[1] = Math.min( this.coord[1] + helicopterYSpeed, maxHelicopterH);
+                 break;
+
+             case this.moveDownKey:
+
+                 this.coord[1] = Math.max( this.coord[1] - helicopterYSpeed, 0);
+                 if(this.coord[1] == 0)
+                    this.onGround = true;
+                 break;
+
             default:
 
         }
@@ -813,6 +844,12 @@ function setup(shaders)
         makeInstanceActive(helicopterInstance.filhos[0].filhos[1], animateHelicopterHeliceRotation);
         makeInstanceActive(helicopterInstance.filhos[1], animateHelicopterHeliceRotation);
 
+
+        helicopterInstance.onGround = true;
+        helicopterInstance.heliceSpeedPer = 0;
+
+        helicopterInstance.moveUpKey = keyData["Up"];
+        helicopterInstance.moveDownKey = keyData["Down"];
 
         helicopterInstance.angleSpeedPerc = 0;
         helicopterInstance.moveRotKey = keyData["Rot"];
@@ -911,7 +948,7 @@ function setup(shaders)
         setupCameras();
 
 
-        let helicoinstance = createAutoRotMovHelicopter(100, 100, 0, { "Box" : ' ', "Rot" : 'ArrowLeft'}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
+        let helicoinstance = createAutoRotMovHelicopter(100, 0, { "Box" : ' ', "Rot" : 'ArrowLeft', "Up" : "ArrowUp", "Down" : "ArrowDown"}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
 
         //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
