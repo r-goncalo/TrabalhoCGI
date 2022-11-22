@@ -792,6 +792,12 @@ function setup(shaders)
             case this.moveRotKey:
                 this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
                 break;
+             case this.moveRotKey:
+                 this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
+                 break;   
+             case this.moveRotKey:
+                 this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
+                 break;         
             default:
 
         }
@@ -799,10 +805,10 @@ function setup(shaders)
 
     }
 
-    function createAutoRotMovHelicopter(distance, height, initialAngle, keyData, colorData){
+    function createAutoRotMovHelicopter(distance, initialAngle, keyData, colorData){
 
 
-        let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), height, distance * Math.sin(initialAngle)], colorData);
+        let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), 0, distance * Math.sin(initialAngle)], colorData);
 
         makeInstanceActive(helicopterInstance.filhos[0].filhos[1], animateHelicopterHeliceRotation);
         makeInstanceActive(helicopterInstance.filhos[1], animateHelicopterHeliceRotation);
@@ -836,7 +842,7 @@ function setup(shaders)
 
 
         //teta, gama (and VP_DISTANCE is the distance)
-        let axonometricCamera = [10, 10];
+        let axonometricCamera = [0, 0];
 
 
         function axonometricCameraFunction(){
