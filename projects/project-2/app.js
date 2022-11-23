@@ -9,7 +9,8 @@ import * as CUBE from '../../libs/objects/cube.js';
 
 let gl;
 const VP_DISTANCE = 500; //500 meters far
-let time = 0;           // Global simulation time
+let time;           // Global simulation time
+let deltaTime = 0;
 let speed = 1/60.0;     // Speed (how many days added to time on each render pass
 
 
@@ -1088,10 +1089,22 @@ function setup(shaders)
 
 
 
-    function render()
+    function render(timestamp)
     {
 
-        time += speed;
+         // the change of time since the last calculation
+
+        if(time === undefined) {        // First time
+            time = timestamp/60;
+            deltaTime = 0;
+        } 
+        else {                          // All other times
+            deltaTime = timestamp/60 - time;
+            time = timestamp/60;
+        }
+
+        console.log("Time: " + time + " Timestamp/60: " + (timestamp/60) + " deltaTime: " + deltaTime);
+
         window.requestAnimationFrame(render);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
