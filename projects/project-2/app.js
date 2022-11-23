@@ -256,6 +256,7 @@ function setup(shaders)
                 break;
             //tecla W - malha de arame
             case 'W':
+                currentDrawMode = (currentDrawMode + 1) % drawModes.length;
                 break;
             //tecla S - superficies preenchidas
             case 'S':
@@ -469,8 +470,15 @@ function setup(shaders)
 
     }
 
+    function modelBuildingWindow(){
 
-    function createBuildingBody(buildingInstanceParent, relCoord, colorData){
+        multScale([7, 1, 11]);
+
+
+    }
+
+
+    function createBuildingBody(buildingInstanceParent, relCoord, colorData, i, numberOfBlock){
 
 
         let buildingBodyInstance = addModeledInstanceSon("BuildingBody",
@@ -487,9 +495,18 @@ function setup(shaders)
             colorData["Ceiling"],
             CUBE.draw);
 
-
+            //Hardcoded
+            if(i!=0 && i!=numberOfBlock-1){
+                let window = addModeledInstanceSon("BuildingWindow",
+                [0, 2, -2],
+                buildingBodyInstance.name,
+                modelBuildingWindow,
+                colorData["Window"],
+                CUBE.draw);
+        }
 
     }
+        
 
     function createBuilding(initialCoord, colorData, numberOfBlocks){
 
@@ -497,7 +514,7 @@ function setup(shaders)
 
         for(let i = 0; i < numberOfBlocks; i++){
 
-            createBuildingBody(buildingInstance, [0, i * 4, 0], colorData);
+            createBuildingBody(buildingInstance, [0, i * 4, 0], colorData, i, numberOfBlocks);
 
         }
 
@@ -508,19 +525,19 @@ function setup(shaders)
 
     function setupBuildings(){
 
-        let buildInstance = createBuilding([60, 0, -80], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 10);
+        let buildInstance = createBuilding([60, 0, -80], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 2);
 
-        buildInstance = createBuilding([100, 0, 300], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 13);
+        buildInstance = createBuilding([100, 0, 300], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 13);
         scaleInstanceByValue(buildInstance, 1);
 
-        buildInstance = createBuilding([-400, 0, -270], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 6);
+        buildInstance = createBuilding([-400, 0, -270], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 6);
         scaleInstanceByValue(buildInstance, 5);
 
-        buildInstance = createBuilding([-345, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 10);
+        buildInstance = createBuilding([-345, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 10);
 
-        buildInstance = createBuilding([-10, 0, -220], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48]}, 20);
+        buildInstance = createBuilding([-10, 0, -220], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 20);
         scaleInstanceByValue(buildInstance, 3);
 
 
@@ -1013,7 +1030,7 @@ function setup(shaders)
 
         setupGround();
 
-        //setupBuildings();
+        setupBuildings();
 
         console.log(instanceTree);
 
