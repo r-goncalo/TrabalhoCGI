@@ -505,6 +505,8 @@ function setup(shaders)
                 CUBE.draw);
         }
 
+        return buildingBodyInstance;
+
     }
         
 
