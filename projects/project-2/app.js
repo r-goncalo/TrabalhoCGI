@@ -167,6 +167,23 @@ function instanceTrueCoord(instance){
 
 }
 
+function instanceTrueScale(instance){
+
+    let toReturn = [instance.scale[0], instance.scale[1], instance.scale[2]];
+    
+    let instanceParent = instance.Pai;
+
+    while(instanceParent != undefined){
+
+        toReturn = [toReturn[0] * instanceParent.scale[0], toReturn[1] * instanceParent.scale[1], toReturn[2]* instanceParent.scale[2]];
+        instanceParent = instanceParent.Pai;
+
+    }
+
+    return toReturn;
+
+}
+
 function makeInstanceResponsive(instance, reactFun){
 
     instance.react = reactFun;
@@ -181,12 +198,28 @@ function makeInstanceActive(instance, animateFun){
 
 }
 
+function freeInstance(instance){
+
+    instance.coord = instanceTrueCoord(instance);
+    instance.scale = instanceTrueScale(instance);
+    
+    let instanceParent = instance.Pai;
+    instanceParent.filhos.pop(instance);
+
+
+    instance.Pai = undefined;
+    instanceTree.push(instance);
+
+    
+
+}
+
 function deleteInstance(instance){
 
     let instanceParent = instance.Pai;
     if(instanceParent != undefined){
 
-        instanceParent.Filhos.pop(instance);
+        instanceParent.filhos.pop(instance);
 
     }else {
 
@@ -582,25 +615,37 @@ function setup(shaders)
 
     */
 
-    let timeToLive = 5;
-    let boxSpeed = 1;
+    let timeToLive = 500;
+    let timeToBeStuck= 1000;
+    let boxSpeed = 0.2;
+    let boxHeightAboveGround = 0.5;
 
     function modelBox(){
 
-        multScale([4, 5, 3]);
+        multScale([0.8, 1, 0.6]);
 
     }
 
     function animateBox(deltaTime){
 
-        if(time - this.timeCreated > timeToLive){
+        if(this.stuckTimer > 0){
 
-            deleteInstance(this);
+            this.stuckTimer -= deltaTime;
+            if(this.stuckTimer <= 0)
+                freeInstance(this);
+
+        }else{
+
+            this.coord[1] = Math.max(this.coord[1] - boxSpeed * deltaTime, boxHeightAboveGround);
+            this.liveTimer -= deltaTime;
+            if(this.liveTimer <= 0)
+                deleteInstance(this);
 
         }
 
-        if(this.coord[1] > groundHeight)
-            this.coord[1] = this.coord[1] - boxSpeed;
+        //console.log("stuckTimer: " + stuckTimer + " ")
+
+
 
     }
 
@@ -615,7 +660,8 @@ function setup(shaders)
         animateBox);
 
     
-        boxInstance.timeCreated = time;
+        boxInstance.stuckTimer = timeToBeStuck;
+        boxInstance.liveTimer = timeToLive;
     
         console.log("Box time: " + time);
        //console.log("Box created: " + boxInstance.coord);
@@ -891,7 +937,7 @@ function setup(shaders)
 
             case this.boxKey:
                 if(!this.onGround)
-                    createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this);
+                    createBox([0, this.filhos[2].coord[1] + this.filhos[2].filhos[0].coord[1], 0], this.boxColor, this);
                 break;
             case this.moveRotKey:
 
