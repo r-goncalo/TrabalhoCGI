@@ -931,6 +931,13 @@ function setup(shaders)
 
     }
 
+    function putHelicopterOnGround(helicopterInstance){
+
+        helicopterInstance.coord[1] = 0;
+        helicopterInstance.coord[1] = - instanceTrueCoord(helicopterInstance.filhos[2].filhos[0])[1];
+
+    }
+
     function createAutoRotMovHelicopter(distance, initialAngle, keyData, colorData){
 
 
@@ -1042,6 +1049,7 @@ function setup(shaders)
 
         let helicoinstance = createAutoRotMovHelicopter(100, 0, { "Box" : ' ', "Rot" : 'ArrowLeft', "Up" : "ArrowUp", "Down" : "ArrowDown"}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
         scaleInstanceByValue(helicoinstance, 5);
+        putHelicopterOnGround(helicoinstance);
 
         //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         //scaleInstanceByValue(helicoinstance, 10);
