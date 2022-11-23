@@ -207,6 +207,7 @@ function deleteInstance(instance){
     }
 
     instance.Pai = undefined;
+    instanceDic.delete(instance.name);
 
 }
 
@@ -762,14 +763,14 @@ function setup(shaders)
                 colorData["Helice"],
                 SPHERE.draw);
 
-            let feet1 = addModeledInstanceSon("HelicopterBase",
+            let feet1 = addModeledInstanceSon("HelicopterFeet1",
             [-1, -2, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
             SPHERE.draw);
 
-            let feet2 = addModeledInstanceSon("HelicopterBase",
+            let feet2 = addModeledInstanceSon("HelicopterFeet2",
             [1, -2, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
@@ -779,7 +780,7 @@ function setup(shaders)
             feet1.rotation[2] = -10;
             feet2.rotation[2] = 10;
 
-                let bar1 = addModeledInstanceSon("HelicopterBase", 
+                let bar1 = addModeledInstanceSon("HelicopterBar1", 
                 [1.1, -0.2, 0.05],
                 feet1.name,
                 modelHelicopterBaseBar,
@@ -789,14 +790,14 @@ function setup(shaders)
                 bar1.rotation[2] = 10;
 
 
-            let feet3 = addModeledInstanceSon("HelicopterBase",
+            let feet3 = addModeledInstanceSon("HelicopterFeet3",
             [-1, -2, -0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
             SPHERE.draw);
 
-                let bar2 = addModeledInstanceSon("HelicopterBase", 
+                let bar2 = addModeledInstanceSon("HelicopterBar2", 
                 [1.1, -0.2, -0.05],
                 feet3.name,
                 modelHelicopterBaseBar,
@@ -805,7 +806,7 @@ function setup(shaders)
 
                 bar2.rotation[2] = 10;
 
-            let feet4 = addModeledInstanceSon("HelicopterBase",
+            let feet4 = addModeledInstanceSon("HelicopterFeet4",
             [1, -2, -0.2],
             helicoinstance.name,
             modelHelicopterBase,
