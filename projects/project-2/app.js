@@ -826,18 +826,13 @@ function setup(shaders)
 
     let hHeliceRotSpeed = 50;
     let hHeliceRotSpeedPerChange = 0.05;
-    let hHeliceRotSpeedPerDrag = 0.01;
+    let hHeliceRotSpeedPerDrag = 0.001;
     let maxHelicopterH = 400;
     let helicopterYSpeed = 1;
-    let helicopterAnglePercentageChange = 0.01;
-    let helicopterMaxAngleSpeed = 5;
-    let helicopterAnglePercentageDrag = 0.0005;
-
-    function animateHelicopterHeliceRotation(){
-
-        this.rotation[1] = (this.rotation[1] + hHeliceRotSpeed) % (720); 
-
-    }
+    let helicopterAnglePercentageChange = 0.005;
+    let helicopterMaxAngleSpeed = 3;
+    let helicopterAnglePercentageDrag = 0.00001;
+    let helicopterMaxInclination = -30;
 
 
     function animateRotatingHelicopter(){
@@ -848,15 +843,24 @@ function setup(shaders)
         this.coord[0] = Math.cos(this.angle * (Math.PI/180))  * this.distance;
         this.coord[2] = Math.sin(this.angle * (Math.PI/180))* this.distance;
         
+        //this is so the helicopter faces the right side (looks forward)
         this.rotation[1] = -90 - this.angle;
 
+        this.rotation[2] = helicopterMaxInclination * this.angleSpeedPerc;
+
+        //the helicopter suffers from drag, and will slow down
         this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageDrag);
 
+        //when the helicopter is not flying, the helices will slow down
         if(this.onGround){
 
-            this.heliceSpeedPer += helicopterAnglePercentageChange;
+            this.heliceSpeedPer = Math.max(0, this.heliceSpeedPer - hHeliceRotSpeedPerDrag);
 
         }
+
+        //rotate helices
+        this.filhos[0].filhos[1].rotation[1] = (this.filhos[0].filhos[1].rotation[1] + hHeliceRotSpeed * this.heliceSpeedPer) % (720);
+        this.filhos[1].rotation[1] = (this.filhos[1].rotation[1] + hHeliceRotSpeed * this.heliceSpeedPer) % (720);
 
 
     }
@@ -874,7 +878,7 @@ function setup(shaders)
             case this.moveRotKey:
 
                 if(!this.onGround)
-                    this.angleSpeedPerc = Math.min( this.angleSpeedPerc + hHeliceRotSpeedPerChange, 1);
+                    this.angleSpeedPerc = Math.min( this.angleSpeedPerc + helicopterAnglePercentageChange, 1);
                 break;
 
              case this.moveUpKey:
@@ -886,7 +890,6 @@ function setup(shaders)
                         this.onGround = false;
                         this.coord[1] = Math.min( this.coord[1] + helicopterYSpeed, maxHelicopterH);
 
-
                     }
                     
                 }
@@ -897,8 +900,10 @@ function setup(shaders)
              case this.moveDownKey:
 
                  this.coord[1] = Math.max( this.coord[1] - helicopterYSpeed, 0);
-                 if(this.coord[1] == 0)
+                 this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageChange);
+                 if(this.coord[1] == 0 && this.heliceSpeedPer == 0){
                     this.onGround = true;
+                 }
                  break;
 
             default:
@@ -912,9 +917,6 @@ function setup(shaders)
 
 
         let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), 0, distance * Math.sin(initialAngle)], colorData);
-
-        makeInstanceActive(helicopterInstance.filhos[0].filhos[1], animateHelicopterHeliceRotation);
-        makeInstanceActive(helicopterInstance.filhos[1], animateHelicopterHeliceRotation);
 
 
         helicopterInstance.onGround = true;
