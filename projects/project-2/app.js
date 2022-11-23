@@ -9,9 +9,8 @@ import * as CUBE from '../../libs/objects/cube.js';
 
 let gl;
 const VP_DISTANCE = 500; //500 meters far
-let time;           // Global simulation time
-let deltaTime = 0;
-let speed = 1/60.0;     // Speed (how many days added to time on each render pass
+let time;
+let speed = 1;  //  /60.0;
 
 
 //the cameras we'll have, composed of instances with a threadRenderCamera() method
@@ -591,7 +590,7 @@ function setup(shaders)
 
     }
 
-    function animateBox(){
+    function animateBox(deltaTime){
 
         if(time - this.timeCreated > timeToLive){
 
@@ -826,6 +825,8 @@ function setup(shaders)
 
     }
 
+/*
+
     let hHeliceRotSpeed = 50;
     let hHeliceRotSpeedPerChange = 0.05;
     let hHeliceRotSpeedPerDrag = 0.001;
@@ -836,11 +837,23 @@ function setup(shaders)
     let helicopterAnglePercentageDrag = 0.00001;
     let helicopterMaxInclination = -30;
 
+    */
 
-    function animateRotatingHelicopter(){
+    let hHeliceRotSpeed = 20;
+    let hHeliceRotSpeedPerChange = 0.05;
+    let hHeliceRotSpeedPerDrag = 0.001;
+    let maxHelicopterH = 400;
+    let helicopterYSpeed = 1;
+    let helicopterAnglePercentageChange = 0.005;
+    let helicopterMaxAngleSpeed = 0.2;
+    let helicopterAnglePercentageDrag = 0.00001;
+    let helicopterMaxInclination = -30;
+
+    function animateRotatingHelicopter(deltaTime){
         
+        //console.log(deltaTime);
 
-        this.angle += (this.angleSpeedPerc) * helicopterMaxAngleSpeed;
+        this.angle += (this.angleSpeedPerc) * helicopterMaxAngleSpeed * deltaTime;
         
         this.coord[0] = Math.cos(this.angle * (Math.PI/180))  * this.distance;
         this.coord[2] = Math.sin(this.angle * (Math.PI/180))* this.distance;
@@ -851,18 +864,18 @@ function setup(shaders)
         this.rotation[2] = helicopterMaxInclination * this.angleSpeedPerc;
 
         //the helicopter suffers from drag, and will slow down
-        this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageDrag);
+        this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageDrag * deltaTime);
 
         //when the helicopter is not flying, the helices will slow down
         if(this.onGround){
 
-            this.heliceSpeedPer = Math.max(0, this.heliceSpeedPer - hHeliceRotSpeedPerDrag);
+            this.heliceSpeedPer = Math.max(0, this.heliceSpeedPer - hHeliceRotSpeedPerDrag * deltaTime);
 
         }
 
         //rotate helices
-        this.filhos[0].filhos[1].rotation[1] = (this.filhos[0].filhos[1].rotation[1] + hHeliceRotSpeed * this.heliceSpeedPer) % (720);
-        this.filhos[1].rotation[1] = (this.filhos[1].rotation[1] + hHeliceRotSpeed * this.heliceSpeedPer) % (720);
+        this.filhos[0].filhos[1].rotation[1] = (this.filhos[0].filhos[1].rotation[1] + hHeliceRotSpeed * this.heliceSpeedPer * deltaTime) % (720);
+        this.filhos[1].rotation[1] = (this.filhos[1].rotation[1] + hHeliceRotSpeed * this.heliceSpeedPer * deltaTime) % (720);
 
 
     }
@@ -1092,20 +1105,15 @@ function setup(shaders)
     function render(timestamp)
     {
 
-         // the change of time since the last calculation
+        let deltaTime = 0; // the change of time since the last calculation
 
         if(time === undefined) {        // First time
-            time = timestamp/60;
-            deltaTime = 0;
+            time = timestamp*speed;
         } 
         else {                          // All other times
-            deltaTime = timestamp/60 - time;
-            time = timestamp/60;
+            deltaTime = timestamp*speed - time;
+            time = timestamp*speed;
         }
-
-        console.log("Time: " + time + " Timestamp/60: " + (timestamp/60) + " deltaTime: " + deltaTime);
-
-        window.requestAnimationFrame(render);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
@@ -1127,9 +1135,11 @@ function setup(shaders)
         for(let i = 0; i < activeInstances.length; i++){
 
             //console.log(activeInstances[i]);
-            activeInstances[i].animate();
+            activeInstances[i].animate(deltaTime);
 
         }
+
+        window.requestAnimationFrame(render);
 
 
         
