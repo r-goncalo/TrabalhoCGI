@@ -204,8 +204,8 @@ function freeInstance(instance){
     instance.scale = instanceTrueScale(instance);
     
     let instanceParent = instance.Pai;
-    instanceParent.filhos.pop(instance);
 
+    instanceParent.filhos.pop(instance);
 
     instance.Pai = undefined;
     instanceTree.push(instance);
@@ -240,7 +240,7 @@ function deleteInstance(instance){
     }
 
     instance.Pai = undefined;
-    delete instanceDic[instance.name];
+    instanceDic[instance.name] = undefined;
 
 }
 
@@ -615,8 +615,8 @@ function setup(shaders)
 
     */
 
-    let timeToLive = 500;
-    let timeToBeStuck= 1000;
+    let timeToLive = 1000;
+    let timeToBeStuck= 2000;
     let boxSpeed = 0.2;
     let boxHeightAboveGround = 0.5;
 
@@ -643,8 +643,7 @@ function setup(shaders)
 
         }
 
-        //console.log("stuckTimer: " + stuckTimer + " ")
-
+        //console.log(this.name +" is in " + this.coord)
 
 
     }
@@ -663,9 +662,6 @@ function setup(shaders)
         boxInstance.stuckTimer = timeToBeStuck;
         boxInstance.liveTimer = timeToLive;
     
-        console.log("Box time: " + time);
-       //console.log("Box created: " + boxInstance.coord);
-
 
     }
 
