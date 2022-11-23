@@ -158,7 +158,7 @@ function instanceTrueCoord(instance){
 
     while(instanceParent != undefined){
 
-        toReturn = [toReturn[0] + instanceParent.coord[0], toReturn[1] + instanceParent.coord[1], toReturn[2] + instanceParent.coord[2]];
+        toReturn = [toReturn[0] * instanceParent.scale[0] + instanceParent.coord[0], toReturn[1] * instanceParent.scale[1] + instanceParent.coord[1], toReturn[2]* instanceParent.scale[2] + instanceParent.coord[2]];
         instanceParent = instanceParent.Pai;
 
     }
@@ -207,7 +207,7 @@ function deleteInstance(instance){
     }
 
     instance.Pai = undefined;
-    instanceDic.delete(instance.name);
+    delete instanceDic[instance.name];
 
 }
 
@@ -900,9 +900,12 @@ function setup(shaders)
 
              case this.moveDownKey:
 
-                 this.coord[1] = Math.max( this.coord[1] - helicopterYSpeed, 0);
+                 this.coord[1] = Math.max( this.coord[1] - helicopterYSpeed, this.coord[1] - instanceTrueCoord(this.filhos[2].filhos[0])[1]);
+
                  this.angleSpeedPerc = Math.max(0, this.angleSpeedPerc - helicopterAnglePercentageChange);
-                 if(this.coord[1] == 0 && this.heliceSpeedPer == 0){
+
+
+                 if(instanceTrueCoord(this.filhos[2].filhos[0])[1] <= 0 && this.angleSpeedPerc <= 0){
                     this.onGround = true;
                  }
                  break;
@@ -1029,8 +1032,8 @@ function setup(shaders)
         //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         //scaleInstanceByValue(helicoinstance, 10);
 
-        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
-        scaleInstanceByValue(helicoinstance, 30);
+        //helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
+        //scaleInstanceByValue(helicoinstance, 30);
 
 
         setupGround();
@@ -1105,7 +1108,7 @@ function setup(shaders)
 
 
         //renderization
-        referencial();
+        //referencial();
         recursiveModelConstruction(instanceTree);
 
         for(let i = 0; i < activeInstances.length; i++){
