@@ -583,6 +583,7 @@ function setup(shaders)
     */
 
     let timeToLive = 5;
+    let boxSpeed = 1;
 
     function modelBox(){
 
@@ -599,22 +600,24 @@ function setup(shaders)
         }
 
         if(this.coord[1] > groundHeight)
-            this.coord[1] = this.coord[1] - this.speed;
+            this.coord[1] = this.coord[1] - boxSpeed;
 
     }
 
-    function createBox(initialCoord, color, boxSpeed){
+    function createBox(initialCoord, color, parentInstance){
 
-        let boxInstance = addActiveInstance("Box",
+        let boxInstance = addActiveInstanceSon("Box",
         initialCoord,
+        parentInstance.name,
         modelBox,
         color,
         CUBE.draw,
         animateBox);
 
-        boxInstance.speed = boxSpeed;
+    
         boxInstance.timeCreated = time;
-
+    
+        console.log("Box time: " + time);
        //console.log("Box created: " + boxInstance.coord);
 
 
@@ -887,8 +890,8 @@ function setup(shaders)
         switch(keyReceived){
 
             case this.boxKey:
-                if(this.angleSpeedPerc > 0)
-                    createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this.distance * Math.PI * (this.angleSpeedPerc * helicopterMaxAngleSpeed /180));
+                if(!this.onGround)
+                    createBox([this.coord[0], this.coord[1], this.coord[2]], this.boxColor, this);
                 break;
             case this.moveRotKey:
 
