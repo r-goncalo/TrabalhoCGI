@@ -32,8 +32,44 @@ let instanceDic = {};
 //note: the instances will be able to use "this" becase they're called from the body of the instance
 let activeInstances = [];
 
+//these arrays are for deleting/freeing instances at the same time after animating, so there's not any problems by
+//removing instances mid animation
+
+let instancesToFree = [];
+
+let instancesToDelete = [];
+
 //instancesWithTheMethod react(event.key), to react when a key is pressed
 let reactiveInstances = [];
+
+
+function consoleloginstances(instanceArray){
+
+    for(let i = 0; i <  instanceArray.length; i++){
+
+
+        console.log(i + ": Name: " + instanceArray[i].name);
+
+    }
+
+}
+
+function indexOfInstanceInArray(instanceToTest, instanceArray){
+
+
+    let toReturn = -1;
+    for(let i = 0; i <  instanceArray.length; i++){
+
+        if(instanceArray[i].name == instanceToTest.name){ 
+            
+            toReturn = i;
+            break;
+        }
+    }
+    
+    return toReturn;
+
+}
 
 function generateInstanceName(newName){
 
@@ -198,49 +234,55 @@ function makeInstanceActive(instance, animateFun){
 
 }
 
-function freeInstance(instance){
+function freeInstance(instanceToFree){
 
-    instance.coord = instanceTrueCoord(instance);
-    instance.scale = instanceTrueScale(instance);
+
+    let newCoord = instanceTrueCoord(instanceToFree);
+    let newScale = instanceTrueScale(instanceToFree);
     
-    let instanceParent = instance.Pai;
+    let instanceToFreeParent = instanceToFree.Pai;
 
-    instanceParent.filhos.pop(instance);
 
-    instance.Pai = undefined;
-    instanceTree.push(instance);
+    instanceToFreeParent.filhos.splice(indexOfInstanceInArray(instanceToFree, instanceToFreeParent.filhos), 1);
 
+
+    instanceToFree.Pai = undefined;
+    instanceTree.push(instanceToFree);
+
+    instanceToFree.coord = newCoord;
+    instanceToFree.scale = newScale;
     
 
 }
 
-function deleteInstance(instance){
+function deleteInstance(instanceToDelete){
 
-    let instanceParent = instance.Pai;
-    if(instanceParent != undefined){
+    let instanceToDeleteParent = instanceToDelete.Pai;
+    if(instanceToDeleteParent != undefined){
 
-        instanceParent.filhos.pop(instance);
+        instanceToDeleteParent.filhos.splice(indexOfInstanceInArray(instanceToDelete, instanceToDeleteParent.filhos), 1);
 
     }else {
 
-        instanceTree.pop(instance);
+        instanceTree.splice(indexOfInstanceInArray(instanceToDelete, instanceTree), 1);
 
     }
 
-    if(instance.animate != undefined){
+    if(instanceToDelete.animate != undefined){
 
-        activeInstances.pop(instance);
+        activeInstances.splice(indexOfInstanceInArray(instanceToDelete, activeInstances), 1);
 
-    }
-
-    if(instance.react != undefined){
-
-        reactiveInstances.pop(instance);
 
     }
 
-    instance.Pai = undefined;
-    instanceDic[instance.name] = undefined;
+    if(instanceToDelete.react != undefined){
+
+        reactiveInstances.splice(indexOfInstanceInArray(instanceToDelete, reactiveInstances), 1);
+
+    }
+
+    instanceToDelete.Pai = undefined;
+    instanceDic[instanceToDelete.name] = undefined;
 
 }
 
@@ -280,7 +322,6 @@ function setup(shaders)
 
     //DO PROJETO 1
     window.addEventListener("keydown", function(event) {
-        //console.log(event.key);
         switch(event.key) {
             //Descola
             case "PageUp":
@@ -331,22 +372,7 @@ function setup(shaders)
         }
 
     })
-    
-    /*
 
-    canvas.addEventListener("mousedown", function(event) {
-    });
-
-    canvas.addEventListener("mousemove", function(event) {
-        const p = getCursorPosition(canvas, event);
-
-        console.log(p);
-    });
-    
-    canvas.addEventListener("mouseup", function(event) {
-    })
-
-    */
 
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -632,18 +658,17 @@ function setup(shaders)
 
             this.stuckTimer -= deltaTime;
             if(this.stuckTimer <= 0)
-                freeInstance(this);
+                instancesToFree.push(this);
 
         }else{
 
             this.coord[1] = Math.max(this.coord[1] - boxSpeed * deltaTime, boxHeightAboveGround);
             this.liveTimer -= deltaTime;
             if(this.liveTimer <= 0)
-                deleteInstance(this);
+                instancesToDelete.push(this);
 
         }
 
-        //console.log(this.name +" is in " + this.coord)
 
 
     }
@@ -896,8 +921,6 @@ function setup(shaders)
 
     function animateRotatingHelicopter(deltaTime){
         
-        //console.log(deltaTime);
-
         this.angle += (this.angleSpeedPerc) * helicopterMaxAngleSpeed * deltaTime;
         
         this.coord[0] = Math.cos(this.angle * (Math.PI/180))  * this.distance;
@@ -927,7 +950,6 @@ function setup(shaders)
 
 
     function helicopterReact(keyReceived){
-
 
         switch(keyReceived){
 
@@ -1132,7 +1154,6 @@ function setup(shaders)
                 multRotationY(instanceNodes[i].rotation[1]);
                 multRotationZ(instanceNodes[i].rotation[2]);
 
-                    //console.log(instanceNodes[i]);
                 multScale(instanceNodes[i].scale);
                 pushMatrix();
                     instanceNodes[i].model();
@@ -1187,10 +1208,24 @@ function setup(shaders)
 
         for(let i = 0; i < activeInstances.length; i++){
 
-            //console.log(activeInstances[i]);
             activeInstances[i].animate(deltaTime);
 
         }
+
+        for(let i = 0; i < instancesToFree.length; i++){
+
+            freeInstance(instancesToFree[i]);
+
+        }
+
+        for(let i = 0; i < instancesToDelete.length; i++){
+
+            deleteInstance(instancesToDelete[i]);
+
+        }
+
+        instancesToDelete = [];
+        instancesToFree = [];
 
         window.requestAnimationFrame(render);
 
