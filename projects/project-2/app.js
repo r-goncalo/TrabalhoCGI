@@ -367,7 +367,7 @@ function setup(shaders)
                 break;
             //Vista de frente ou alçado principal
             case '2':
-                currentCamera = 2;
+                changeToCameraByName("FrontCamera");
                 break;
             //Vista de cima ou planta
             case '3':
@@ -375,9 +375,11 @@ function setup(shaders)
                 break;
             //Vista lateral direita ou alçado lateral direito
             case '4':
+                changeToCameraByName("RightCamera");
                 break;
             //Desafio - Colocar uma camara adicional, posicionada no helicoptero e apontando para a frente
             case '5':
+                changeToCameraByName("HelicopterCamera");
                 break;
             case '-': //cycle through all available cameras
                 cycleCameras();
@@ -1086,6 +1088,8 @@ function setup(shaders)
 
         function changeToCamera(index){
 
+            console.log(index);
+
             currentCamera = index;
             if(cameras[currentCamera].name == "AxonometricCamera"){
 
@@ -1132,17 +1136,17 @@ function setup(shaders)
             axonometricCameraFunction,
             [0, 0, 0]);
 
-            addCameraInstance("Camera",
+            addCameraInstance("FrontCamera",
             cameraBaseFunction,
-            [0, VP_DISTANCE, VP_DISTANCE]);
+            [VP_DISTANCE, VP_DISTANCE, 0]);
 
             addCameraInstance("TopDownCamera",
             cameraBaseFunction,
             [80, VP_DISTANCE, 0]);
 
-            addCameraInstance("Camera",
+            addCameraInstance("RightCamera",
             cameraBaseFunction,
-            [100, VP_DISTANCE * 0.5, -VP_DISTANCE * 0.5]);
+            [0, VP_DISTANCE, VP_DISTANCE]);
 
             addCameraInstance("Camera",
             cameraBaseFunction,
