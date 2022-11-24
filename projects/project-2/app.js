@@ -14,7 +14,7 @@ let time;
 let speed = 1;  //  /60.0;
 
 
-//the cameras we'll have, composed of instances with a threadRenderCamera() method
+//the cameras we'll have, composed of instances with a renderCamera() method
 let cameras = [];
 let currentCamera = 0;
 
@@ -113,7 +113,6 @@ function addInstanceSon(nameStr, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
     
-    
     let newName = generateInstanceName(nameStr);
 
     let instance = { name : newName, coord : initialCoord, model : function(){}, rotation : [0, 0, 0], scale : [1, 1, 1], filhos : []};
@@ -176,7 +175,7 @@ function addActiveInstanceSon(nameStr, initialCoord, parentName, modelFun, color
 function addCameraInstance(nameStr, cameraFun, initialCoord){
 
     let camera = addInstance(nameStr, initialCoord);
-    camera.threadRenderCamera = cameraFun;
+    camera.renderCamera = cameraFun;
     cameras.push(camera);
 
     return camera;
@@ -189,7 +188,7 @@ function addCameraInstanceSon(nameStr, initialCoord, parentName, cameraFun){
         initialCoord, 
         parentName);
         
-        camera.threadRenderCamera = cameraFun;
+        camera.renderCamera = cameraFun;
         cameras.push(camera);
     
         return camera;
@@ -222,6 +221,23 @@ function instanceTrueScale(instance){
     while(instanceParent != undefined){
 
         toReturn = [toReturn[0] * instanceParent.scale[0], toReturn[1] * instanceParent.scale[1], toReturn[2]* instanceParent.scale[2]];
+        instanceParent = instanceParent.Pai;
+
+    }
+
+    return toReturn;
+
+}
+
+function instanceTrueRot(instance){
+
+    let toReturn = [instance.rotation[0], instance.rotation[1], instance.rotation[2]];
+    
+    let instanceParent = instance.Pai;
+
+    while(instanceParent != undefined){
+
+        toReturn = [toReturn[0] + instanceParent.rotation[0], toReturn[1] + instanceParent.rotation[1], toReturn[2] + instanceParent.rotation[2]];
         instanceParent = instanceParent.Pai;
 
     }
@@ -810,7 +826,15 @@ function setup(shaders)
     function helicopterCamera(){ 
 
 
-        loadMatrix(lookAt([0, 0, 0], [this.coord[0], -this.coord[1], this.coord[2]], [0,1,0]));
+
+        let trueCoord = instanceTrueCoord(this);
+        let trueRot = instanceTrueRot(this);
+
+        loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], [0, 0, 0], [0,1,0]));
+
+        multRotationX(trueRot[0]);
+        multRotationY(trueRot[1]);
+        multRotationZ(trueRot[2]);
 
     }
 
@@ -1088,8 +1112,6 @@ function setup(shaders)
 
         function changeToCamera(index){
 
-            console.log(index);
-
             currentCamera = index;
             if(cameras[currentCamera].name == "AxonometricCamera"){
 
@@ -1101,6 +1123,9 @@ function setup(shaders)
             
             }
 
+            console.log(cameras[currentCamera].name);
+
+
         }
 
         function changeToCameraByName(name){
@@ -1109,22 +1134,17 @@ function setup(shaders)
 
         }
 
-
-        //teta, gama (and VP_DISTANCE is the distance)
-        let axonometricCamera = [0, 0];
-
-
         function axonometricCameraFunction(){
 
-            loadMatrix(lookAt([0, 0, 0], [VP_DISTANCE, 0, 0], [0,1,0]));
+            loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
             multRotationY(effectController.Teta);
-            multRotationZ(effectController.Gama);
+            multRotationX(effectController.Gama);
 
         }
 
         function cameraBaseFunction(){
 
-            loadMatrix(lookAt([0, 0, 0], [this.coord[0], -this.coord[1], this.coord[2]], [0,1,0]));
+            loadMatrix(lookAt([this.coord[0], this.coord[1], this.coord[2]], [0, 0, 0], [0,1,0]));
 
         }
 
@@ -1138,7 +1158,7 @@ function setup(shaders)
 
             addCameraInstance("FrontCamera",
             cameraBaseFunction,
-            [VP_DISTANCE, VP_DISTANCE, 0]);
+            [0, VP_DISTANCE, VP_DISTANCE]);
 
             addCameraInstance("TopDownCamera",
             cameraBaseFunction,
@@ -1146,7 +1166,7 @@ function setup(shaders)
 
             addCameraInstance("RightCamera",
             cameraBaseFunction,
-            [0, VP_DISTANCE, VP_DISTANCE]);
+            [VP_DISTANCE, VP_DISTANCE, 0]);
 
             addCameraInstance("Camera",
             cameraBaseFunction,
@@ -1180,7 +1200,7 @@ function setup(shaders)
         scaleInstanceByValue(helicoinstance, 5);
         putHelicopterOnGround(helicoinstance);
 
-
+/*
         helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         scaleInstanceByValue(helicoinstance, 10);
         putHelicopterOnGround(helicoinstance);
@@ -1189,20 +1209,19 @@ function setup(shaders)
         scaleInstanceByValue(helicoinstance, 5);
         putHelicopterOnGround(helicoinstance);
 
-        //helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
-        //scaleInstanceByValue(helicoinstance, 30);
+        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
+        scaleInstanceByValue(helicoinstance, 30);
 
-
+*/
         let groundInstance = createGround();
         putGroundBellowZero(groundInstance);
 
         setupBuildings();
 
-        console.log(instanceTree);
-
     }
 
     setupInstances();
+    console.log(instanceTree);
 
     /*
         *****END OF SETUP INITIAL INSTANCES***
@@ -1267,7 +1286,7 @@ function setup(shaders)
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        cameras[currentCamera].threadRenderCamera();
+        cameras[currentCamera].renderCamera();
 
 
 
