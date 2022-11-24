@@ -66,7 +66,7 @@ function indexOfInstanceInArray(instanceToTest, instanceArray){
             break;
         }
     }
-    
+
     return toReturn;
 
 }
@@ -662,7 +662,7 @@ function setup(shaders)
 
         }else{
 
-            this.coord[1] = Math.max(this.coord[1] - boxSpeed * deltaTime, boxHeightAboveGround);
+            this.coord[1] = Math.max(this.coord[1] - boxSpeed * deltaTime, boxHeightAboveGround * this.scale[1]);
             this.liveTimer -= deltaTime;
             if(this.liveTimer <= 0)
                 instancesToDelete.push(this);
