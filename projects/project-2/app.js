@@ -6,6 +6,7 @@ import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CYLINDER from '../../libs/objects/cylinder.js';
 import * as CUBE from '../../libs/objects/cube.js';
 
+import { GUI } from '../../libs/dat.gui.module.js';
 
 let gl;
 const VP_DISTANCE = 500; //500 meters far
@@ -305,6 +306,20 @@ function setup(shaders)
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
 
+    const gui = new GUI();
+
+    let effectController = {
+
+        Teta : 0,
+        Gama : 0
+
+
+    };
+
+    let folder = gui.addFolder("axonometric view");
+    folder.add( effectController, 'Teta', 0, 360, 1 );
+    folder.add( effectController, 'Gama', 0, 360, 1 );
+
     gl = setupWebGL(canvas);
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
@@ -358,7 +373,8 @@ function setup(shaders)
             case '-': //cycle through all available cameras
                 currentCamera = (currentCamera + 1) % cameras.length;
                 console.log("Current camera: " + currentCamera);
-                console.log("all the cameras: " + cameras)
+                console.log("all the cameras: ");
+                console.log(cameras);
                 break;
             
 
@@ -491,7 +507,7 @@ function setup(shaders)
         *****SETUP GROUND***
     */
 
-    let groundHeight = 0;
+    let groundHeight = 0.1;
 
     function modelGround(){
 
@@ -502,7 +518,7 @@ function setup(shaders)
     function setupGround(){
 
         let groundInstance = addModeledInstance("Ground",
-        [0, 0, 0],
+        [0, -0.1, 0],
         modelGround,
         [193, 209, 119],
         CUBE.draw);
@@ -514,6 +530,9 @@ function setup(shaders)
     /*
         *****SETUP BUILDINGS***
     */
+
+    let buildingHeight = 2.5;
+
 
 
     function modelBuildingBody(){
@@ -533,6 +552,13 @@ function setup(shaders)
     function modelBuildingWindow(){
 
         multScale([7, 1, 11]);
+
+
+    }
+
+    function putBuildingOnGround(buildingInstance){
+
+        buildingInstance.coord[1] = -buildingHeight * buildingInstance.scale[1];
 
 
     }
@@ -637,7 +663,7 @@ function setup(shaders)
 
     /*
 
-    ****SETUP BOXES***
+    ****SETUP BOXES***0
 
     */
 
@@ -895,20 +921,6 @@ function setup(shaders)
 
     }
 
-/*
-
-    let hHeliceRotSpeed = 50;
-    let hHeliceRotSpeedPerChange = 0.05;
-    let hHeliceRotSpeedPerDrag = 0.001;
-    let maxHelicopterH = 400;
-    let helicopterYSpeed = 1;
-    let helicopterAnglePercentageChange = 0.005;
-    let helicopterMaxAngleSpeed = 3;
-    let helicopterAnglePercentageDrag = 0.00001;
-    let helicopterMaxInclination = -30;
-
-    */
-
     let hHeliceRotSpeed = 20;
     let hHeliceRotSpeedPerChange = 0.05;
     let hHeliceRotSpeedPerDrag = 0.001;
@@ -1051,9 +1063,8 @@ function setup(shaders)
         function axonometricCameraFunction(){
 
             loadMatrix(lookAt([0, 0, 0], [VP_DISTANCE, 0, 0], [0,1,0]));
-            multRotationY(axonometricCamera[0]);
-            multRotationX(axonometricCamera[1]);
-            multRotationZ(axonometricCamera[1]);
+            multRotationY(effectController.Teta);
+            multRotationZ(effectController.Gama);
 
         }
 
@@ -1069,7 +1080,7 @@ function setup(shaders)
             
             let cameraInstance = addCameraInstance("AxonometricCamera",
             axonometricCameraFunction,
-            [0, VP_DISTANCE, VP_DISTANCE]);
+            [0, 0, 0]);
 
             addCameraInstance("Camera",
             cameraBaseFunction,
@@ -1118,8 +1129,14 @@ function setup(shaders)
         scaleInstanceByValue(helicoinstance, 5);
         putHelicopterOnGround(helicoinstance);
 
-        //helicoinstance = createAutoRotMovHelicopter(150, 200, 0, { "Box" : 'b', "Rot" : 'v'}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
-        //scaleInstanceByValue(helicoinstance, 10);
+
+        helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
+        scaleInstanceByValue(helicoinstance, 10);
+        putHelicopterOnGround(helicoinstance);
+
+        helicoinstance = createAutoRotMovHelicopter(200, 30, { "Box" : '<', "Rot" : 'z', "Up" : "x", "Down" : "c"}, {"Body" : [17, 30, 75], "Spike" : [255, 1, 8], "Helice" : [1, 205, 1], "Base" : [145, 20, 145], "Box" : [100, 100, 200]});        
+        scaleInstanceByValue(helicoinstance, 5);
+        putHelicopterOnGround(helicoinstance);
 
         //helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
         //scaleInstanceByValue(helicoinstance, 30);
