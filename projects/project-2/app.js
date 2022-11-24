@@ -55,13 +55,13 @@ function consoleloginstances(instanceArray){
 
 }
 
-function indexOfInstanceInArray(instanceToTest, instanceArray){
+function indexOfInstanceNameInArray(name, instanceArray){
 
 
     let toReturn = -1;
     for(let i = 0; i <  instanceArray.length; i++){
 
-        if(instanceArray[i].name == instanceToTest.name){ 
+        if(instanceArray[i].name == name){ 
             
             toReturn = i;
             break;
@@ -71,6 +71,15 @@ function indexOfInstanceInArray(instanceToTest, instanceArray){
     return toReturn;
 
 }
+
+
+function indexOfInstanceInArray(instanceToTest, instanceArray){
+
+
+    return indexOfInstanceNameInArray(instanceToTest.name, instanceArray);
+
+}
+
 
 function generateInstanceName(newName){
 
@@ -354,7 +363,7 @@ function setup(shaders)
                 break;
             //A tecla 1 devera voltar a usar a projecao axonometrica
             case '1':
-                currentCamera = 1;
+                changeToCameraByName("AxonometricCamera");
                 break;
             //Vista de frente ou alçado principal
             case '2':
@@ -362,7 +371,7 @@ function setup(shaders)
                 break;
             //Vista de cima ou planta
             case '3':
-                currentCamera ;
+                changeToCameraByName("TopDownCamera");
                 break;
             //Vista lateral direita ou alçado lateral direito
             case '4':
@@ -371,7 +380,7 @@ function setup(shaders)
             case '5':
                 break;
             case '-': //cycle through all available cameras
-                currentCamera = (currentCamera + 1) % cameras.length;
+                cycleCameras();
                 console.log("Current camera: " + currentCamera);
                 console.log("all the cameras: ");
                 console.log(cameras);
@@ -507,7 +516,8 @@ function setup(shaders)
         *****SETUP GROUND***
     */
 
-    let groundHeight = 0.1;
+    let groundHeight = 0.2;
+
 
     function modelGround(){
 
@@ -515,10 +525,16 @@ function setup(shaders)
 
     }
 
-    function setupGround(){
+    function putGroundBellowZero(groundInstance){
+
+        groundInstance.coord[1] = -groundHeight * groundInstance.scale[1];
+
+    }
+
+    function createGround(){
 
         let groundInstance = addModeledInstance("Ground",
-        [0, -0.1, 0],
+        [0, 0, 0],
         modelGround,
         [193, 209, 119],
         CUBE.draw);
@@ -558,7 +574,7 @@ function setup(shaders)
 
     function putBuildingOnGround(buildingInstance){
 
-        buildingInstance.coord[1] = -buildingHeight * buildingInstance.scale[1];
+        buildingInstance.coord[1] = buildingHeight * buildingInstance.scale[1];
 
 
     }
@@ -615,18 +631,23 @@ function setup(shaders)
 
         let buildInstance = createBuilding([60, 0, -80], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 2);
+        putBuildingOnGround(buildInstance);
 
         buildInstance = createBuilding([100, 0, 300], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 13);
         scaleInstanceByValue(buildInstance, 1);
+        putBuildingOnGround(buildInstance);
 
         buildInstance = createBuilding([-400, 0, -270], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 6);
         scaleInstanceByValue(buildInstance, 5);
+        putBuildingOnGround(buildInstance);
 
         buildInstance = createBuilding([-345, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 10);
+        putBuildingOnGround(buildInstance);
 
         buildInstance = createBuilding([-10, 0, -220], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 20);
         scaleInstanceByValue(buildInstance, 3);
+        putBuildingOnGround(buildInstance);
 
 
     }
@@ -1056,6 +1077,35 @@ function setup(shaders)
     */
 
 
+        function cycleCameras(){
+
+            changeToCamera((currentCamera + 1)%cameras.length);
+            
+        }
+        
+
+        function changeToCamera(index){
+
+            currentCamera = index;
+            if(cameras[currentCamera].name == "AxonometricCamera"){
+
+                gui.show();
+
+            }else{
+
+                gui.hide();
+            
+            }
+
+        }
+
+        function changeToCameraByName(name){
+
+            changeToCamera(indexOfInstanceNameInArray(name, cameras));
+
+        }
+
+
         //teta, gama (and VP_DISTANCE is the distance)
         let axonometricCamera = [0, 0];
 
@@ -1086,9 +1136,9 @@ function setup(shaders)
             cameraBaseFunction,
             [0, VP_DISTANCE, VP_DISTANCE]);
 
-            addCameraInstance("Camera",
+            addCameraInstance("TopDownCamera",
             cameraBaseFunction,
-            [80, VP_DISTANCE, VP_DISTANCE]);
+            [80, VP_DISTANCE, 0]);
 
             addCameraInstance("Camera",
             cameraBaseFunction,
@@ -1098,9 +1148,6 @@ function setup(shaders)
             cameraBaseFunction,
             [-100, VP_DISTANCE * 0.2, VP_DISTANCE * 0.5]);
 
-            addCameraInstance("TopDownCamera",
-            cameraBaseFunction,
-            [0, VP_DISTANCE, 0]);
 
 
         }
@@ -1142,7 +1189,8 @@ function setup(shaders)
         //scaleInstanceByValue(helicoinstance, 30);
 
 
-        setupGround();
+        let groundInstance = createGround();
+        putGroundBellowZero(groundInstance);
 
         setupBuildings();
 
