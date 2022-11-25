@@ -844,12 +844,10 @@ function setup(shaders)
 
     function helicopterCamera(){ 
 
-
+        mProjection = perspective(90, aspect, 1, VP_DISTANCE * 3);
 
         let trueCoord = instanceTrueCoord(this);
         let trueRot = instanceTrueRot(this);
-
-        console.log(trueCoord);
 
         loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
             [trueCoord[0] + Math.cos(trueRot[0] * Math.PI/180),
@@ -1161,6 +1159,7 @@ function setup(shaders)
 
         function axonometricCameraFunction(){
 
+            
             loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
             multRotationX(effectController.Gama);
             multRotationY(effectController.Teta);
@@ -1170,6 +1169,7 @@ function setup(shaders)
 
         function cameraBaseFunction(){
 
+            mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
             loadMatrix(lookAt([this.coord[0], this.coord[1], this.coord[2]], [0, 0, 0], [0,1,0]));
 
         }
@@ -1226,7 +1226,7 @@ function setup(shaders)
         scaleInstanceByValue(helicoinstance, 5);
         putHelicopterOnGround(helicoinstance);
 
-/*
+
 
         helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         scaleInstanceByValue(helicoinstance, 10);
@@ -1236,10 +1236,10 @@ function setup(shaders)
         scaleInstanceByValue(helicoinstance, 5);
         putHelicopterOnGround(helicoinstance);
 
-        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
-        scaleInstanceByValue(helicoinstance, 30);
+//        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
+//        scaleInstanceByValue(helicoinstance, 30);
 
-*/
+
 
         let groundInstance = createGround();
         putGroundBellowZero(groundInstance);
