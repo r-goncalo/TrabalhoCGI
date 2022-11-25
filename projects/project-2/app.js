@@ -743,23 +743,23 @@ function setup(shaders)
 
     function setupBuildings(){
 
-        let buildInstance = createBuilding([60, 0, -80], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
+        let buildInstance = createBuilding([50, 0, -50], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 2);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([100, 0, 300], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 13);
-        scaleInstanceByValue(buildInstance, 1);
+        buildInstance = createBuilding([100, 0, -350], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 13);
+        scaleInstanceByValue(buildInstance, 2);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([-400, 0, -270], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 6);
+        buildInstance = createBuilding([350, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 6);
         scaleInstanceByValue(buildInstance, 5);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([-345, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
+        buildInstance = createBuilding([-350, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 10);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([-10, 0, -220], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 20);
+        buildInstance = createBuilding([-150, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 20);
         scaleInstanceByValue(buildInstance, 3);
         putBuildingOnGround(buildInstance);
 
@@ -1348,10 +1348,11 @@ function setup(shaders)
             if(i%2==0){
                 x = x-500;
             }
-            if(i%2==1){
+            else{
                 z -= -250;
                 x=250;
             }
+            console.log(coord);
         }
 
         x = 250;
@@ -1363,10 +1364,11 @@ function setup(shaders)
             if(i%2==0){
                 x = x-500;
             }
-            if(i%2==1){
+            else{
                 z -= -500;
                 x=250;
             }
+            console.log(coord);
         }
 
         setupBuildings();
