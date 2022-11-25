@@ -109,6 +109,7 @@ function addInstance(nameStr, initialCoord){
 
 }
 
+//adiciona uma instancia sabendo como filha de uma outra
 function addInstanceSon(nameStr, initialCoord, parentName){
 
     let instanceParent = instanceDic[parentName];
@@ -126,6 +127,7 @@ function addInstanceSon(nameStr, initialCoord, parentName){
 
 }
 
+//adiciona uma instancia com modelo, cor, etc
 function addModeledInstance(nameStr, initialCoord, modelFun, colorArray, drawFun){
 
     let instance = addInstance(nameStr, initialCoord);
@@ -150,6 +152,7 @@ function addModeledInstanceSon(nameStr, initialCoord, parentName, modelFun, colo
 
 }
 
+//adiciona uma instancia ativa
 function addActiveInstance(nameStr, initialCoord, modelFun, colorArray, drawFun, animateFun){
 
 
@@ -1159,8 +1162,9 @@ function setup(shaders)
         function axonometricCameraFunction(){
 
             loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
-            multRotationY(effectController.Teta);
             multRotationX(effectController.Gama);
+            multRotationY(effectController.Teta);
+            
 
         }
 
