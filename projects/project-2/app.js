@@ -708,7 +708,8 @@ function setup(shaders)
 
     let timeToLive = 1000;
     let timeToBeStuck= 2000;
-    let boxSpeed = 0.2;
+    let boxFallingSpeed = 0.2;
+    let boxDragMultiplier = 0.98;
     let boxHeightAboveGround = 0.5;
 
     function modelBox(){
@@ -722,12 +723,27 @@ function setup(shaders)
         if(this.stuckTimer > 0){
 
             this.stuckTimer -= deltaTime;
-            if(this.stuckTimer <= 0)
+            if(this.stuckTimer <= 0){
+                this.speedX =  Math.cos(this.Pai.angle * Math.PI/180) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
+                this.speedZ =  Math.sin(this.Pai.angle * Math.PI/180) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
                 instancesToFree.push(this);
-
+            }
         }else{
 
-            this.coord[1] = Math.max(this.coord[1] - boxSpeed * deltaTime, boxHeightAboveGround * this.scale[1]);
+            this.coord[1] = this.coord[1] - boxFallingSpeed * deltaTime;
+            if(this.coord[1] < boxHeightAboveGround * this.scale[1]){
+
+                this.coord[1] = boxHeightAboveGround * this.scale[1];
+
+            }else{
+
+                this.coord[0] += this.speedX * deltaTime;
+                this.coord[2] += this.speedZ * deltaTime;
+
+                this.speedX *= boxDragMultiplier * deltaTime;
+                this.speedZ *= boxDragMultiplier * deltaTime;
+
+            }
             this.liveTimer -= deltaTime;
             if(this.liveTimer <= 0)
                 instancesToDelete.push(this);
@@ -830,11 +846,17 @@ function setup(shaders)
         let trueCoord = instanceTrueCoord(this);
         let trueRot = instanceTrueRot(this);
 
-        loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], [0, 0, 0], [0,1,0]));
+        console.log(trueCoord);
 
-        multRotationX(trueRot[0]);
-        multRotationY(trueRot[1]);
-        multRotationZ(trueRot[2]);
+        loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
+            [trueCoord[0] + Math.cos(trueRot[0] * Math.PI/180),
+            trueCoord[1] + Math.cos(trueRot[1] * Math.PI/180),
+            trueCoord[2] + Math.cos(trueRot[2] * Math.PI/180)],
+            [0,1,0]));
+
+        //multRotationX(trueRot[0]);
+        //multRotationY(trueRot[1]);
+        //multRotationZ(trueRot[2]);
 
     }
 
@@ -1201,6 +1223,7 @@ function setup(shaders)
         putHelicopterOnGround(helicoinstance);
 
 /*
+
         helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         scaleInstanceByValue(helicoinstance, 10);
         putHelicopterOnGround(helicoinstance);
@@ -1213,6 +1236,7 @@ function setup(shaders)
         scaleInstanceByValue(helicoinstance, 30);
 
 */
+
         let groundInstance = createGround();
         putGroundBellowZero(groundInstance);
 
@@ -1291,7 +1315,7 @@ function setup(shaders)
 
 
         //renderization
-        //referencial();
+        referencial();
         recursiveModelConstruction(instanceTree);
 
         for(let i = 0; i < activeInstances.length; i++){
