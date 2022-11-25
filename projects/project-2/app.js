@@ -545,10 +545,13 @@ function setup(shaders)
         multScale([1000, 0.2, 1000]);
 
     }
-
     
     function modelStreet(){
-        multScale([15*20, 0.2, 2*30]);
+        multScale([500, 0.2, 2*30]);
+    }
+
+    function modelStreetDivider(){
+        multScale([500, 0.2, 2*5]);
     }
 
     function modelCircleHelipad(){
@@ -615,15 +618,24 @@ function setup(shaders)
             HbarBig2.coord[1] = groundHeight * HbarBig2.scale[1];
     }
 
-    function createStreets(){
+    function createStreets(rotation, coord){
 
         let streetInstance = addModeledInstance("Street",
-        [350, 0, 0],
+        coord,
         modelStreet,
         [0, 0, 0],
         CUBE.draw);
 
-        return streetInstance;
+        streetInstance.rotation[1] = rotation;
+
+            let streetDivider = addModeledInstanceSon("StreetDivider",
+            [0,0,0],
+            streetInstance.name,
+            modelStreetDivider,
+            [500,500,500],
+            CUBE.draw);
+
+            streetDivider.coord[1] = groundHeight * streetDivider.scale[1];
 
     }
 
@@ -1327,7 +1339,35 @@ function setup(shaders)
 
         let helipad = createHelipad();
 
-        let street1 = createStreets();
+        let x = 250;
+        let z = -250;
+        let y = 0;
+        for(let i = 0; i<6;i++){
+            let coord = [x,y,z];
+            createStreets(0, coord);
+            if(i%2==0){
+                x = x-500;
+            }
+            if(i%2==1){
+                z -= -250;
+                x=250;
+            }
+        }
+
+        x = 250;
+        z = -250;
+        for(let i = 0; i<4;i++){
+            let coord = [x,y,z];
+            console.log(coord);
+            createStreets(90, coord);
+            if(i%2==0){
+                x = x-500;
+            }
+            if(i%2==1){
+                z -= -500;
+                x=250;
+            }
+        }
 
         setupBuildings();
 
