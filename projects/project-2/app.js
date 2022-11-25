@@ -546,6 +546,87 @@ function setup(shaders)
 
     }
 
+    
+    function modelStreet(){
+        multScale([15*20, 0.2, 2*30]);
+    }
+
+    function modelCircleHelipad(){
+        multScale([15*10, 0.2, 15*10]);
+    }
+
+    function modelHBarSmall(){
+        multScale([15*2, 0.2, 6*2]);
+    }
+
+    function modelHBarBig(){
+        multScale([15*5, 0.2, 2.5*5]);
+    }
+
+    function putGroundBellowZero(groundInstance){
+
+        groundInstance.coord[1] = -groundHeight * groundInstance.scale[1];
+    }
+
+    function createGround(){
+
+        let groundInstance = addModeledInstance("Ground",
+        [0, 0, 0],
+        modelGround,
+        [193, 209, 119],
+        CUBE.draw);
+
+        return groundInstance;
+
+    }
+
+    function createHelipad(){
+        let circle = addModeledInstance("Circle",
+        [400, 0, -370],
+        modelCircleHelipad,
+        [0,0,0],
+        SPHERE.draw);
+            let HBarSmall = addModeledInstanceSon("HBar",
+                [0, 0, 0],
+                circle.name,
+                modelHBarSmall,
+                [500,500,500],
+                CUBE.draw);
+            
+            let HbarBig1 = addModeledInstanceSon("HBar",
+                [-20, 0, 0],
+                circle.name,
+                modelHBarBig,
+                [500,500,500],
+                CUBE.draw);
+
+            let HbarBig2 = addModeledInstanceSon("HBar",
+                [20, 0, 0],
+                circle.name,
+                modelHBarBig,
+                [500,500,500],
+                CUBE.draw);
+
+            HbarBig1.rotation[1] = 90;
+            HbarBig2.rotation[1] = 90;
+
+            HBarSmall.coord[1] = groundHeight * HBarSmall.scale[1];
+            HbarBig1.coord[1] = groundHeight * HbarBig1.scale[1];
+            HbarBig2.coord[1] = groundHeight * HbarBig2.scale[1];
+    }
+
+    function createStreets(){
+
+        let streetInstance = addModeledInstance("Street",
+        [350, 0, 0],
+        modelStreet,
+        [0, 0, 0],
+        CUBE.draw);
+
+        return streetInstance;
+
+    }
+
     function putGroundBellowZero(groundInstance){
 
         groundInstance.coord[1] = -groundHeight * groundInstance.scale[1];
@@ -1243,6 +1324,10 @@ function setup(shaders)
 
         let groundInstance = createGround();
         putGroundBellowZero(groundInstance);
+
+        let helipad = createHelipad();
+
+        let street1 = createStreets();
 
         setupBuildings();
 
