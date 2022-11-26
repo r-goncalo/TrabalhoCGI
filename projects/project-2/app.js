@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult, perspective, rotate } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation } from "../../libs/stack.js";
+import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate } from "../../libs/MV.js";
+import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation, multMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CYLINDER from '../../libs/objects/cylinder.js';
@@ -212,22 +212,26 @@ function instanceTrueCoord(instance){
     
     let instanceParent = instance.Pai;
 
+    //console.log(toReturn);
+
     while(instanceParent != undefined){
 
         toReturn = [ instanceParent.coord[0] +
-        toReturn[0] * instanceParent.scale[0] * Math.cos(radOf(instanceParent.rotation[1]))
-        + toReturn[2]* instanceParent.scale[2] * Math.cos(radOf(instanceParent.rotation[1])),
+        toReturn[0] * instanceParent.scale[0] * Math.cos(radOf(-instanceParent.rotation[1]))
+        + toReturn[2]* instanceParent.scale[2] * Math.cos(radOf(-instanceParent.rotation[1])),
 
         toReturn[1] * instanceParent.scale[1] + instanceParent.coord[1],
 
         instanceParent.coord[2] +
-        toReturn[2] * instanceParent.scale[2] * Math.sin(radOf(instanceParent.rotation[1]))
-        + toReturn[0] * instanceParent.scale[0] * Math.sin(radOf(instanceParent.rotation[1]))];
+        toReturn[2] * instanceParent.scale[2] * Math.sin(radOf(-instanceParent.rotation[1]))
+        + toReturn[0] * instanceParent.scale[0] * Math.sin(radOf(-instanceParent.rotation[1]))];
 
 
         instanceParent = instanceParent.Pai;
 
     }
+
+    //console.log(toReturn);
 
     return toReturn;
 
@@ -408,11 +412,11 @@ function setup(shaders)
                 break;
             //tecla W - malha de arame
             case 'W':
-                currentDrawMode = (currentDrawMode + 1) % drawModes.length;
+                currentDrawMode = 0;
                 break;
             //tecla S - superficies preenchidas
             case 'S':
-                currentDrawMode = (currentDrawMode + 1) % drawModes.length;
+                currentDrawMode = 1;
                 break;
             //A tecla 1 devera voltar a usar a projecao axonometrica
             case '1':
@@ -976,16 +980,13 @@ function setup(shaders)
         let trueCoord = instanceTrueCoord(this);
         let trueRot = instanceTrueRot(this);
 
-        loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
-            [trueCoord[0] + Math.cos(radOf(trueRot[1])),
+        loadMatrix(rotateY(-trueRot[1]));
+
+        multMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
+            [trueCoord[0] + 1,
             trueCoord[1],
-            trueCoord[2] + Math.sin(radOf(trueRot[1]))],
+            trueCoord[2]],
             [0,1,0]));
-
-        //multRotationX(trueRot[0]);
-        //multRotationY(trueRot[1]);
-        //multRotationZ(trueRot[2]);
-
     }
 
 
@@ -1114,7 +1115,7 @@ function setup(shaders)
             helicoinstance.name,
             helicopterCamera);
 
-            makeInstanceModeled(hCamera, modelBox, [0, 0, 0], CUBE.draw);
+            scaleInstanceByValue(c, 10);
 
         return helicoinstance;
 
@@ -1352,11 +1353,11 @@ function setup(shaders)
 
 
         let helicoinstance = createAutoRotMovHelicopter(100, 0, { "Box" : ' ', "Rot" : 'ArrowLeft', "Up" : "ArrowUp", "Down" : "ArrowDown"}, {"Body" : [255, 0, 0], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [40, 20, 10]});        
-        scaleInstanceByValue(helicoinstance, 5);
+        scaleInstanceByValue(helicoinstance, 10);
         putHelicopterOnGround(helicoinstance);
 
 
-
+/*
         helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         scaleInstanceByValue(helicoinstance, 10);
         putHelicopterOnGround(helicoinstance);
@@ -1364,6 +1365,8 @@ function setup(shaders)
         helicoinstance = createAutoRotMovHelicopter(200, 30, { "Box" : '<', "Rot" : 'z', "Up" : "x", "Down" : "c"}, {"Body" : [17, 30, 75], "Spike" : [255, 1, 8], "Helice" : [1, 205, 1], "Base" : [145, 20, 145], "Box" : [100, 100, 200]});        
         scaleInstanceByValue(helicoinstance, 5);
         putHelicopterOnGround(helicoinstance);
+
+*/
 
 //        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
 //        scaleInstanceByValue(helicoinstance, 30);
