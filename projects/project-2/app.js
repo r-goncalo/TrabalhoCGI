@@ -1110,12 +1110,10 @@ function setup(shaders)
             feet3.rotation[2] = -10;
             feet4.rotation[2] = 10;
 
-            let hCamera = addCameraInstanceSon("HelicopterCamera",
+            addCameraInstanceSon("HelicopterCamera",
             [2.6, 0.5, 0],
             helicoinstance.name,
             helicopterCamera);
-
-            scaleInstanceByValue(c, 10);
 
         return helicoinstance;
 
