@@ -433,11 +433,11 @@ function setup(shaders)
             case "PageDown":
                 break;
             //tecla W - malha de arame
-            case 'W':
+            case 'w':
                 currentDrawMode = 0;
                 break;
             //tecla S - superficies preenchidas
-            case 'S':
+            case 's':
                 currentDrawMode = 1;
                 break;
             //A tecla 1 devera voltar a usar a projecao axonometrica
