@@ -55,6 +55,13 @@ function consoleloginstances(instanceArray){
 
 }
 
+//converts degrees to rad 
+function radOf(degs){
+
+    return degs*Math.PI/180;
+
+}
+
 function indexOfInstanceNameInArray(name, instanceArray){
 
 
@@ -198,6 +205,7 @@ function addCameraInstanceSon(nameStr, initialCoord, parentName, cameraFun){
 
 }
 
+//returns the coordinates of an instance in the world (only takes in account the Y rotation)
 function instanceTrueCoord(instance){
 
     let toReturn = [instance.coord[0], instance.coord[1], instance.coord[2]];
@@ -206,7 +214,9 @@ function instanceTrueCoord(instance){
 
     while(instanceParent != undefined){
 
-        toReturn = [toReturn[0] * instanceParent.scale[0] + instanceParent.coord[0], toReturn[1] * instanceParent.scale[1] + instanceParent.coord[1], toReturn[2]* instanceParent.scale[2] + instanceParent.coord[2]];
+        toReturn = [toReturn[0] * instanceParent.scale[0] * Math.cos(radOf(instanceParent.rotation[1])) + instanceParent.coord[0], 
+        toReturn[1] * instanceParent.scale[1] + instanceParent.coord[1],
+        toReturn[2]* instanceParent.scale[2] * Math.sin(radOf(instanceParent.rotation[1])) + instanceParent.coord[2]];
         instanceParent = instanceParent.Pai;
 
     }
@@ -215,6 +225,7 @@ function instanceTrueCoord(instance){
 
 }
 
+//returns the actual scale of an instance in the world
 function instanceTrueScale(instance){
 
     let toReturn = [instance.scale[0], instance.scale[1], instance.scale[2]];
@@ -232,6 +243,7 @@ function instanceTrueScale(instance){
 
 }
 
+//returns the actual rotation of an instance in the world
 function instanceTrueRot(instance){
 
     let toReturn = [instance.rotation[0], instance.rotation[1], instance.rotation[2]];
@@ -820,8 +832,8 @@ function setup(shaders)
 
             this.stuckTimer -= deltaTime;
             if(this.stuckTimer <= 0){
-                this.speedX =  Math.cos(this.Pai.angle * Math.PI/180) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
-                this.speedZ =  Math.sin(this.Pai.angle * Math.PI/180) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
+                this.speedX =  Math.cos(radOf(this.Pai.angle)) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
+                this.speedZ =  Math.sin(radOf(this.Pai.angle)) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
                 instancesToFree.push(this);
             }
         }else{
@@ -943,9 +955,9 @@ function setup(shaders)
         let trueRot = instanceTrueRot(this);
 
         loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
-            [trueCoord[0] + Math.cos(trueRot[0] * Math.PI/180),
-            trueCoord[1] + Math.cos(trueRot[1] * Math.PI/180),
-            trueCoord[2] + Math.cos(trueRot[2] * Math.PI/180)],
+            [trueCoord[0] + Math.cos(radOf(trueRot[0])),
+            trueCoord[1] + Math.cos(radOf(trueRot[1])),
+            trueCoord[2] + Math.cos(radOf(trueRot[2]))],
             [0,1,0]));
 
         //multRotationX(trueRot[0]);
@@ -1098,8 +1110,8 @@ function setup(shaders)
         
         this.angle += (this.angleSpeedPerc) * helicopterMaxAngleSpeed * deltaTime;
         
-        this.coord[0] = Math.cos(this.angle * (Math.PI/180))  * this.distance;
-        this.coord[2] = Math.sin(this.angle * (Math.PI/180))* this.distance;
+        this.coord[0] = Math.cos(radOf(this.angle))  * this.distance;
+        this.coord[2] = Math.sin(radOf(this.angle))* this.distance;
         
         //this is so the helicopter faces the right side (looks forward)
         this.rotation[1] = -90 - this.angle;
