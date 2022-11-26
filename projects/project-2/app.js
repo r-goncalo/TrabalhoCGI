@@ -392,10 +392,10 @@ function setup(shaders)
 
     }
 
-    let globalFolder = gui.addFolder("global");
-    globalFolder.add(boxController, 'fallingSpeed', 0.01, 1, 0.01);
-    globalFolder.add(boxController, 'timeToLive', 100, 20000, 100);
-    globalFolder.add(boxController, 'timeToBeStuck', 100, 20000, 100);
+    let boxFolder = gui.addFolder("global");
+    boxFolder.add(boxController, 'fallingSpeed', 0.01, 1, 0.01);
+    boxFolder.add(boxController, 'timeToLive', 100, 20000, 100);
+    boxFolder.add(boxController, 'timeToBeStuck', 100, 20000, 100);
 
     gl = setupWebGL(canvas);
 
