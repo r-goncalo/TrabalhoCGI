@@ -214,9 +214,17 @@ function instanceTrueCoord(instance){
 
     while(instanceParent != undefined){
 
-        toReturn = [toReturn[0] * instanceParent.scale[0] * Math.cos(radOf(instanceParent.rotation[1])) + instanceParent.coord[0], 
+        toReturn = [ instanceParent.coord[0] +
+        toReturn[0] * instanceParent.scale[0] * Math.cos(radOf(instanceParent.rotation[1]))
+        + toReturn[2]* instanceParent.scale[2] * Math.cos(radOf(instanceParent.rotation[1])),
+
         toReturn[1] * instanceParent.scale[1] + instanceParent.coord[1],
-        toReturn[2]* instanceParent.scale[2] * Math.sin(radOf(instanceParent.rotation[1])) + instanceParent.coord[2]];
+
+        instanceParent.coord[2] +
+        toReturn[2] * instanceParent.scale[2] * Math.sin(radOf(instanceParent.rotation[1]))
+        + toReturn[0] * instanceParent.scale[0] * Math.sin(radOf(instanceParent.rotation[1]))];
+
+
         instanceParent = instanceParent.Pai;
 
     }
@@ -224,7 +232,6 @@ function instanceTrueCoord(instance){
     return toReturn;
 
 }
-
 //returns the actual scale of an instance in the world
 function instanceTrueScale(instance){
 
@@ -955,9 +962,9 @@ function setup(shaders)
         let trueRot = instanceTrueRot(this);
 
         loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
-            [trueCoord[0] + Math.cos(radOf(trueRot[0])),
-            trueCoord[1] + Math.cos(radOf(trueRot[1])),
-            trueCoord[2] + Math.cos(radOf(trueRot[2]))],
+            [trueCoord[0] + Math.cos(radOf(trueRot[1])),
+            trueCoord[1],
+            trueCoord[2] + Math.sin(radOf(trueRot[1]))],
             [0,1,0]));
 
         //multRotationX(trueRot[0]);
