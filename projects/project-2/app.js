@@ -1035,14 +1035,14 @@ function setup(shaders)
                 SPHERE.draw);
 
             let feet1 = addModeledInstanceSon("HelicopterFeet1",
-            [-1, -2, 0.2],
+            [-1, -1.6, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
             SPHERE.draw);
 
             let feet2 = addModeledInstanceSon("HelicopterFeet2",
-            [1, -2, 0.2],
+            [1, -1.6, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
@@ -1062,7 +1062,7 @@ function setup(shaders)
 
 
             let feet3 = addModeledInstanceSon("HelicopterFeet3",
-            [-1, -2, -0.2],
+            [-1, -1.6, -0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
@@ -1078,7 +1078,7 @@ function setup(shaders)
                 bar2.rotation[2] = 10;
 
             let feet4 = addModeledInstanceSon("HelicopterFeet4",
-            [1, -2, -0.2],
+            [1, -1.6, -0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
@@ -1188,7 +1188,7 @@ function setup(shaders)
     function putHelicopterOnGround(helicopterInstance){
 
         helicopterInstance.coord[1] = 0;
-        helicopterInstance.coord[1] = - instanceTrueCoord(helicopterInstance.filhos[2].filhos[0])[1];
+        helicopterInstance.coord[1] = - instanceTrueCoord(helicopterInstance.filhos[2].filhos[0])[1]+2.2;
 
     }
 
