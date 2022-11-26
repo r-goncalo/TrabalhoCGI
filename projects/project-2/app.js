@@ -382,6 +382,17 @@ function setup(shaders)
     axoFolder.add( axoController, 'Gama', 0, 360, 1 );
 
 
+
+    let globalController = {
+
+        boxFallingSpeed : 0.2,
+
+
+    }
+
+    let globalFolder = gui.addFolder("global");
+    globalFolder.add(globalController, 'boxFallingSpeed', 0.01, 1, 0.01);
+
     gl = setupWebGL(canvas);
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
@@ -795,6 +806,7 @@ function setup(shaders)
 
 
     }
+
     /*
         *****END OF SETUP BUILDINGS***
     */
@@ -829,8 +841,7 @@ function setup(shaders)
 
     let timeToLive = 1000;
     let timeToBeStuck= 2000;
-    let boxFallingSpeed = 0.2;
-    let boxDragMultiplier = 0.99;
+    let boxDragMultiplier = 0.9999;
     let boxHeightAboveGround = 0.5;
 
     function modelBox(){
@@ -846,15 +857,15 @@ function setup(shaders)
             this.stuckTimer -= deltaTime;
             if(this.stuckTimer <= 0){
                 
-                this.speedX =  Math.cos(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed * 20;
-                this.speedZ =  Math.sin(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed * 20;
+                this.speedX =  Math.cos(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
+                this.speedZ =  Math.sin(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
 
                 instancesToFree.push(this);
 
             }
         }else{
 
-            this.coord[1] = this.coord[1] - boxFallingSpeed * deltaTime;
+            this.coord[1] = this.coord[1] - globalController.boxFallingSpeed * deltaTime;
             if(this.coord[1] < boxHeightAboveGround * this.scale[1]){
 
                 this.coord[1] = boxHeightAboveGround * this.scale[1];
@@ -864,8 +875,9 @@ function setup(shaders)
                 this.coord[0] += this.speedX * deltaTime;
                 this.coord[2] += this.speedZ * deltaTime;
 
-                this.speedX *= boxDragMultiplier;
-                this.speedZ *= boxDragMultiplier;
+                this.speedX = this.speedX * boxDragMultiplier/(1 - deltaTime/1000);
+                this.speedZ = this.speedZ * boxDragMultiplier/(1 - deltaTime/1000);
+
 
             }
             this.liveTimer -= deltaTime;
