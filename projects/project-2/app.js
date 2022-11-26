@@ -383,15 +383,19 @@ function setup(shaders)
 
 
 
-    let globalController = {
+    let boxController = {
 
-        boxFallingSpeed : 0.2,
+        fallingSpeed : 0.2,
+        timeToLive : 5000,
+        timeToBeStuck : 2000
 
 
     }
 
     let globalFolder = gui.addFolder("global");
-    globalFolder.add(globalController, 'boxFallingSpeed', 0.01, 1, 0.01);
+    globalFolder.add(boxController, 'fallingSpeed', 0.01, 1, 0.01);
+    globalFolder.add(boxController, 'timeToLive', 100, 20000, 100);
+    globalFolder.add(boxController, 'timeToBeStuck', 100, 20000, 100);
 
     gl = setupWebGL(canvas);
 
@@ -839,8 +843,7 @@ function setup(shaders)
 
     */
 
-    let timeToLive = 1000;
-    let timeToBeStuck= 2000;
+
     let boxDragMultiplier = 0.9999;
     let boxHeightAboveGround = 0.5;
 
@@ -865,7 +868,7 @@ function setup(shaders)
             }
         }else{
 
-            this.coord[1] = this.coord[1] - globalController.boxFallingSpeed * deltaTime;
+            this.coord[1] = this.coord[1] - boxController.fallingSpeed * deltaTime;
             if(this.coord[1] < boxHeightAboveGround * this.scale[1]){
 
                 this.coord[1] = boxHeightAboveGround * this.scale[1];
@@ -901,8 +904,8 @@ function setup(shaders)
         animateBox);
 
     
-        boxInstance.stuckTimer = timeToBeStuck;
-        boxInstance.liveTimer = timeToLive;
+        boxInstance.stuckTimer = boxController.timeToBeStuck;
+        boxInstance.liveTimer = boxController.timeToLive;
     
 
     }
