@@ -43,7 +43,7 @@ let instancesToDelete = [];
 //instancesWithTheMethod react(event.key), to react when a key is pressed
 let reactiveInstances = [];
 
-
+//this is used for debuging
 function consoleloginstances(instanceArray){
 
     for(let i = 0; i <  instanceArray.length; i++){
@@ -88,6 +88,7 @@ function indexOfInstanceInArray(instanceToTest, instanceArray){
 }
 
 
+//this is used so no instance has the same name
 function generateInstanceName(newName){
 
     let toReturn = newName;
@@ -232,6 +233,7 @@ function instanceTrueCoord(instance){
     return toReturn;
 
 }
+
 //returns the actual scale of an instance in the world
 function instanceTrueScale(instance){
 
@@ -367,7 +369,13 @@ function setup(shaders)
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
 
+
+/*  
+        GUI SETUP
+*/
+
     const gui = new GUI();
+
 
     let axoController = {
 
@@ -408,6 +416,11 @@ function setup(shaders)
     let heliFolder = gui.addFolder("heliFolder");
     heliFolder.add(helicopterController, 'helicopterMaxAngleSpeed', 0.05, 2, 0.05);
 
+
+/*  
+        END OF GUI SETUP
+*/
+
     gl = setupWebGL(canvas);
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
@@ -423,15 +436,8 @@ function setup(shaders)
     });
 
 
-    //DO PROJETO 1
     window.addEventListener("keydown", function(event) {
         switch(event.key) {
-            //Descola
-            case "PageUp":
-                break;
-            //Volta para baixo
-            case "PageDown":
-                break;
             //tecla W - malha de arame
             case 'w':
                 currentDrawMode = 0;
@@ -477,7 +483,6 @@ function setup(shaders)
     })
 
 
-
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     SPHERE.init(gl);
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
@@ -503,8 +508,7 @@ function setup(shaders)
     
     window.requestAnimationFrame(render);
     
-    
-
+    //puts a color in the fragment shader
     function defineColor(colors){
 
         const solidColor = gl.getUniformLocation(program, "solidColor");
@@ -875,8 +879,8 @@ function setup(shaders)
     */
 
 
-    let boxDragMultiplier = 0.98;
-    let boxHeightAboveGround = 0.5;
+    let boxDragMultiplier = 0.98; // the percentage speed retained in each second
+    let boxHeightAboveGround = 0.5; // the height of half the box
 
     function modelBox(){
 
@@ -886,6 +890,7 @@ function setup(shaders)
 
     function animateBox(deltaTime){
 
+        //if stucked to parent
         if(this.stuckTimer > 0){
 
             this.stuckTimer -= deltaTime;
@@ -897,6 +902,8 @@ function setup(shaders)
                 instancesToFree.push(this);
 
             }
+
+        //if free
         }else{
 
             this.coord[1] = this.coord[1] - boxController.fallingSpeed * deltaTime;
@@ -924,6 +931,7 @@ function setup(shaders)
 
     }
 
+    //the parent will be where the box will be stuck
     function createBox(initialCoord, color, parentInstance){
 
         let boxInstance = addActiveInstanceSon("Box",
@@ -1008,6 +1016,7 @@ function setup(shaders)
     
 
 
+    //this is used for the first person in an helicopter
     function helicopterCamera(){ 
 
         mProjection = perspective(90, aspect, 1, VP_DISTANCE * 3);
@@ -1025,6 +1034,7 @@ function setup(shaders)
     }
 
 
+    //this creates a base helicopter model
     function createHelicopter(initialCoord, colorData){
 
         let helicoinstance = addModeledInstance("Helicopter",
@@ -1154,25 +1164,29 @@ function setup(shaders)
 
     }
 
-    let hHeliceRotSpeed = 20;
-    let hHeliceRotSpeedPerChange = 0.05;
-    let hHeliceRotSpeedPerDrag = 0.001;
-    let maxHelicopterH = 400;
-    let helicopterYSpeed = 1;
+    let hHeliceRotSpeed = 20; //helice max rotation speed
+    let hHeliceRotSpeedPerChange = 0.05; //percentage changed on input
+    let hHeliceRotSpeedPerDrag = 0.001; //percentage of speed being lost when on the ground
+    let maxHelicopterH = 400; //max helicopter height
+    let helicopterYSpeed = 1; //helicopter speed on the Y axis
     let helicopterAnglePercentageChange = 0.005;
     let helicopterAnglePercentageDrag = 0.00001;
     let helicopterMaxInclination = -30;
 
+    //animates a rotating helicopter
     function animateRotatingHelicopter(deltaTime){
         
         this.angle += (this.angleSpeedPerc) * helicopterController.helicopterMaxAngleSpeed * deltaTime;
         
+        //puts him on the correct position
+
         this.coord[0] = Math.cos(radOf(this.angle))  * this.distance;
         this.coord[2] = Math.sin(radOf(this.angle))* this.distance;
         
         //this is so the helicopter faces the right side (looks forward)
         this.rotation[1] = -90 - this.angle;
 
+        //this is so the helicopter tilts
         this.rotation[2] = helicopterMaxInclination * this.angleSpeedPerc;
 
         //the helicopter suffers from drag, and will slow down
@@ -1192,7 +1206,7 @@ function setup(shaders)
 
     }
 
-
+    //a rotating helicopter reaction to input
     function helicopterReact(keyReceived){
 
         switch(keyReceived){
@@ -1389,22 +1403,6 @@ function setup(shaders)
         putHelicopterOnGround(helicoinstance);
 
 
-/* Another helicopter that can be set up
-        helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
-        scaleInstanceByValue(helicoinstance, 10);
-        putHelicopterOnGround(helicoinstance);
-
-        helicoinstance = createAutoRotMovHelicopter(200, 30, { "Box" : '<', "Rot" : 'z', "Up" : "x", "Down" : "c"}, {"Body" : [17, 30, 75], "Spike" : [255, 1, 8], "Helice" : [1, 205, 1], "Base" : [145, 20, 145], "Box" : [100, 100, 200]});        
-        scaleInstanceByValue(helicoinstance, 5);
-        putHelicopterOnGround(helicoinstance);
-
-*/
-
-//        helicoinstance = createHelicopter([0, 50, 0], {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});
-//        scaleInstanceByValue(helicoinstance, 30);
-
-
-
         let groundInstance = createGround();
         putGroundBellowZero(groundInstance);
 
@@ -1446,16 +1444,13 @@ function setup(shaders)
     }
 
     setupInstances();
-    console.log(instanceTree);
+    console.log(instanceTree); //this is so we have a clear view of the initial state of the scene
 
     /*
         *****END OF SETUP INITIAL INSTANCES***
     */
 
-   
-
-        
-
+    //this is the renderization of the instances
     function recursiveModelConstruction(instanceNodes){
 
         for(let i = 0; i < instanceNodes.length; i++){
@@ -1469,8 +1464,9 @@ function setup(shaders)
 
                 multScale(instanceNodes[i].scale);
                 pushMatrix();
-                    instanceNodes[i].model();
+                    instanceNodes[i].model(); //all instances should have a model function so they can scale and rotate and move child instances
 
+                    //if an instance has an actual model
                     if(instanceNodes[i].color != undefined){
                         uploadModelView();
                         defineColor(instanceNodes[i].color);
@@ -1506,8 +1502,6 @@ function setup(shaders)
         
         gl.useProgram(program);
         
-        //ModelView Transf -> Proj Transf -> Perspective div -> Clip -> Projection along Z -> Viewport Transf
-
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
@@ -1516,9 +1510,12 @@ function setup(shaders)
 
 
         //renderization
-        referencial();
+        //referencial(); this can be uncommented for debugging purposes
+
+        //this renders the instances on the tree
         recursiveModelConstruction(instanceTree);
 
+        //at ea
         for(let i = 0; i < activeInstances.length; i++){
 
             activeInstances[i].animate(deltaTime);
