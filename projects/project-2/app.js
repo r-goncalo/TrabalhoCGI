@@ -268,6 +268,7 @@ function instanceTrueRot(instance){
 
 }
 
+//makes an existent instance responsive
 function makeInstanceResponsive(instance, reactFun){
 
     instance.react = reactFun;
@@ -275,6 +276,16 @@ function makeInstanceResponsive(instance, reactFun){
 
 }
 
+//makes an existent instance responsive
+function makeInstanceModeled(instance, modelFun, colorArray, drawFun){
+
+    instance.model = modelFun;
+    instance.color = colorArray;
+    instance.draw = drawFun;
+
+}
+
+//makes an existent instance active
 function makeInstanceActive(instance, animateFun){
 
     instance.animate = animateFun;
@@ -282,6 +293,7 @@ function makeInstanceActive(instance, animateFun){
 
 }
 
+//frees an instance from its parent(s)
 function freeInstance(instanceToFree){
 
 
@@ -303,6 +315,8 @@ function freeInstance(instanceToFree){
 
 }
 
+
+//deletes an instance from the system
 function deleteInstance(instanceToDelete){
 
     let instanceToDeleteParent = instanceToDelete.Pai;
@@ -334,7 +348,7 @@ function deleteInstance(instanceToDelete){
 
 }
 
-
+//scales an instance by a single value
 function scaleInstanceByValue(instance, value){
 
         instance.scale = 
@@ -355,7 +369,7 @@ function setup(shaders)
 
     const gui = new GUI();
 
-    let effectController = {
+    let axoController = {
 
         Teta : 0,
         Gama : 0
@@ -363,9 +377,10 @@ function setup(shaders)
 
     };
 
-    let folder = gui.addFolder("axonometric view");
-    folder.add( effectController, 'Teta', 0, 360, 1 );
-    folder.add( effectController, 'Gama', 0, 360, 1 );
+    let axoFolder = gui.addFolder("axonometric view");
+    axoFolder.add( axoController, 'Teta', 0, 360, 1 );
+    axoFolder.add( axoController, 'Gama', 0, 360, 1 );
+
 
     gl = setupWebGL(canvas);
 
@@ -1094,10 +1109,12 @@ function setup(shaders)
             feet3.rotation[2] = -10;
             feet4.rotation[2] = 10;
 
-            addCameraInstanceSon("HelicopterCamera",
+            let hCamera = addCameraInstanceSon("HelicopterCamera",
             [2.6, 0.5, 0],
             helicoinstance.name,
             helicopterCamera);
+
+            makeInstanceModeled(hCamera, modelBox, [0, 0, 0], CUBE.draw);
 
         return helicoinstance;
 
@@ -1250,11 +1267,11 @@ function setup(shaders)
             currentCamera = index;
             if(cameras[currentCamera].name == "AxonometricCamera"){
 
-                gui.show();
+                axoFolder.show();
 
             }else{
 
-                gui.hide();
+                axoFolder.hide();
             
             }
 
@@ -1273,8 +1290,8 @@ function setup(shaders)
 
             
             loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
-            multRotationX(effectController.Gama);
-            multRotationY(effectController.Teta);
+            multRotationX(axoController.Gama);
+            multRotationY(axoController.Teta);
             
 
         }
