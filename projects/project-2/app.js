@@ -816,7 +816,6 @@ function setup(shaders)
     
         }
     
-    
         function setupBuildings(){
     
             let buildInstance = createBuilding([-100, 0, -150], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 10);
@@ -866,17 +865,6 @@ function setup(shaders)
 
     /*
         *****SETUP HELICOPTER***
-
-        An Helicopter (the main body) also as:
-            distance : int
-            speed : int
-
-        It also has a camera
-
-        The color data is
-            "Body" : [r, g, b]
-            "Spike" : [r, g, b]
-            "Helice" : [r, g, b]
 
     */
 
@@ -946,7 +934,6 @@ function setup(shaders)
         CUBE.draw,
         animateBox);
 
-    
         boxInstance.stuckTimer = boxController.timeToBeStuck;
         boxInstance.liveTimer = boxController.timeToLive;
     
@@ -1391,6 +1378,7 @@ function setup(shaders)
         */ 
        
             
+
     function setupInstances(){
 
         setupCameras();
@@ -1401,7 +1389,7 @@ function setup(shaders)
         putHelicopterOnGround(helicoinstance);
 
 
-/*
+/* Another helicopter that can be set up
         helicoinstance = createAutoRotMovHelicopter(150, 0, { "Box" : 'b', "Rot" : 'v', "Up" : "u", "Down" : "h"}, {"Body" : [17, 191, 75], "Spike" : [255, 189, 8], "Helice" : [54, 205, 255], "Base" : [145, 145, 145], "Box" : [100, 150, 200]});        
         scaleInstanceByValue(helicoinstance, 10);
         putHelicopterOnGround(helicoinstance);
@@ -1420,8 +1408,8 @@ function setup(shaders)
         let groundInstance = createGround();
         putGroundBellowZero(groundInstance);
 
-        let helipad = createHelipad();
 
+        //Creates Horizontal Streets
         let x = 250;
         let z = -250;
         let y = 0;
@@ -1437,6 +1425,7 @@ function setup(shaders)
             }
         }
 
+        //Creates Vertical Streets
         x = 250;
         z = -250;
         for(let i = 0; i<4;i++){
@@ -1452,6 +1441,7 @@ function setup(shaders)
         }
 
         setupBuildings();
+        createHelipad();
 
     }
 
