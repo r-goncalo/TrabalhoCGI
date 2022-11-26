@@ -240,9 +240,9 @@ function instanceTrueRot(instance){
 
     while(instanceParent != undefined){
 
+        //toReturn = [toReturn[0] + instanceParent.rotation[0]*instanceParent.rotation[2]-90, toReturn[1] +15, toReturn[2]+instanceParent.rotation[0]*instanceParent.rotation[2]-90];
         toReturn = [toReturn[0] + instanceParent.rotation[0], toReturn[1] + instanceParent.rotation[1], toReturn[2] + instanceParent.rotation[2]];
         instanceParent = instanceParent.Pai;
-
     }
 
     return toReturn;
@@ -934,6 +934,11 @@ function setup(shaders)
         }
     
 
+        function degrees_to_radians(degrees)
+        {
+          var pi = Math.PI;
+          return degrees * (pi/180);
+        }
 
     function helicopterCamera(){ 
 
@@ -942,11 +947,17 @@ function setup(shaders)
         let trueCoord = instanceTrueCoord(this);
         let trueRot = instanceTrueRot(this);
 
-        loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
+        loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]],
+             [trueCoord[0] - 25*Math.sin(degrees_to_radians(trueRot[0]-90)), 
+             trueCoord[1]+10, 
+             trueCoord[2]-25*Math.cos(degrees_to_radians(trueRot[2]-90))], 
+             [0,1,0]));
+
+            /* 
             [trueCoord[0] + Math.cos(trueRot[0] * Math.PI/180),
             trueCoord[1] + Math.cos(trueRot[1] * Math.PI/180),
             trueCoord[2] + Math.cos(trueRot[2] * Math.PI/180)],
-            [0,1,0]));
+            [0,1,0]));*/
 
         //multRotationX(trueRot[0]);
         //multRotationY(trueRot[1]);
@@ -962,7 +973,6 @@ function setup(shaders)
         modelMainBody,
         colorData["Body"],
         SPHERE.draw);
-
 
             let hTail = addModeledInstanceSon("HelicopterTail",
             [-4, 0, 0],
@@ -1023,14 +1033,14 @@ function setup(shaders)
                 SPHERE.draw);
 
             let feet1 = addModeledInstanceSon("HelicopterFeet1",
-            [-1, -2, 0.2],
+            [-1, -1.6, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
             SPHERE.draw);
 
             let feet2 = addModeledInstanceSon("HelicopterFeet2",
-            [1, -2, 0.2],
+            [1, -1.6, 0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
@@ -1050,7 +1060,7 @@ function setup(shaders)
 
 
             let feet3 = addModeledInstanceSon("HelicopterFeet3",
-            [-1, -2, -0.2],
+            [-1, -1.6, -0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
@@ -1066,7 +1076,7 @@ function setup(shaders)
                 bar2.rotation[2] = 10;
 
             let feet4 = addModeledInstanceSon("HelicopterFeet4",
-            [1, -2, -0.2],
+            [1, -1.6, -0.2],
             helicoinstance.name,
             modelHelicopterBase,
             colorData["Base"],
@@ -1176,14 +1186,14 @@ function setup(shaders)
     function putHelicopterOnGround(helicopterInstance){
 
         helicopterInstance.coord[1] = 0;
-        helicopterInstance.coord[1] = - instanceTrueCoord(helicopterInstance.filhos[2].filhos[0])[1];
+        helicopterInstance.coord[1] = -instanceTrueCoord(helicopterInstance.filhos[2].filhos[0])[1]+2.2;
 
     }
 
     function createAutoRotMovHelicopter(distance, initialAngle, keyData, colorData){
 
 
-        let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle), 0, distance * Math.sin(initialAngle)], colorData);
+        let helicopterInstance = createHelicopter([distance * Math.cos(initialAngle),0, distance * Math.sin(initialAngle)], colorData);
 
 
         helicopterInstance.onGround = true;
