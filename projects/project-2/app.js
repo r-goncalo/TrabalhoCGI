@@ -710,7 +710,7 @@ function setup(shaders)
 
     }
 
-    function modelBuildingWindow(){
+    function modelBuildingBalcony(){
 
         multScale([7, 1, 11]);
 
@@ -735,20 +735,19 @@ function setup(shaders)
         colorData["Body"],
         CUBE.draw);
 
-            let buildingInstanceCeiling = addModeledInstanceSon("BuildingCeiling",
+            addModeledInstanceSon("BuildingCeiling",
             [0, 2.5, 0],
             buildingBodyInstance.name,
             modelBuildingCeiling,
             colorData["Ceiling"],
             CUBE.draw);
 
-            //Hardcoded
             if(i!=0 && i!=numberOfBlock-1){
-                let window = addModeledInstanceSon("BuildingWindow",
+                addModeledInstanceSon("BuildingBalcony",
                 [0, 2, -2],
                 buildingBodyInstance.name,
-                modelBuildingWindow,
-                colorData["Window"],
+                modelBuildingBalcony,
+                colorData["Balcony"],
                 CUBE.draw);
         }
 
@@ -774,33 +773,28 @@ function setup(shaders)
 
     function setupBuildings(){
 
-        let buildInstance = createBuilding([50, 0, -50], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
+        let buildInstance = createBuilding([50, 0, -50], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 2);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([100, 0, -350], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 13);
+        buildInstance = createBuilding([100, 0, -350], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 13);
         scaleInstanceByValue(buildInstance, 2);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([350, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 6);
+        buildInstance = createBuilding([350, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 6);
         scaleInstanceByValue(buildInstance, 5);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([-350, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 10);
+        buildInstance = createBuilding([-350, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 10);
         scaleInstanceByValue(buildInstance, 10);
         putBuildingOnGround(buildInstance);
 
-        buildInstance = createBuilding([-150, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Window" : [500, 500, 500]}, 20);
+        buildInstance = createBuilding([-150, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 20);
         scaleInstanceByValue(buildInstance, 3);
         putBuildingOnGround(buildInstance);
 
 
     }
-
-
-
-        
-
     /*
         *****END OF SETUP BUILDINGS***
     */
