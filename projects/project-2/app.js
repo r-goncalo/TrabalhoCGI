@@ -718,108 +718,140 @@ function setup(shaders)
         *****SETUP BUILDINGS***
     */
 
-    let buildingHeight = 2.5;
+        let buildingHeight = 2.5;
 
 
 
-    function modelBuildingBody(){
+        function modelBuildingBody(){
+    
+            multScale([10, 5, 10]);
+    
+    
+        }
+    
+        function modelBuildingCeiling(){
+    
+            multScale([11, 0.5, 11]);
+    
+    
+        }
+    
+        function modelBuildingBalcony(){
+    
+            multScale([7, 3, 11]);
+        }
+    
+        function modelBuildingWindow(){
+    
+            multScale([2, 2, 0.2]);
+        }
 
-        multScale([10, 5, 10]);
-
-
-    }
-
-    function modelBuildingCeiling(){
-
-        multScale([11, 0.5, 11]);
-
-
-    }
-
-    function modelBuildingBalcony(){
-
-        multScale([7, 1, 11]);
-
-
-    }
-
-    function putBuildingOnGround(buildingInstance){
-
-        buildingInstance.coord[1] = buildingHeight * buildingInstance.scale[1];
-
-
-    }
-
-
-    function createBuildingBody(buildingInstanceParent, relCoord, colorData, i, numberOfBlock){
-
-
-        let buildingBodyInstance = addModeledInstanceSon("BuildingBody",
-        relCoord,
-        buildingInstanceParent.name,
-        modelBuildingBody,
-        colorData["Body"],
-        CUBE.draw);
-
-            addModeledInstanceSon("BuildingCeiling",
-            [0, 2.5, 0],
-            buildingBodyInstance.name,
-            modelBuildingCeiling,
-            colorData["Ceiling"],
+        function putBuildingOnGround(buildingInstance){
+    
+            buildingInstance.coord[1] = buildingHeight * buildingInstance.scale[1];
+    
+    
+        }
+    
+    
+        function createBuildingBody(buildingInstanceParent, relCoord, colorData, i){
+    
+    
+            let buildingBodyInstance = addModeledInstanceSon("BuildingBody",
+            relCoord,
+            buildingInstanceParent.name,
+            modelBuildingBody,
+            colorData["Body"],
             CUBE.draw);
-
-            if(i!=0 && i!=numberOfBlock-1){
-                addModeledInstanceSon("BuildingBalcony",
-                [0, 2, -2],
+    
+                addModeledInstanceSon("BuildingCeiling",
+                [0, 2.5, 0],
                 buildingBodyInstance.name,
-                modelBuildingBalcony,
-                colorData["Balcony"],
+                modelBuildingCeiling,
+                colorData["Ceiling"],
                 CUBE.draw);
+    
+                addModeledInstanceSon("BuildingWindow1",
+                [2, 0.5, 5],
+                buildingBodyInstance.name,
+                modelBuildingWindow,
+                colorData["Window"],
+                CUBE.draw
+                );
+    
+                addModeledInstanceSon("BuildingWindow2",
+                [-2, 0.5, 5],
+                buildingBodyInstance.name,
+                modelBuildingWindow,
+                colorData["Window"],
+                CUBE.draw
+                );
+
+
+                if(i!=0){
+                    addModeledInstanceSon("BuildingBalcony",
+                    [0, 0, -2],
+                    buildingBodyInstance.name,
+                    modelBuildingBalcony,
+                    colorData["Balcony"],
+                    CUBE.draw);
+            }
+    
+            return buildingBodyInstance;
+    
         }
-
-        return buildingBodyInstance;
-
-    }
-        
-
-    function createBuilding(initialCoord, colorData, numberOfBlocks){
-
-        let buildingInstance = addInstance("Building",  initialCoord);
-
-        for(let i = 0; i < numberOfBlocks; i++){
-
-            createBuildingBody(buildingInstance, [0, i * 4, 0], colorData, i, numberOfBlocks);
-
+            
+    
+        function createBuilding(initialCoord, colorData, numberOfBlocks){
+    
+            let buildingInstance = addInstance("Building",  initialCoord);
+    
+            for(let i = 0; i < numberOfBlocks; i++){
+    
+                createBuildingBody(buildingInstance, [0, i * 4, 0], colorData, i);
+    
+            }
+    
+            return buildingInstance;
+    
         }
+    
+    
+        function setupBuildings(){
+    
+            let buildInstance = createBuilding([-100, 0, -150], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 10);
+            scaleInstanceByValue(buildInstance, 2);
+            putBuildingOnGround(buildInstance);
+    
+            buildInstance = createBuilding([100, 0, -350], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 13);
+            scaleInstanceByValue(buildInstance, 2);
+            putBuildingOnGround(buildInstance);
+    
+            buildInstance = createBuilding([350, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 6);
+            scaleInstanceByValue(buildInstance, 5);
+            putBuildingOnGround(buildInstance);
+    
+            buildInstance = createBuilding([-350, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 10);
+            scaleInstanceByValue(buildInstance, 10);
+            putBuildingOnGround(buildInstance);
+    
+            buildInstance = createBuilding([-150, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 20);
+            scaleInstanceByValue(buildInstance, 3);
+            putBuildingOnGround(buildInstance);
 
-        return buildingInstance;
+            buildInstance = createBuilding([-100, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 14);
+            scaleInstanceByValue(buildInstance, 3);
+            putBuildingOnGround(buildInstance);
 
-    }
+            buildInstance = createBuilding([150, 0, 150], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 5);
+            scaleInstanceByValue(buildInstance, 3);
+            putBuildingOnGround(buildInstance);
 
-
-    function setupBuildings(){
-
-        let buildInstance = createBuilding([50, 0, -50], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 10);
-        scaleInstanceByValue(buildInstance, 2);
-        putBuildingOnGround(buildInstance);
-
-        buildInstance = createBuilding([100, 0, -350], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 13);
-        scaleInstanceByValue(buildInstance, 2);
-        putBuildingOnGround(buildInstance);
-
-        buildInstance = createBuilding([350, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 6);
-        scaleInstanceByValue(buildInstance, 5);
-        putBuildingOnGround(buildInstance);
-
-        buildInstance = createBuilding([-350, 0, 120], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 10);
-        scaleInstanceByValue(buildInstance, 10);
-        putBuildingOnGround(buildInstance);
-
-        buildInstance = createBuilding([-150, 0, 400], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500]}, 20);
-        scaleInstanceByValue(buildInstance, 3);
-        putBuildingOnGround(buildInstance);
-
-
+            buildInstance = createBuilding([150, 0, 350], {"Body" : [163, 126, 24], "Ceiling" : [183, 146, 48], "Balcony" : [500, 500, 500], "Window" : [0, 200, 500]}, 9);
+            scaleInstanceByValue(buildInstance, 3);
+            putBuildingOnGround(buildInstance);
+    
+    
     }
 
     /*
