@@ -212,8 +212,6 @@ function instanceTrueCoord(instance){
     
     let instanceParent = instance.Pai;
 
-    //console.log(toReturn);
-
     while(instanceParent != undefined){
 
         toReturn = [ instanceParent.coord[0] +
@@ -230,8 +228,6 @@ function instanceTrueCoord(instance){
         instanceParent = instanceParent.Pai;
 
     }
-
-    //console.log(toReturn);
 
     return toReturn;
 
@@ -440,9 +436,6 @@ function setup(shaders)
                 break;
             case '-': //cycle through all available cameras
                 cycleCameras();
-                console.log("Current camera: " + currentCamera);
-                console.log("all the cameras: ");
-                console.log(cameras);
                 break;
             
 
@@ -843,7 +836,7 @@ function setup(shaders)
     let timeToLive = 1000;
     let timeToBeStuck= 2000;
     let boxFallingSpeed = 0.2;
-    let boxDragMultiplier = 0.98;
+    let boxDragMultiplier = 0.99;
     let boxHeightAboveGround = 0.5;
 
     function modelBox(){
@@ -858,9 +851,12 @@ function setup(shaders)
 
             this.stuckTimer -= deltaTime;
             if(this.stuckTimer <= 0){
-                this.speedX =  Math.cos(radOf(this.Pai.angle)) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
-                this.speedZ =  Math.sin(radOf(this.Pai.angle)) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
+                
+                this.speedX =  Math.cos(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed * 20;
+                this.speedZ =  Math.sin(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed * 20;
+
                 instancesToFree.push(this);
+
             }
         }else{
 
@@ -874,8 +870,8 @@ function setup(shaders)
                 this.coord[0] += this.speedX * deltaTime;
                 this.coord[2] += this.speedZ * deltaTime;
 
-                this.speedX *= boxDragMultiplier * deltaTime;
-                this.speedZ *= boxDragMultiplier * deltaTime;
+                this.speedX *= boxDragMultiplier;
+                this.speedZ *= boxDragMultiplier;
 
             }
             this.liveTimer -= deltaTime;
@@ -1165,6 +1161,7 @@ function setup(shaders)
 
             case this.boxKey:
                 if(!this.onGround)
+                    //creates a box, children of this helicopter, below it
                     createBox([0, this.filhos[2].coord[1] + this.filhos[2].filhos[0].coord[1], 0], this.boxColor, this);
                 break;
             case this.moveRotKey:
@@ -1273,8 +1270,6 @@ function setup(shaders)
                 axoFolder.hide();
             
             }
-
-            console.log(cameras[currentCamera].name);
 
 
         }
@@ -1389,14 +1384,12 @@ function setup(shaders)
                 z -= -250;
                 x=250;
             }
-            console.log(coord);
         }
 
         x = 250;
         z = -250;
         for(let i = 0; i<4;i++){
             let coord = [x,y,z];
-            console.log(coord);
             createStreets(90, coord);
             if(i%2==0){
                 x = x-500;
@@ -1405,7 +1398,6 @@ function setup(shaders)
                 z -= -500;
                 x=250;
             }
-            console.log(coord);
         }
 
         setupBuildings();
