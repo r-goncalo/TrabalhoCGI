@@ -392,10 +392,21 @@ function setup(shaders)
 
     }
 
-    let boxFolder = gui.addFolder("global");
+    let boxFolder = gui.addFolder("boxFolder");
     boxFolder.add(boxController, 'fallingSpeed', 0.01, 1, 0.01);
     boxFolder.add(boxController, 'timeToLive', 100, 20000, 100);
     boxFolder.add(boxController, 'timeToBeStuck', 100, 20000, 100);
+
+    
+    let helicopterController = {
+
+        helicopterMaxAngleSpeed : 0.2
+
+
+    }
+
+    let heliFolder = gui.addFolder("heliFolder");
+    heliFolder.add(helicopterController, 'helicopterMaxAngleSpeed', 0.05, 2, 0.05);
 
     gl = setupWebGL(canvas);
 
@@ -844,7 +855,7 @@ function setup(shaders)
     */
 
 
-    let boxDragMultiplier = 0.9999;
+    let boxDragMultiplier = 0.98;
     let boxHeightAboveGround = 0.5;
 
     function modelBox(){
@@ -860,8 +871,8 @@ function setup(shaders)
             this.stuckTimer -= deltaTime;
             if(this.stuckTimer <= 0){
                 
-                this.speedX =  Math.cos(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
-                this.speedZ =  Math.sin(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterMaxAngleSpeed;
+                this.speedX =  Math.cos(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterController.helicopterMaxAngleSpeed;
+                this.speedZ =  Math.sin(radOf(-this.Pai.rotation[1])) * this.Pai.angleSpeedPerc * helicopterController.helicopterMaxAngleSpeed;
 
                 instancesToFree.push(this);
 
@@ -1130,13 +1141,12 @@ function setup(shaders)
     let maxHelicopterH = 400;
     let helicopterYSpeed = 1;
     let helicopterAnglePercentageChange = 0.005;
-    let helicopterMaxAngleSpeed = 0.2;
     let helicopterAnglePercentageDrag = 0.00001;
     let helicopterMaxInclination = -30;
 
     function animateRotatingHelicopter(deltaTime){
         
-        this.angle += (this.angleSpeedPerc) * helicopterMaxAngleSpeed * deltaTime;
+        this.angle += (this.angleSpeedPerc) * helicopterController.helicopterMaxAngleSpeed * deltaTime;
         
         this.coord[0] = Math.cos(radOf(this.angle))  * this.distance;
         this.coord[2] = Math.sin(radOf(this.angle))* this.distance;
