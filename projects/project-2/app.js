@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult, perspective, rotate } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation } from "../../libs/stack.js";
+import { ortho, lookAt, flatten, mult, perspective, rotate, rotateY } from "../../libs/MV.js";
+import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation, multMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CYLINDER from '../../libs/objects/cylinder.js';
@@ -223,7 +223,7 @@ function instanceTrueScale(instance){
 
     while(instanceParent != undefined){
 
-        toReturn = [toReturn[0] * instanceParent.scale[0], toReturn[1] * instanceParent.scale[1], toReturn[2]* instanceParent.scale[2]];
+        toReturn = [toReturn[0] * instanceParent.scale[0]* Math.cos(instanceParent.rotation[1]), toReturn[1] * instanceParent.scale[1], toReturn[2]* instanceParent.scale[2]* Math.sin(instanceParent.rotation[1])];
         instanceParent = instanceParent.Pai;
 
     }
@@ -264,7 +264,6 @@ function makeInstanceActive(instance, animateFun){
 }
 
 function freeInstance(instanceToFree){
-
 
     let newCoord = instanceTrueCoord(instanceToFree);
     let newScale = instanceTrueScale(instanceToFree);
@@ -754,7 +753,6 @@ function setup(shaders)
         }
 
 
-
     }
 
     function createBox(initialCoord, color, parentInstance){
@@ -849,14 +847,14 @@ function setup(shaders)
         let trueCoord = instanceTrueCoord(this);
         let trueRot = instanceTrueRot(this);
 
+        loadMatrix(rotateY(-90-trueRot[1]));
+
         loadMatrix(lookAt([trueCoord[0], trueCoord[1], trueCoord[2]], 
-            [trueCoord[0] + Math.cos(trueRot[0] * Math.PI/180),
-            trueCoord[1] + Math.cos(trueRot[1] * Math.PI/180),
-            trueCoord[2] + Math.cos(trueRot[2] * Math.PI/180)],
+            [trueCoord[0], trueCoord[1], trueCoord[2] + 1], 
             [0,1,0]));
 
         //multRotationX(trueRot[0]);
-        //multRotationY(trueRot[1]);
+        
         //multRotationZ(trueRot[2]);
 
     }
