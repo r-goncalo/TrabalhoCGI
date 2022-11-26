@@ -371,8 +371,8 @@ function setup(shaders)
 
     let axoController = {
 
-        Teta : 0,
-        Gama : 0
+        Teta : 20,
+        Gama : 20
 
 
     };
