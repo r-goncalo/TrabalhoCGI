@@ -8,6 +8,7 @@ import * as CUBE from '../../libs/objects/cube.js';
 
 import { GUI } from '../../libs/dat.gui.module.js';
 
+
 let gl;
 const VP_DISTANCE = 500; //500 meters far
 let time;
@@ -423,7 +424,7 @@ function setup(shaders)
 
     gl = setupWebGL(canvas);
 
-    let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
+    let program = buildProgramFromSources(gl, shaders["shader1.vert"], shaders["shader1.frag"]);
 
     let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
 
@@ -1544,6 +1545,5 @@ function setup(shaders)
     }
 }
 
-
-const urls = ["shader.vert", "shader.frag"];
+const urls = ["shader1.vert", "shader1.frag"];
 loadShadersFromURLS(urls).then(shaders => setup(shaders))
