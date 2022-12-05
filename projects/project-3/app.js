@@ -6,13 +6,22 @@ import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CYLINDER from '../../libs/objects/cylinder.js';
 import * as CUBE from '../../libs/objects/cube.js';
 
-import { GUI } from '../../libs/dat.gui.module.js';
+import { color, GUI } from '../../libs/dat.gui.module.js';
 
 
 let gl;
-const VP_DISTANCE = 500; //500 meters far
-let time;
-let speed = 1;  //  /60.0;
+const VP_DISTANCE = 5;
+
+
+let colors = {
+
+    BLACK : [0, 0, 0],
+    BROWN : [255, 128, 0]
+
+
+}
+
+
 
 
 function setup(shaders)
@@ -99,8 +108,7 @@ function setup(shaders)
     }
 
 
-    //this will define the color of the sky
-    gl.clearColor(56, 56, 56, 1.0);
+    gl.clearColor(56/255, 56/255, 56/255, 1.0);
     CUBE.init(gl);
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
     
@@ -114,20 +122,68 @@ function setup(shaders)
     }
 
 
+/**
+ * *********RENDERING STUFF*******
+ */
+
+    //puts a color in the fragment shader
+    function defineColor(colors){
+
+        const solidColor = gl.getUniformLocation(program, "solidColor");
+        gl.uniform3f(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
 
 
-    function render(timestamp)
+    }
+
+
+
+/**
+ * ********SCENE*********
+ */
+
+
+function renderGround(){
+
+
+    multScale([10, 1, 10]);
+    uploadModelView();
+    defineColor(colors.BROWN); 
+    CUBE.draw(gl, program, gl.TRIANGLES);
+
+
+}
+
+
+
+function renderScene(){
+
+
+    renderGround();
+
+
+
+}
+
+/**
+ * ********END OF SCENE*********
+ */
+
+
+    function renderCamera(){
+
+
+        loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
+        multRotationX(axoController.Gama);
+        multRotationY(axoController.Teta);
+    
+
+    }
+
+
+
+    function render()
     {
 
-        let deltaTime = 0; // the change of time since the last calculation
-
-        if(time === undefined) {        // First time
-            time = timestamp*speed;
-        } 
-        else {                          // All other times
-            deltaTime = timestamp*speed - time;
-            time = timestamp*speed;
-        }
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
@@ -135,6 +191,10 @@ function setup(shaders)
         
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
+
+
+        renderCamera();
+        renderScene();
 
 
         window.requestAnimationFrame(render);
