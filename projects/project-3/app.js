@@ -5,8 +5,11 @@ import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, mult
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CYLINDER from '../../libs/objects/cylinder.js';
 import * as CUBE from '../../libs/objects/cube.js';
+import * as BUNNY from '../../libs/objects/bunny.js';
+import * as PYRAMID from  '../../libs/objects/pyramid.js';
+import * as TORUS from  '../../libs/objects/torus.js';
 
-import { color, GUI } from '../../libs/dat.gui.module.js';
+import {GUI} from '../../libs/dat.gui.module.js';
 
 
 let gl;
@@ -16,7 +19,13 @@ const VP_DISTANCE = 5;
 let colors = {
 
     BLACK : [0, 0, 0],
-    BROWN : [255, 128, 0]
+    WHITE : [255, 255, 255],
+    BROWN : [255, 128, 0],
+    BRIGHT_RED : [255, 0, 0],
+    BRIGHT_GREEN : [0, 255, 0],
+    BRIGHT_BLUE : [0, 0, 255],
+    PINK : [255, 102, 204]
+
 
 
 }
@@ -84,8 +93,9 @@ function setup(shaders)
 
     gl.clearColor(56/255, 56/255, 56/255, 1.0);
     CUBE.init(gl);
-    gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
-    
+    SPHERE.init(gl);
+    CYLINDER.init(gl);
+    BUNNY.init(gl);
     window.requestAnimationFrame(render);
 
     
@@ -119,7 +129,7 @@ function setup(shaders)
 function renderGround(){
 
 
-    multScale([10, 1, 10]);
+    multScale([10, 0.5, 10]);
     uploadModelView();
     defineColor(colors.BROWN); 
     CUBE.draw(gl, program, gl.TRIANGLES);
@@ -127,12 +137,35 @@ function renderGround(){
 
 }
 
+function renderCube(){
+
+    multScale([2, 2, 2]);
+    uploadModelView();
+    defineColor(colors.PINK); 
+    CUBE.draw(gl, program, gl.TRIANGLES);
+
+}
+
+
+
+function renderCylinder(){}
+function renderSphere(){}
+function renderBunny(){}
+
+function renderPrimitives(){
+
+    renderCube();
+
+}
 
 
 function renderScene(){
 
 
-    renderGround();
+    pushMatrix();
+        renderGround();
+    popMatrix();
+        renderPrimitives();
 
 
 
