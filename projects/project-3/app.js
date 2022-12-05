@@ -52,32 +52,6 @@ function setup(shaders)
 
 
 
-    let boxController = {
-
-        fallingSpeed : 0.2,
-        timeToLive : 5000,
-        timeToBeStuck : 2000
-
-
-    }
-
-    let boxFolder = gui.addFolder("boxFolder");
-    boxFolder.add(boxController, 'fallingSpeed', 0.01, 1, 0.01);
-    boxFolder.add(boxController, 'timeToLive', 100, 20000, 100);
-    boxFolder.add(boxController, 'timeToBeStuck', 100, 20000, 100);
-
-    
-    let helicopterController = {
-
-        helicopterMaxAngleSpeed : 0.2
-
-
-    }
-
-    let heliFolder = gui.addFolder("heliFolder");
-    heliFolder.add(helicopterController, 'helicopterMaxAngleSpeed', 0.05, 2, 0.05);
-
-
 /*  
         END OF GUI SETUP
 */
