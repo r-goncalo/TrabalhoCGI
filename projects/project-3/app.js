@@ -26,11 +26,7 @@ let colors = {
     BRIGHT_BLUE : [0, 0, 255],
     PINK : [255, 102, 204]
 
-
-
 }
-
-
 
 
 function setup(shaders)
@@ -55,10 +51,21 @@ function setup(shaders)
 
     };
 
+    let zoomController = {
+        fovy : 0,
+        near : 0,
+        far: 0
+    }
+
     let axoFolder = gui.addFolder("axonometric view");
     axoFolder.add( axoController, 'Teta', 0, 360, 1 );
     axoFolder.add( axoController, 'Gama', 0, 360, 1 );
 
+
+    let zoomFolder = gui.addFolder("camera");
+    zoomFolder.add(zoomController, 'fovy', 0, 100, 0.1);
+    zoomFolder.add(zoomController, 'near', 0, 100, 0.1 );
+    zoomFolder.add(zoomController, 'far', 1, 40, 0.1);
 
 
 /*  
@@ -140,21 +147,41 @@ function renderGround(){
 function renderCube(){
 
     multScale([2, 2, 2]);
+    multTranslation([0,0,0]);
     uploadModelView();
     defineColor(colors.PINK); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 }
 
-
-
-function renderCylinder(){}
-function renderSphere(){}
-function renderBunny(){}
+function renderCylinder(){
+    multScale([0.1, 0.1, 0.1]);
+    multTranslation([-7,0.2,0])
+    uploadModelView();
+    defineColor(colors.BRIGHT_BLUE);
+    CYLINDER.draw(gl, program, gl.TRIANGLES);
+}
+function renderSphere(){
+    multScale([1, 1, 1]);
+    multTranslation([5,0,0])
+    uploadModelView();
+    defineColor(colors.BLACK);
+    SPHERE.draw(gl, program, gl.TRIANGLES);
+}
+function renderBunny(){
+    multScale([5, 5, 5]);
+    multTranslation([0.3,0,0])
+    uploadModelView();
+    defineColor(colors.BRIGHT_GREEN);
+    BUNNY.draw(gl, program, gl.TRIANGLES);
+}
 
 function renderPrimitives(){
 
     renderCube();
+    renderBunny();
+    renderCylinder();
+    renderSphere();
 
 }
 
@@ -182,6 +209,7 @@ function renderScene(){
         loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
         multRotationX(axoController.Gama);
         multRotationY(axoController.Teta);
+        //multTranslation(zoomController.far);
     
 
     }
