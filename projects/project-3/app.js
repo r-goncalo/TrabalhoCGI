@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate, vec3 } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation, multMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -47,25 +47,49 @@ function setup(shaders)
 
         Teta : 20,
         Gama : 20
-
-
     };
 
-    let zoomController = {
-        fovy : 0,
-        near : 0,
-        far: 0
+    let camera = {
+        eye: vex3(0,5,10),
+        at: vec3(0,0,0),
+        up: vec3(0,1,0),
+        fovy : 45,
+        near : 0.1,
+        far: 40
     }
+
+    let lights = [
+        {
+            ambient: [50,50,50],
+            diffuse: [60, 60, 60],
+            specular: [200,200,200],
+            position: [0.0, 0.0, 10.0, 1.0],
+            axis: [0.0, 0.0, -1.0],
+            aperture: 10.0,
+            cutoff: 10
+        },
+        {
+            ambient: [500, 0.0,0.0],
+            diffuse: [50, 0.0, 0.0],
+            specular: [150,0.0,0.0],
+            position: [-20.0, 5.0, 5.0, 1.0],
+            axis: [-20.0, 5.0, 5.0],
+            aperture: 180.0,
+            cutoff: -1
+        }
+    ]
 
     let axoFolder = gui.addFolder("axonometric view");
     axoFolder.add( axoController, 'Teta', 0, 360, 1 );
     axoFolder.add( axoController, 'Gama', 0, 360, 1 );
 
 
-    let zoomFolder = gui.addFolder("camera");
-    zoomFolder.add(zoomController, 'fovy', 0, 100, 0.1);
-    zoomFolder.add(zoomController, 'near', 0, 100, 0.1 );
-    zoomFolder.add(zoomController, 'far', 1, 40, 0.1);
+    let cameraFolder = gui.addFolder("camera");
+    cameraFolder.add(camera, 'fovy', 1, 100, 1);
+    cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
+    cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
+
+
 
 
 /*  
