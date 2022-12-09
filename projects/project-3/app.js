@@ -50,7 +50,7 @@ function setup(shaders)
     };
 
     let camera = {
-        eye: vex3(0,5,10),
+        eye: vec3(0,5,10),
         at: vec3(0,0,0),
         up: vec3(0,1,0),
         fovy : 45,
