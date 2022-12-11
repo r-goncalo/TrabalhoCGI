@@ -36,65 +36,11 @@ function setup(shaders)
     let aspect = canvas.width / canvas.height;
 
 
-/*  
-        GUI SETUP
-*/
-
-    const gui = new GUI();
-
-
-    let axoController = {
-
-        Teta : 20,
-        Gama : 20
-    };
-
-    let camera = {
-        eye: vec3(0,5,10),
-        at: vec3(0,0,0),
-        up: vec3(0,1,0),
-        fovy : 45,
-        near : 0.1,
-        far: 40
-    }
-
-    let lights = [
-        {
-            ambient: [50,50,50],
-            diffuse: [60, 60, 60],
-            specular: [200,200,200],
-            position: [0.0, 0.0, 10.0, 1.0],
-            axis: [0.0, 0.0, -1.0],
-            aperture: 10.0,
-            cutoff: 10
-        },
-        {
-            ambient: [500, 0.0,0.0],
-            diffuse: [50, 0.0, 0.0],
-            specular: [150,0.0,0.0],
-            position: [-20.0, 5.0, 5.0, 1.0],
-            axis: [-20.0, 5.0, 5.0],
-            aperture: 180.0,
-            cutoff: -1
-        }
-    ]
-
-    let axoFolder = gui.addFolder("axonometric view");
-    axoFolder.add( axoController, 'Teta', 0, 360, 1 );
-    axoFolder.add( axoController, 'Gama', 0, 360, 1 );
-
-
-    let cameraFolder = gui.addFolder("camera");
-    cameraFolder.add(camera, 'fovy', 1, 100, 1);
-    cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
-    cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
-
-
-
-
-/*  
-        END OF GUI SETUP
-*/
+/**
+ * 
+ * BASIC GL STUFF
+ * 
+ */
 
     gl = setupWebGL(canvas);
 
@@ -136,6 +82,87 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
     }
 
+
+/**
+ * 
+ * END OF BASIC GL STUFF
+ * 
+ */
+
+/*  
+        GUI SETUP
+*/
+
+const gui = new GUI();
+
+
+let optionsController = {
+
+    "Backface culling" : true,
+    "Depth buffer" : false
+
+};
+
+let optionsFolder = gui.addFolder("options");
+optionsFolder.add( optionsController, 'Backface culling');
+optionsFolder.add( optionsController, 'Depth buffer');
+
+gl.cullFace(gl.BACK | gl.FRONT);
+
+let axoController = {
+
+    Teta : 20,
+    Gama : 20
+};
+
+let camera = {
+    eye: vec3(0,5,10),
+    at: vec3(0,0,0),
+    up: vec3(0,1,0),
+    fovy : 45,
+    near : 0.1,
+    far: 40
+}
+
+let lights = [
+    {
+        ambient: [50,50,50],
+        diffuse: [60, 60, 60],
+        specular: [200,200,200],
+        position: [0.0, 0.0, 10.0, 1.0],
+        axis: [0.0, 0.0, -1.0],
+        aperture: 10.0,
+        cutoff: 10
+    },
+    {
+        ambient: [500, 0.0,0.0],
+        diffuse: [50, 0.0, 0.0],
+        specular: [150,0.0,0.0],
+        position: [-20.0, 5.0, 5.0, 1.0],
+        axis: [-20.0, 5.0, 5.0],
+        aperture: 180.0,
+        cutoff: -1
+    }
+]
+
+
+
+let axoFolder = gui.addFolder("axonometric view");
+axoFolder.add( axoController, 'Teta', 0, 360, 1 );
+axoFolder.add( axoController, 'Gama', 0, 360, 1 );
+
+
+let cameraFolder = gui.addFolder("camera");
+cameraFolder.add(camera, 'fovy', 1, 100, 1);
+cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
+cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
+
+
+
+
+/*  
+    END OF GUI SETUP
+*/
 
 /**
  * *********RENDERING STUFF*******
@@ -251,6 +278,7 @@ function renderScene(){
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
+        //gl.enable(gl.CULL_FACE)
 
         renderCamera();
         renderScene();
