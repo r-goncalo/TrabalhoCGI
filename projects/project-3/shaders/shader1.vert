@@ -34,9 +34,14 @@ void main() {
     vec3 posC = (mModelView * vPosition).xyz;
     vec3 fLight;
     if(lightPosition.w == 0.0){
-        fLight = normalize((mViewNormals*lightPosition).xyz);}
-    else{
-        fLight = normalize((mView*lightPosition).xyz - posC);}
+
+        fLight = normalize((mViewNormals*lightPosition).xyz);
+        
+        }else{
+
+        fLight = normalize((mView*lightPosition).xyz - posC);
+        
+        }
 
     vec3 V = vec3(0, 0, 1); // Projeção paralela...
     
