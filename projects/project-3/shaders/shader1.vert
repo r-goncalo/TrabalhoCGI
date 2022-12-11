@@ -1,12 +1,15 @@
-uniform mat4 mModelView;
-uniform mat4 mProjection;
+uniform mat4 mModelView; //model-view transformation
+uniform mat4 mNormals; //model-view transformation for normals
+uniform mat4 mView; //view transformation (for points)
+uniform mViewNormals; //view transformation (for vectors)
+uniform mProjection; //projection matrix
 
-attribute vec4 vPosition;
-attribute vec3 vNormal;
+attribute vec4 vPosition; //vertex position in modelling coordinates
+attribute vec3 vNormal; //vertex normal in modelling coordinates
 
 varying vec3 fNormal;
 
-/*
+
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
 const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
@@ -22,16 +25,16 @@ vec3 ambientColor = lightAmb * materialAmb;
 vec3 diffuseColor = lightDif * materialDif;
 vec3 specularColor = lightSpe * materialSpe;
 
-*/
+
 void main() {
 
-/*
+
     vec3 posC = (mModelView * vPosition).xyz;
     vec3 L;
     if(lightPosition.w == 0.0){
         L = normalize((mViewNormals*lightPosition).xyz);}
     else{
-        L = normalize((mView*lightPosition).xyz - posC;}
+        L = normalize((mView*lightPosition).xyz - posC);}
 
     vec3 V = vec3(0,0,1); // Projeção paralela...
     vec3 H = normalize(L+V);
@@ -44,7 +47,7 @@ void main() {
     if( dot(L,N) < 0.0 ) {
     specular = vec3(0.0, 0.0, 0.0);
     }
-*/
+
     gl_Position = mProjection * mModelView * vPosition;
 
 }
