@@ -38,16 +38,21 @@ void main() {
     else{
         fLight = normalize((mView*lightPosition).xyz - posC);}
 
-    vec3 V = vec3(0,0,1); // Projeção paralela...
-    vec3 H = normalize(L+V);
+    vec3 V = vec3( 0, 0, 1); // Projeção paralela...
+    
+    vec3 H = normalize(fLight + V);
     vec3 N = normalize( (mNormals * vNormal).xyz);
+
     float diffuseFactor = max( dot(fLight,N), 0.0 );
     vec3 diffuse = diffuseFactor * diffuseColor;
+
     float specularFactor = pow(max(dot(N,H), 0.0), shininess);
     vec3 specular = specularFactor * specularColor;
 
     if( dot(fLight,N) < 0.0 ) {
-    specular = vec3(0.0, 0.0, 0.0);
+
+        specular = vec3(0.0, 0.0, 0.0);
+        
     }
 
     gl_Position = mProjection * mModelView * vPosition;
