@@ -1,12 +1,12 @@
 uniform mat4 mModelView;
 uniform mat4 mProjection;
 
-uniform vec3 solidColor;
-
 attribute vec4 vPosition;
 attribute vec3 vNormal;
 
 varying vec3 fNormal;
+
+/*
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
 const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
@@ -22,8 +22,10 @@ vec3 ambientColor = lightAmb * materialAmb;
 vec3 diffuseColor = lightDif * materialDif;
 vec3 specularColor = lightSpe * materialSpe;
 
-
+*/
 void main() {
+
+/*
     vec3 posC = (mModelView * vPosition).xyz;
     vec3 L;
     if(lightPosition.w == 0.0){
@@ -42,7 +44,7 @@ void main() {
     if( dot(L,N) < 0.0 ) {
     specular = vec3(0.0, 0.0, 0.0);
     }
+*/
     gl_Position = mProjection * mModelView * vPosition;
 
-    fColor = vec4(ambientColor + diffuse + specular, 1.0);
 }

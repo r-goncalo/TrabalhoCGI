@@ -3,8 +3,10 @@ precision highp float;
 varying vec3 fNormal;
 varying vec3 fPosition;
 
-const int MAX_LIGHTS = 8;
+uniform vec3 solidColor;
 
+const int MAX_LIGHTS = 8;
+/*
 //For 1 light
 const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
 const vec3 materialDif = vec3(1.0, 0.0, 0.0);
@@ -18,6 +20,8 @@ vec3 diffuseColor = lightDif * materialDif;
 vec3 specularColor = lightSpe * materialSpe;
 varying vec3 fLight;
 varying vec3 fViewer;
+
+/*
 
 /* For more than 1 light
 struct LightInfo {
@@ -47,6 +51,8 @@ uniform MaterialInfo uMaterial;        // The material of the object being drawn
 */
 
 void main() {
+
+    /*
     vec3 L = normalize(fLight);
     vec3 V = normalize(fViewer);
     vec3 N = normalize(fNormal);
@@ -58,5 +64,7 @@ void main() {
     if( dot(L,N) < 0.0 ) {
     specular = vec3(0.0, 0.0, 0.0);
     }
-    gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
+    */
+    //gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
+    gl_FragColor = vec4(solidColor, 1.0);
 }
