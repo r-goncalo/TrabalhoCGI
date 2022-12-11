@@ -278,11 +278,6 @@ function renderScene(){
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        if(optionsController["Backface culling"]) 
-            gl.cullFace(gl.BACK);
-        else   
-            gl.cullFace(gl.FRONT);
-
         renderCamera();
         renderScene();
 
