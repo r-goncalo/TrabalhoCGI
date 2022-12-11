@@ -278,7 +278,8 @@ function renderScene(){
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        //gl.enable(gl.CULL_FACE)
+        if(optionsController["Backface culling"]) 
+            gl.enable(gl.CULL_FACE)
 
         renderCamera();
         renderScene();
