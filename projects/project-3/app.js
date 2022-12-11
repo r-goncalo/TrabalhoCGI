@@ -165,7 +165,7 @@ cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
 */
 
 /**
- * *********RENDERING STUFF*******
+ * ********Shader Stuff*********
  */
 
     //puts a color in the fragment shader
@@ -176,6 +176,37 @@ cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
 
 
     }
+
+
+    //puts a color in the fragment shader
+    function updateShaders(){
+
+        const vmModelView = gl.getUniformLocation(program, "mModelView");
+        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+
+        const vmNormals = gl.getUniformLocation(program, "mNormals");
+        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+
+        const vmView = gl.getUniformLocation(program, "mView");
+        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+
+        const vmViewNormals = gl.getUniformLocation(program, "mViewNormals");
+        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+
+        const vmProjection = gl.getUniformLocation(program, "mProjection");
+        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+
+    }
+
+
+
+
+
+/**
+ * ********End of Shader  Stuff*********
+ */
+
+
 
 
 
@@ -252,6 +283,7 @@ function renderScene(){
 /**
  * ********END OF SCENE*********
  */
+
 
 
     function renderCamera(){
