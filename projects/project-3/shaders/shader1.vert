@@ -1,4 +1,3 @@
-precision highp float;
 
 
 uniform mat4 mModelView; //model-view transformation
@@ -35,11 +34,30 @@ vec3 diffuseColor = lightDif * materialDif;
 vec3 specularColor = lightSpe * materialSpe;
 
 
+vec4 multMatVec(mat4 mat, vec4 vec){
+
+    vec4 toReturn;
+
+    for(int i = 0; i < 4; i++){
+
+
+
+
+    }
+
+    return toReturn;
+
+}
+
+
 void main() {
 
-
+    //the vertex position after the transformations
     vec3 posC = (mModelView * vPosition).xyz;
-    vec3 fLight;
+
+    //the normal of the vector in the surface
+    fNormal = normalize( (mNormals * vNormal).xyz);
+
     if(lightPosition.w == 0.0){
 
         fLight = normalize((mViewNormals*lightPosition).xyz);
@@ -53,7 +71,6 @@ void main() {
     vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
     
     vec3 H = normalize(fLight + fViewer);
-    vec3 N = normalize( (mNormals * (vNormal).xyz);
 
     float diffuseFactor = max( dot(fLight, N), 0.0 );
     vec3 diffuse = diffuseFactor * diffuseColor;
