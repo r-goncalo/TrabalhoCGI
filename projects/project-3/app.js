@@ -75,13 +75,6 @@ function setup(shaders)
     BUNNY.init(gl);
     window.requestAnimationFrame(render);
 
-    
-
-    function uploadModelView()
-    {
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
-    }
-
 
 /**
  * 
@@ -219,7 +212,7 @@ function renderGround(){
 
 
     multScale([10, 0.5, 10]);
-    uploadModelView();
+    updateShaders();
     defineColor(colors.BROWN); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
@@ -230,7 +223,7 @@ function renderCube(){
 
     multScale([2, 2, 2]);
     multTranslation([0,0,0]);
-    uploadModelView();
+    updateShaders();
     defineColor(colors.PINK); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
@@ -239,21 +232,21 @@ function renderCube(){
 function renderCylinder(){
     multScale([0.1, 0.1, 0.1]);
     multTranslation([-7,0.2,0])
-    uploadModelView();
+    updateShaders();
     defineColor(colors.BRIGHT_BLUE);
     CYLINDER.draw(gl, program, gl.TRIANGLES);
 }
 function renderSphere(){
     multScale([1, 1, 1]);
     multTranslation([5,0,0])
-    uploadModelView();
+    updateShaders();
     defineColor(colors.BLACK);
     SPHERE.draw(gl, program, gl.TRIANGLES);
 }
 function renderBunny(){
     multScale([5, 5, 5]);
     multTranslation([0.3,0,0])
-    uploadModelView();
+    updateShaders();
     defineColor(colors.BRIGHT_GREEN);
     BUNNY.draw(gl, program, gl.TRIANGLES);
 }
