@@ -7,7 +7,9 @@ uniform mProjection; //projection matrix
 attribute vec4 vPosition; //vertex position in modelling coordinates
 attribute vec3 vNormal; //vertex normal in modelling coordinates
 
-varying vec3 fNormal;
+varying vec3 fNormal; //normal vector in camera space
+varying vec3 fLight; //Light vector in camera space
+varying vec3 fViewer; //view vector in camera space
 
 
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
