@@ -107,7 +107,7 @@ let optionsFolder = gui.addFolder("options");
 optionsFolder.add( optionsController, 'Backface culling');
 optionsFolder.add( optionsController, 'Depth buffer');
 
-gl.cullFace(gl.BACK | gl.FRONT);
+gl.enable(gl.CULL_FACE)
 
 let axoController = {
 
@@ -279,7 +279,9 @@ function renderScene(){
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
         if(optionsController["Backface culling"]) 
-            gl.enable(gl.CULL_FACE)
+            gl.cullFace(gl.BACK);
+        else   
+            gl.cullFace(gl.FRONT);
 
         renderCamera();
         renderScene();
