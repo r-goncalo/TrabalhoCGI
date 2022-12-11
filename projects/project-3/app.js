@@ -175,7 +175,7 @@ cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
     function updateShaders(){
 
         const vmModelView = gl.getUniformLocation(program, "mModelView");
-        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+        gl.uniformMatrix4fv(vmModelView, flatten(modelView()));
 
         const vmNormals = gl.getUniformLocation(program, "mNormals");
         gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);

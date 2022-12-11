@@ -50,10 +50,10 @@ void main() {
         
         }
 
-    vec3 V = vec3(0, 0, 1); // Projeção paralela...
+    vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
     
-    vec3 H = normalize(fLight + V);
-    vec3 N = normalize( (mNormals * vNormal).xyz);
+    vec3 H = normalize(fLight + fViewer);
+    vec3 N = normalize( (mNormals * (vNormal).xyz);
 
     float diffuseFactor = max( dot(fLight, N), 0.0 );
     vec3 diffuse = diffuseFactor * diffuseColor;
