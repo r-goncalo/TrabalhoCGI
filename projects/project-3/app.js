@@ -119,6 +119,16 @@ let axoController = {
     Gama : 20
 };
 
+
+let cameraController = {};
+
+let eyeController = {};
+
+let upController = {};
+
+let lightsController = {};
+
+
 let lights = [
     {
         ambient: [50,50,50],
@@ -308,8 +318,8 @@ function renderScene(){
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
 
         loadMatrix(mView);
-        multRotationX(axoController.Gama);
-        multRotationY(axoController.Teta);
+        //multRotationX(axoController.Gama);
+        //multRotationY(axoController.Teta);
         //multTranslation(zoomController.far);
     
 
@@ -324,10 +334,7 @@ function renderScene(){
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
         gl.useProgram(program);
-        
-
-
-
+    
         renderCamera();
         renderScene();
 
