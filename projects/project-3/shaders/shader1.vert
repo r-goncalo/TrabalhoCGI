@@ -8,7 +8,7 @@ uniform mat4 mProjection; //projection matrix
 
 //this attributes are used by object libraries (like cube.js)
 attribute vec4 vPosition; //vertex position in modelling coordinates
-attribute vec3 vNormal; //vertex normal in modelling coordinates
+attribute vec4 vNormal; //vertex normal in modelling coordinates
 
 varying vec3 fNormal; //normal vector in camera space
 varying vec3 fLight; //Light vector in camera space
