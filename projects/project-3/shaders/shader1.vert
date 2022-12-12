@@ -5,9 +5,10 @@ varying vec4 fColor;
 
 uniform mat4 mModelView; //model-view transformation
 uniform mat4 mNormals; //model-view transformation for normals
+uniform mat4 mProjection; //projection matrix
 uniform mat4 mView; //view transformation (for points)
 uniform mat4 mViewNormals; //view transformation (for vectors)
-uniform mat4 mProjection; //projection matrix
+
 
 //this attributes are used by object libraries (like cube.js)
 attribute vec4 vPosition; //vertex position in modelling coordinates
@@ -21,11 +22,18 @@ varying vec3 fViewer; //view vector in camera space
 //debuging light:
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
+/*
+uniform vec3 materialAmb;
+uniform vec3 materialDif;
+uniform vec3 materialSpe;
+uniform float shininess;
+*/
 
 const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
 const vec3 materialDif = vec3(1.0, 0.0, 0.0);
 const vec3 materialSpe = vec3(1.0, 1.0, 1.0);
 const float shininess = 6.0;
+
 
 const vec3 lightAmb = vec3(0.2, 0.2, 0.2);
 const vec3 lightDif = vec3(0.7, 0.7, 0.7);
@@ -47,7 +55,7 @@ void main() {
 
     if(lightPosition.w == 0.0){
 
-        fLight = normalize((mViewNormals*lightPosition).xyz);
+        fLight = normalize((mViewNormals * lightPosition).xyz);
         
     }else{
 
@@ -73,6 +81,6 @@ void main() {
 
     gl_Position = mProjection * mModelView * vPosition;
 
-    fColor = vec4((ambientColor + diffuse + specular) * solidColor, 1.0);
+    fColor = vec4(ambientColor + diffuse + specular, 1.0);
 
 }

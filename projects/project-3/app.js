@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate, vec3 } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate, vec3, normalMatrix } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation, multMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -16,17 +16,6 @@ let gl;
 const VP_DISTANCE = 5;
 
 
-let colors = {
-
-    BLACK : [0, 0, 0],
-    WHITE : [255, 255, 255],
-    BROWN : [255, 128, 0],
-    BRIGHT_RED : [255, 0, 0],
-    BRIGHT_GREEN : [0, 255, 0],
-    BRIGHT_BLUE : [0, 0, 255],
-    PINK : [255, 102, 204]
-
-}
 
 
 function setup(shaders)
@@ -34,6 +23,27 @@ function setup(shaders)
     
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
+
+/**
+ * 
+ * CAMERAS INFORMATION
+ * 
+ */
+
+ let camera = {
+    eye: vec3(0,5,10),
+    at: vec3(0,0,0),
+    up: vec3(0,1,0),
+    fovy : 45,
+    near : 0.1,
+    far: 40
+};
+
+/**
+ * 
+ * END OF CAMERAS INFORMATION
+ * 
+ */
 
 
 /**
@@ -46,7 +56,8 @@ function setup(shaders)
 
     let program = buildProgramFromSources(gl, shaders["shader1.vert"], shaders["shader1.frag"]);
 
-    let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
+    //let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
+    let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -64,7 +75,7 @@ function setup(shaders)
         aspect = canvas.width / canvas.height;
 
         gl.viewport(0,0,canvas.width, canvas.height);
-        mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
+        let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
     }
 
 
@@ -107,15 +118,6 @@ let axoController = {
     Teta : 20,
     Gama : 20
 };
-
-let camera = {
-    eye: vec3(0,5,10),
-    at: vec3(0,0,0),
-    up: vec3(0,1,0),
-    fovy : 45,
-    near : 0.1,
-    far: 40
-}
 
 let lights = [
     {
@@ -160,35 +162,43 @@ cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
 /**
  * ********Shader Stuff*********
  */
+/*
 
-    //puts a color in the fragment shader
-    function defineColor(colors){
+    let materials = {
 
-        const solidColor = gl.getUniformLocation(program, "solidColor");
-        gl.uniform3f(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
-
+        BLUE : {materialAmb : vec3(1.0, 0.0, 0.0), materialDif : vec3(1.0, 0.0, 0.0), materialSpe : vec3(1.0, 0.0, 0.0), shininess : 6.0}
 
     }
 
+    function defineMaterial(material){
 
-    //puts a color in the fragment shader
-    function updateShaders(){
+        uniform vec3 materialAmb;
+        uniform vec3 materialDif;
+        uniform vec3 materialSpe;
+        uniform float shininess;
 
         const vmModelView = gl.getUniformLocation(program, "mModelView");
         gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
-/*
-        const vmNormals = gl.getUniformLocation(program, "mNormals");
-        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
 
-        const vmView = gl.getUniformLocation(program, "mView");
-        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+        const vmModelView = gl.getUniformLocation(program, "mModelView");
+        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
 
-        const vmViewNormals = gl.getUniformLocation(program, "mViewNormals");
-        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+        const vmModelView = gl.getUniformLocation(program, "mModelView");
+        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
 
-        const vmProjection = gl.getUniformLocation(program, "mProjection");
-        gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
+    }
+
 */
+
+    //puts a color in the fragment shader
+    function updateModelView(){
+
+        const vmModelView = gl.getUniformLocation(program, "mModelView");
+        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
+
+        const vmNormals = gl.getUniformLocation(program, "mNormals");
+        gl.uniformMatrix4fv(vmModelView, false, flatten(normalMatrix(modelView())));
+
     }
 
 
@@ -212,8 +222,8 @@ function renderGround(){
 
 
     multScale([10, 0.5, 10]);
-    updateShaders();
-    defineColor(colors.BROWN); 
+    updateModelView();
+    //defineMaterial(materials.BROWN); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 
@@ -223,8 +233,8 @@ function renderCube(){
 
     multScale([1, 1, 1]);
     multTranslation([0,0,0]);
-    updateShaders();
-    defineColor(colors.PINK); 
+    updateModelView();
+    //defineMaterial(materials.PINK); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 }
@@ -232,22 +242,24 @@ function renderCube(){
 function renderCylinder(){
     multScale([0.1, 0.1, 0.1]);
     multTranslation([-7,0.2,0])
-    updateShaders();
-    defineColor(colors.BRIGHT_BLUE);
+    updateModelView();
+    //defineMaterial(materials.BRIGHT_BLUE);
     CYLINDER.draw(gl, program, gl.TRIANGLES);
 }
+
 function renderSphere(){
     multScale([1, 1, 1]);
     multTranslation([5,0,0])
-    updateShaders();
-    defineColor(colors.BLACK);
+    updateModelView();
+    //defineMaterial(materials.BLACK);
     SPHERE.draw(gl, program, gl.TRIANGLES);
 }
+
 function renderBunny(){
     multScale([5, 5, 5]);
     multTranslation([0.3,0,0])
-    updateShaders();
-    defineColor(colors.BRIGHT_GREEN);
+    updateModelView();
+    //defineMaterial(materials.BRIGHT_GREEN);
     BUNNY.draw(gl, program, gl.TRIANGLES);
 }
 
@@ -287,8 +299,15 @@ function renderScene(){
 
     function renderCamera(){
 
+        mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        loadMatrix(lookAt([0, 0, VP_DISTANCE], [0, 0, 0], [0,1,0]));
+        let mView = lookAt(camera.eye, camera.at, camera.up);
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mView"), false, flatten(mView));
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
+
+        loadMatrix(mView);
         multRotationX(axoController.Gama);
         multRotationY(axoController.Teta);
         //multTranslation(zoomController.far);
@@ -307,7 +326,7 @@ function renderScene(){
         gl.useProgram(program);
         
 
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
+
 
         renderCamera();
         renderScene();
