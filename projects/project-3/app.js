@@ -175,8 +175,8 @@ cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
     function updateShaders(){
 
         const vmModelView = gl.getUniformLocation(program, "mModelView");
-        gl.uniformMatrix4fv(vmModelView, flatten(modelView()));
-
+        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
+/*
         const vmNormals = gl.getUniformLocation(program, "mNormals");
         gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
 
@@ -188,7 +188,7 @@ cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
 
         const vmProjection = gl.getUniformLocation(program, "mProjection");
         gl.uniformMatrix4fv(solidColor, colors[0]/255, colors[1]/255, colors[2]/255);
-
+*/
     }
 
 
@@ -253,9 +253,15 @@ function renderBunny(){
 
 function renderPrimitives(){
 
-    renderCube();
-    renderBunny();
-    renderCylinder();
+    pushMatrix();
+        renderCube();
+    popMatrix();
+    pushMatrix();
+        renderBunny();
+    popMatrix();
+    pushMatrix();
+        renderCylinder();
+    popMatrix();
     renderSphere();
 
 }
