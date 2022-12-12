@@ -23,22 +23,6 @@ function setup(shaders)
     
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
-
-/**
- * 
- * CAMERAS INFORMATION
- * 
- */
-
- let camera = {
-    eye: vec3(0,5,10),
-    at: vec3(0,0,0),
-    up: vec3(0,1,0),
-    fovy : 45,
-    near : 0.1,
-    far: 40
-};
-
 /**
  * 
  * END OF CAMERAS INFORMATION
@@ -56,27 +40,6 @@ function setup(shaders)
 
     let program = buildProgramFromSources(gl, shaders["shader1.vert"], shaders["shader1.frag"]);
 
-    //let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
-    let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
-
-    resize_canvas();
-    window.addEventListener("resize", resize_canvas);
-    window.addEventListener("resize", function(event) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        gl.viewport(0,0,canvas.width, canvas.height);
-    });
-
-    function resize_canvas(event)
-    {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        aspect = canvas.width / canvas.height;
-
-        gl.viewport(0,0,canvas.width, canvas.height);
-        let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
-    }
 
 
     gl.clearColor(56/255, 56/255, 56/255, 1.0);
@@ -107,24 +70,41 @@ let optionsController = {
 
 };
 
-let optionsFolder = gui.addFolder("options");
+const optionsFolder = gui.addFolder("options");
 optionsFolder.add( optionsController, 'Backface culling');
 optionsFolder.add( optionsController, 'Depth buffer');
 
-gl.enable(gl.CULL_FACE)
+//gl.enable(gl.CULL_FACE);
 
-let axoController = {
-
-    Teta : 20,
-    Gama : 20
+let camera = {
+    eye: vec3(0,5,10),
+    at: vec3(0,0,0),
+    up: vec3(0,1,0),
+    fovy : 45,
+    near : 0.1,
+    far: 40
 };
 
 
-let cameraController = {};
+let cameraFolder = gui.addFolder("camera");
+cameraFolder.add(camera, 'fovy', 1, 100, 1);
+cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
+cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
 
-let eyeController = {};
+const eyeFolder = gui.addFolder("eye");
+eyeFolder.add(camera.eye, 0).step(0.05).name("x");
+eyeFolder.add(camera.eye, 1).step(0.05).name("y");
+eyeFolder.add(camera.eye, 2).step(0.05).name("z");
 
-let upController = {};
+const atFolder = gui.addFolder("At");
+atFolder.add(camera.at, 0).step(0.05).name("x");
+atFolder.add(camera.at, 1).step(0.05).name("y");
+atFolder.add(camera.at, 2).step(0.05).name("z");
+
+const upFolder = gui.addFolder("Up");
+upFolder.add(camera.up, 0).step(0.05).name("x");
+upFolder.add(camera.up, 1).step(0.05).name("y");
+upFolder.add(camera.up, 2).step(0.05).name("z");
 
 let lightsController = {};
 
@@ -151,23 +131,42 @@ let lights = [
 ]
 
 
-
-let axoFolder = gui.addFolder("axonometric view");
-axoFolder.add( axoController, 'Teta', 0, 360, 1 );
-axoFolder.add( axoController, 'Gama', 0, 360, 1 );
-
-
-let cameraFolder = gui.addFolder("camera");
-cameraFolder.add(camera, 'fovy', 1, 100, 1);
-cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
-cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
-
-
-
-
 /*  
     END OF GUI SETUP
 */
+
+/**
+ * 
+ * RESIZE STUFF
+ * 
+ */
+    //let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
+    let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
+
+    resize_canvas();
+    window.addEventListener("resize", resize_canvas);
+    window.addEventListener("resize", function(event) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        gl.viewport(0,0,canvas.width, canvas.height);
+    });
+
+    function resize_canvas(event)
+    {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        aspect = canvas.width / canvas.height;
+
+        gl.viewport(0,0,canvas.width, canvas.height);
+        let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
+    }
+
+    /**
+     * 
+     * RESIZE STUFF
+     * 
+     */
 
 /**
  * ********Shader Stuff*********
