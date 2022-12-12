@@ -221,7 +221,7 @@ function renderGround(){
 
 function renderCube(){
 
-    multScale([2, 2, 2]);
+    multScale([1, 1, 1]);
     multTranslation([0,0,0]);
     updateShaders();
     defineColor(colors.PINK); 
@@ -262,7 +262,7 @@ function renderPrimitives(){
     pushMatrix();
         renderCylinder();
     popMatrix();
-    renderSphere();
+        renderSphere();
 
 }
 

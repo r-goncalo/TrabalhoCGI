@@ -6,6 +6,10 @@ varying vec3 fPosition;
 uniform vec3 solidColor;
 
 const int MAX_LIGHTS = 8;
+
+varying vec4 fColor;
+
+
 /*
 //For 1 light
 const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
@@ -66,5 +70,6 @@ void main() {
     }
     */
     //gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
-    gl_FragColor = vec4(solidColor, 1.0);
+    //gl_FragColor = vec4(solidColor, 1.0);
+    gl_FragColor = fColor;
 }

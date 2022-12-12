@@ -1,3 +1,8 @@
+uniform vec3 solidColor;
+varying vec4 fColor;
+
+
+
 uniform mat4 mModelView; //model-view transformation
 uniform mat4 mNormals; //model-view transformation for normals
 uniform mat4 mView; //view transformation (for points)
@@ -16,6 +21,7 @@ varying vec3 fViewer; //view vector in camera space
 //debuging light:
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
+
 const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
 const vec3 materialDif = vec3(1.0, 0.0, 0.0);
 const vec3 materialSpe = vec3(1.0, 1.0, 1.0);
@@ -30,8 +36,6 @@ const vec3 lightSpe = vec3(1.0, 1.0, 1.0);
 vec3 ambientColor = lightAmb * materialAmb;
 vec3 diffuseColor = lightDif * materialDif;
 vec3 specularColor = lightSpe * materialSpe;
-
-varying vec4 fColor;
 
 void main() {
 
@@ -69,6 +73,6 @@ void main() {
 
     gl_Position = mProjection * mModelView * vPosition;
 
-    fColor = vec4(ambientColor + diffuse + specular, 1.0);
+    fColor = vec4((ambientColor + diffuse + specular) * solidColor, 1.0);
 
 }
