@@ -33,23 +33,6 @@ vec3 ambientColor = lightAmb * materialAmb;
 vec3 diffuseColor = lightDif * materialDif;
 vec3 specularColor = lightSpe * materialSpe;
 
-
-vec4 multMatVec(mat4 mat, vec4 vec){
-
-    vec4 toReturn;
-
-    for(int i = 0; i < 4; i++){
-
-
-
-
-    }
-
-    return toReturn;
-
-}
-
-
 void main() {
 
     //the vertex position after the transformations
@@ -72,13 +55,13 @@ void main() {
     
     vec3 H = normalize(fLight + fViewer);
 
-    float diffuseFactor = max( dot(fLight, N), 0.0 );
+    float diffuseFactor = max( dot(fLight, fNormal), 0.0 );
     vec3 diffuse = diffuseFactor * diffuseColor;
 
-    float specularFactor = pow( max(dot(N, H), 0.0), shininess);
+    float specularFactor = pow( max(dot(fNormal, H), 0.0), shininess);
     vec3 specular = specularFactor * specularColor;
 
-    if( dot(fLight,N) < 0.0 ) {
+    if( dot(fLight, fNormal) < 0.0 ) {
 
         specular = vec3(0.0, 0.0, 0.0);
 
