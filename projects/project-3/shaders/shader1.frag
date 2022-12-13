@@ -1,75 +1,67 @@
 precision highp float;
 
-varying vec3 fNormal;
-varying vec3 fPosition;
-
-uniform vec3 solidColor;
-
 const int MAX_LIGHTS = 8;
 
-varying vec4 fColor;
-
-
-/*
-//For 1 light
-const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
-const vec3 materialDif = vec3(1.0, 0.0, 0.0);
-const vec3 materialSpe = vec3(1.0, 1.0, 1.0);
-const float shininess = 6.0;
-const vec3 lightAmb = vec3(0.2, 0.2, 0.2);
-const vec3 lightDif = vec3(0.7, 0.7, 0.7);
-const vec3 lightSpe = vec3(1.0, 1.0, 1.0);
-vec3 ambientColor = lightAmb * materialAmb;
-vec3 diffuseColor = lightDif * materialDif;
-vec3 specularColor = lightSpe * materialSpe;
-varying vec3 fLight;
-varying vec3 fViewer;
-
-/*
-
-/* For more than 1 light
 struct LightInfo {
-    // Light colour intensities
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-    // Light geometry
-    vec4 position;  // Position/direction of light (in camera coordinates)
-    // ...
-    //   additional fields
-    // ...
+    bool active;
+    bool directional;
+    vec3 pos;
+    vec3 ia;
+    vec3 id;
+    vec3 is;
 };
 
 struct MaterialInfo {
-    vec3 Ka;
-    vec3 Kd;
-    vec3 Ks;
+    vec3 ka;
+    vec3 kd;
+    vec3 ks;
     float shininess;
 };
 
+varying vec3 fNormal;
+varying vec3 posC;
+
 uniform int uNLights; // Effective number of lights used
 
-uniform LightInfo uLights[MAX_LIGHTS]; // The array of lights present in the scene
-uniform MaterialInfo uMaterial;        // The material of the object being drawn
-*/
+uniform LightInfo uLight[MAX_LIGHTS]; // The array of lights present in the scene
+uniform MaterialInfo uMaterial;  // The material of the object being drawn
+
+uniform mat4 mView;
+uniform mat4 mViewNormals;
 
 void main() {
+    for(int i = 0; i < MAX_LIGHTS; i++) {
+        if(i == uNLights) break; 
 
-    /*
-    vec3 L = normalize(fLight);
-    vec3 V = normalize(fViewer);
-    vec3 N = normalize(fNormal);
-    vec3 H = normalize(L+V);
-    float diffuseFactor = max( dot(L,N), 0.0 );
-    vec3 diffuse = diffuseFactor * diffuseColor;
-    float specularFactor = pow(max(dot(N,H), 0.0), shininess);
-    vec3 specular = specularFactor * specularColor;
-    if( dot(L,N) < 0.0 ) {
-    specular = vec3(0.0, 0.0, 0.0);
+        if(uLight[i].active) {
+            
+            vec3 L;
+            if(uLight[i].directional) {
+                L = normalize((mViewNormals * vec4(uLight[i].pos, 0.0)).xyz);
+            } else {
+                L = normalize((mView * vec4(uLight[i].pos, 1.0)).xyz - posC);
+            }
+
+            vec3 V = normalize(-posC);
+            vec3 N = normalize(fNormal);
+            vec3 R = reflect(-L, N);
+
+            float diffuseFactor = max(dot(N, L), 0.0);
+            float specularFactor = pow(max(dot(R, V), 0.0), uMaterial.shininess);
+
+            vec3 ambientColor = uLight[i].ia * uMaterial.ka;
+
+            vec3 diffuseColor = uLight[i].id * uMaterial.kd;
+            vec3 diffuse = diffuseFactor * diffuseColor;
+
+            vec3 specularColor = uLight[i].is * uMaterial.ks;
+            vec3 specular = specularFactor * specularColor;
+
+            if(dot(L, N) < 0.0) {
+                specular = vec3(0.0, 0.0, 0.0);
+            }
+            
+            gl_FragColor.xyz += vec3(ambientColor + diffuse + specular);
+        }  
     }
-    */
-    //gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
-    //gl_FragColor = vec4(solidColor, 1.0);
-    gl_FragColor = fColor;
 }
