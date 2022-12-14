@@ -176,14 +176,10 @@ function createLight(){
 
 
 }
-/*
-let addlightbutton = {
-    add: function () {
-      if (lights.length < MAX_LIGHTS) {
-          createLight();
-      }*/
 
-//lightsFolder.add(addlightbutton, "add").name("Add a new light");
+
+lightsFolder.add({addLight: createLight}, "addLight").name("Add a new light");
+
 
 createLight();
 
