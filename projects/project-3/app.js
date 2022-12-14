@@ -119,6 +119,8 @@ bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
 const lightsFolder = gui.addFolder("Lights");
 
+const MAX_LIGHTS = 3;
+
 let lights = [];
 
 function createLight(){
