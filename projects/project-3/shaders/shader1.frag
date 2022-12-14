@@ -11,11 +11,6 @@ uniform vec3 materialDif;
 uniform vec3 materialSpe;
 uniform float shininess;
 
-const vec3 materialAmb1 = vec3(1.0, 0.0, 0.0);
-const vec3 materialDif1 = vec3(1.0, 0.0, 0.0);
-const vec3 materialSpe1 = vec3(1.0, 1.0, 1.0);
-const float shininess1 = 6.0;
-
 const int MAX_LIGHTS = 3;
 
 uniform int nLights; //number of lights

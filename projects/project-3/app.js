@@ -135,7 +135,7 @@ let lights = [];
 
 function createLight(){
 
-        let newLightFolder = lightsFolder.addFolder("Light " + lights.length);
+        let newLightFolder = lightsFolder.addFolder("Light " + (lights.length+1));
 
         lights.push({
             active: true,
@@ -176,6 +176,14 @@ function createLight(){
 
 
 }
+/*
+let addlightbutton = {
+    add: function () {
+      if (lights.length < MAX_LIGHTS) {
+          createLight();
+      }*/
+
+//lightsFolder.add(addlightbutton, "add").name("Add a new light");
 
 createLight();
 
