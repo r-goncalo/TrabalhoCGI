@@ -131,38 +131,7 @@ const lightsFolder = gui.addFolder("Lights");
 
 const MAX_LIGHTS = 3;
 
-let lights = [
-    {
-        active: true,
-        ambient: [50,50,50],
-        diffuse: [60, 60, 60],
-        specular: [200,200,200],
-        position: [0.0, 0.0, 10.0, 1.0],
-        axis: [0.0, 0.0, -1.0],
-        aperture: 10.0,
-        cutoff: 10
-    },
-    {
-        active: true,
-        ambient: [500, 0.0,0.0],
-        diffuse: [50, 0.0, 0.0],
-        specular: [150,0.0,0.0],
-        position: [-20.0, 5.0, 5.0, 1.0],
-        axis: [-20.0, 5.0, 5.0],
-        aperture: 180.0,
-        cutoff: -1
-    },
-    {
-        active: true,
-        ambient: [75, 75,100],
-        diffuse: [75, 75, 100],
-        specular: [150,150,175],
-        position: [3.0, 5.0, 2.0, 1.0],
-        axis: [-1.0, 5.0, -2.0],
-        aperture: 120.0,
-        cutoff: -5
-    }
-]
+let lights = []
 
 /*
 function createLight(){
