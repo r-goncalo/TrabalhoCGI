@@ -137,7 +137,7 @@ function createLight(){
             position: [0.0, 5.0, 0.0, 1.0],
             axis: [0, -5.0, 0],
             aperture: 30.0,
-            cutoff: 0.05,
+            cutoff: 1,
             spotlight: false
         });
 
@@ -163,7 +163,7 @@ function createLight(){
         
 
         newLightFolder.add(lights[lights.length -1], "aperture").min(0.1).max(180).step(0.01).name("aperture");
-        newLightFolder.add(lights[lights.length -1], "cutoff").min(0).max(1).step(0.01).name("cutoff");
+        newLightFolder.add(lights[lights.length -1], "cutoff").min(0).max(20).step(0.01).name("cutoff");
         newLightFolder.add(lights[lights.length -1], "spotlight");
         
    }

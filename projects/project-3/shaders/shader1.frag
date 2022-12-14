@@ -82,12 +82,11 @@ void main() {
 
                 float lightIntensity = 0.0;
 
-                vec3 pointToSpot = lights[i].position.xyz - posC;
                 float angle = abs(acos(dot(normalize(-1.0 *  lights[i].axis), fLight)));
                 
                 if(angle <= (lights[i].aperture)){
 
-                    lightIntensity = 1.0 - pow(abs(cos(angle)), lights[i].cutoff);
+                    lightIntensity = 1.0 + pow(abs(cos(angle)), lights[i].cutoff);
 
                 }
 
