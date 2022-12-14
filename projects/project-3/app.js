@@ -244,20 +244,23 @@ const deleteLightButton = lightsFolder.add({
 
     let materials = {
 
-        GREEN : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0}
+        GREEN : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0},
+        BROWN : {materialAmb : vec3(200, 119, 28), materialDif : vec3(50, 71, 82), materialSpe : vec3(255, 255, 255), shininess : 4.0}
 
     }
 
     function defineMaterial(material){
 
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), false, material.materialAmb[0]/255, material.materialAmb[1]/255, material.materialAmb[2]/255);
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialDif"), false, material.materialDif[0]/255, material.materialDif[1]/255, material.materialDif[2]/255);
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), false, material.materialSpe[1]/255, material.materialDif[2]/255, material.materialDif[3]/255);
+        gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), material.materialAmb[0]/255, material.materialAmb[1]/255, material.materialAmb[2]/255);
 
-        gl.uniform1f(gl.getUniformLocation(program, "shininess"), false, material.shininess);
+        gl.uniform3f(gl.getUniformLocation(program, "materialDif"), material.materialDif[0]/255, material.materialDif[1]/255, material.materialDif[2]/255);
+
+        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), material.materialSpe[1]/255, material.materialDif[2]/255, material.materialDif[3]/255);
+
+        gl.uniform1f(gl.getUniformLocation(program, "shininess"), material.shininess);
 
     }
 
@@ -296,7 +299,7 @@ function renderGround(){
 
     multScale([10, 0.5, 10]);
     updateModelView();
-    defineMaterial(materials.GREEN); 
+    defineMaterial(materials.BROWN); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 
