@@ -111,18 +111,18 @@ const bunnyColorFolder = gui.addFolder("Bunny material");
 
 const ambFolder = bunnyColorFolder.addFolder("amb");
 ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("R");
-ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("G");
-ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("B");
+ambFolder.add(bunnyColor.materialAmb, 1).min(0).max(255).step(0.5).name("G");
+ambFolder.add(bunnyColor.materialAmb, 2).min(0).max(255).step(0.5).name("B");
 
 const difFolder = bunnyColorFolder.addFolder("dif");
 difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("R");
-difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("G");
-difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("B");
+difFolder.add(bunnyColor.materialDif, 1).min(0).max(255).step(0.5).name("G");
+difFolder.add(bunnyColor.materialDif, 2).min(0).max(255).step(0.5).name("B");
 
 const speFolder = bunnyColorFolder.addFolder("spe");
 speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("R");
-speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("G");
-speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("B");
+speFolder.add(bunnyColor.materialSpe, 1).min(0).max(255).step(0.5).name("G");
+speFolder.add(bunnyColor.materialSpe, 2).min(0).max(255).step(0.5).name("B");
 
 bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
@@ -344,15 +344,21 @@ function renderScene(){
     }
 
 
+    function loadLights(){
 
-    function render()
-    {
+        gl.uniform1i(gl.getUniformLocation(program, "nLights"), false, lights.length);
+
+        for(let i = 0; i < lights.length; i++){
 
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        
-        gl.useProgram(program);
-    
+            
+        }
+
+
+    }
+
+    function loadOptions(){
+
         if (optionsController["Backface culling"]) {
 
             gl.enable(gl.CULL_FACE);
@@ -374,6 +380,20 @@ function renderScene(){
 
             gl.disable(gl.DEPTH_TEST);
           }
+
+    }
+
+
+
+    function render()
+    {
+
+
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        
+        gl.useProgram(program);
+    
+        loadOptions();
 
 
         renderCamera();

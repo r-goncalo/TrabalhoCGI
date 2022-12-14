@@ -1,19 +1,35 @@
 precision highp float;
 
-const int MAX_LIGHTS = 8;
+
 
 uniform mat4 mView; //view transformation (for points)
 uniform mat4 mViewNormals; //view transformation (for vectors)
-
-
-//debuging light:
-const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
 
 uniform vec3 materialAmb;
 uniform vec3 materialDif;
 uniform vec3 materialSpe;
 uniform float shininess;
+
+const int MAX_LIGHTS = 8;
+
+uniform int nLights; //number of lights
+
+struct Light {
+    int mode; //1 pont, 2 dir, 3 spot
+    bool active;
+    vec3 pos;
+    vec3 ia;
+    vec3 id;
+    vec3 is;
+};
+
+uniform Light lights[MAX_LIGHTS];
+
+
+
+//debuging light:
+const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
 const vec3 lightAmb = vec3(0.2, 0.2, 0.2);
 const vec3 lightDif = vec3(0.7, 0.7, 0.7);
@@ -26,43 +42,59 @@ const vec3 lightSpe = vec3(1.0, 1.0, 1.0);
 
 varying vec3 fViewer; //view vector in camera space
 varying vec3 fNormal; //normal vector in camera space
-varying vec3 posC;
+varying vec3 posC; //pos in camera coordinates
 
 
 void main() {
 
-    vec3 ambientColor = lightAmb * materialAmb;
-    vec3 diffuseColor = lightDif * materialDif;
-    vec3 specularColor = lightSpe * materialSpe;
+    for(int i = 0; i < MAX_LIGHTS; i++){
 
-    vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
-    
-    vec3 fLight;
+        //i can not be compared with non constant expression on for loop
+        if(i >= nLights)
+            break;
 
-    if(lightPosition.w == 0.0){
+        if(lights[i].active){
 
-        fLight = normalize((mViewNormals * lightPosition).xyz);
-        
-    }else{
+            vec3 ambientColor = lightAmb * materialAmb;
+            vec3 diffuseColor = lightDif * materialDif;
+            vec3 specularColor = lightSpe * materialSpe;
+            
+            vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
+            
+            vec3 fLight;
+            
+            if(lightPosition.w == 0.0){
+                
+                fLight = normalize((mViewNormals * lightPosition).xyz);
+                
+            }else{
+                
+                fLight = normalize((mView*lightPosition).xyz - posC);
+                
+                }
+            
+            vec3 H = normalize(fLight + fViewer);
+            
+            float diffuseFactor = max( dot(fLight, fNormal), 0.0 );
+            vec3 diffuse = diffuseFactor * diffuseColor;
+            
+            float specularFactor = pow( max(dot(fNormal, H), 0.0), shininess);
+            vec3 specular = specularFactor * specularColor;
+            
+            if( dot(fLight, fNormal) < 0.0 ) {
+                
+                specular = vec3(0.0, 0.0, 0.0);
+            
+            }
+            
+            
+            gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
 
-        fLight = normalize((mView*lightPosition).xyz - posC);
-        
+
         }
-
-    vec3 H = normalize(fLight + fViewer);
-
-    float diffuseFactor = max( dot(fLight, fNormal), 0.0 );
-    vec3 diffuse = diffuseFactor * diffuseColor;
-
-    float specularFactor = pow( max(dot(fNormal, H), 0.0), shininess);
-    vec3 specular = specularFactor * specularColor;
-
-    if( dot(fLight, fNormal) < 0.0 ) {
-
-        specular = vec3(0.0, 0.0, 0.0);
 
     }
 
 
-    gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
+
 }
