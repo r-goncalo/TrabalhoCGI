@@ -204,7 +204,7 @@ let lights = [
         gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
 
         const vmNormals = gl.getUniformLocation(program, "mNormals");
-        gl.uniformMatrix4fv(vmModelView, false, flatten(normalMatrix(modelView())));
+        gl.uniformMatrix4fv(vmNormals, false, flatten(normalMatrix(modelView())));
 
     }
 
@@ -315,9 +315,6 @@ function renderScene(){
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
 
         loadMatrix(mView);
-        //multRotationX(axoController.Gama);
-        //multRotationY(axoController.Teta);
-        //multTranslation(zoomController.far);
     
 
     }

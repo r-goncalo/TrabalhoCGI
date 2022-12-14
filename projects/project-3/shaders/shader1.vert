@@ -1,7 +1,4 @@
-uniform vec3 solidColor;
 varying vec4 fColor;
-
-
 
 uniform mat4 mModelView; //model-view transformation
 uniform mat4 mNormals; //model-view transformation for normals
