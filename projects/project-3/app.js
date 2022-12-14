@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate, vec3, normalMatrix } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, mult, rotateY, perspective, rotate, vec3, normalMatrix, cross } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multRotationX, multRotationZ, multScale, pushMatrix, popMatrix, multTranslation, multMatrix } from "../../libs/stack.js";
 import {
     perspective,
@@ -74,7 +74,6 @@ function setup(shaders)
 */
 
 const gui = new GUI();
-
 
 let optionsController = {
 
@@ -264,6 +263,75 @@ lightsFolder.add(addlightbutton, "add").name("Add a new light");
      * 
      */
 
+
+    /**
+     * DESAFIO STUFF
+     * 
+     */
+
+    // Global variables to keep track of the current mouse position and whether the mouse is being clicked
+let mouseX = 0;
+let mouseY = 0;
+let isMouseDown = false;
+
+// Set up event listeners to track mouse movement
+canvas.addEventListener("mousedown", function(event) {
+  isMouseDown = true;
+});
+
+canvas.addEventListener("mousemove", function(event) {
+  // Update the mouse position
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+});
+
+canvas.addEventListener("mouseup", function(event) {
+  isMouseDown = false;
+});
+
+
+    /*
+
+let isDragging = false;
+let lastX = null;
+let lastY = null;
+
+function handleMouseMove(event) {
+    if (isDragging) {
+    // Calculate the difference in mouse position since the last event
+    let dx = event.clientX - lastX;
+    let dy = event.clientY - lastY;
+
+    // Update the camera's position and orientation based on the mouse movement
+    let rotationX = rotateY(dx * 0.01);
+    let rotationY = rotate(dy * 0.01, cross(vec3(camera.at), vec3(camera.up)));
+    camera.eye = mult(rotationX, rotationY) * vec3(camera.eye);
+    camera.up = mult(rotationX, rotationY) * vec3(camera.up);
+    camera.at = mult(rotationX, rotationY) * vec3(camera.at);
+    
+    }
+}
+function handleMouseDown(event) {
+    isDragging = true;
+    lastX = event.clientX;
+    lastY = event.clientY;
+}
+
+function handleMouseUp(event) {
+    isDragging = false;
+    lastX = event.clientX;
+    lastY = event.clientY;
+}
+
+canvas.addEventListener("mousedown", handleMouseDown);
+canvas.addEventListener("mousemove", handleMouseMove);
+canvas.addEventListener("mouseup", handleMouseUp);
+
+*/
+/**
+ * END OF DESAFIO STUFF
+ */
+
 /**
  * ********Shader Stuff*********
  */
@@ -406,21 +474,89 @@ function renderScene(){
 
         mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
+        
+        
+        // In your rendering loop, check if the mouse is being clicked and update the camera's position and orientation
+        if (isMouseDown) {
+            // Use the mouse movement to update the camera's orientation
+            let rotationX = (camera.eye[0] + mouseY) / (canvas.height / 2);
+            let rotationY = (camera.eye[1] + mouseX) / (canvas.width / 2);
 
-        let mView = lookAt(camera.eye, camera.at, camera.up);
+            let mView = lookAt(vec3(rotationX, rotationY, camera.eye[2]), camera.at, camera.up);
+            gl.uniformMatrix4fv(gl.getUniformLocation(program, "mView"), false, flatten(mView));
+            gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
 
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mView"), false, flatten(mView));
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
+            loadMatrix(mView);
+      }
+      else{
+            let mView = lookAt(camera.eye, camera.at, camera.up);
+            gl.uniformMatrix4fv(gl.getUniformLocation(program, "mView"), false, flatten(mView));
+            gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
 
+<<<<<<< Updated upstream
         loadMatrix(mView);
         //multRotationX(axoController.Gama);
         //multRotationY(axoController.Teta);
         //multTranslation(zoomController.far);
+=======
+            loadMatrix(mView);}
+
+        
+>>>>>>> Stashed changes
     
 
     }
 
 
+<<<<<<< Updated upstream
+=======
+    function loadLights(){
+
+        gl.uniform1i(gl.getUniformLocation(program, "nLights"), false, lights.length);
+
+        for(let i = 0; i < lights.length; i++){
+
+            gl.uniform4f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position.x, lights[i].position.y, lights[i].position.z, lights[i].position.w);
+            gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient.x  / 255,lights[i].ambient.y / 255,lights[i].ambient.z / 255);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse.x / 255, lights[i].diffuse.y / 255, lights[i].diffuse.z / 255);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular.x / 255, lights[i].specular.y / 255, lights[i].specular.z / 255);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis.x,  lights[i].axis.y,  lights[i].axis.z);
+            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
+            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
+            gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
+        }
+
+    }
+
+    
+
+    function loadOptions(){
+
+        if (optionsController["Backface culling"]) {
+
+            gl.enable(gl.CULL_FACE);
+            gl.cullFace(gl.BACK);
+
+          } else {
+
+            gl.disable(gl.CULL_FACE);
+
+          }
+
+          
+          if (optionsController["Depth buffer"]) {
+
+            gl.enable(gl.DEPTH_TEST);
+
+          } else {
+
+            gl.disable(gl.DEPTH_TEST);
+          }
+
+    }
+
+
+>>>>>>> Stashed changes
 
     function render()
     {
@@ -430,8 +566,17 @@ function renderScene(){
         
         gl.useProgram(program);
     
+<<<<<<< Updated upstream
+=======
+        loadOptions();
+
+        loadLights();
+
+   
+>>>>>>> Stashed changes
         renderCamera();
         renderScene();
+
 
 
         window.requestAnimationFrame(render);
