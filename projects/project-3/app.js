@@ -133,6 +133,7 @@ const MAX_LIGHTS = 3;
 
 let lights = [
     {
+        active: true,
         ambient: [50,50,50],
         diffuse: [60, 60, 60],
         specular: [200,200,200],
@@ -142,6 +143,7 @@ let lights = [
         cutoff: 10
     },
     {
+        active: true,
         ambient: [500, 0.0,0.0],
         diffuse: [50, 0.0, 0.0],
         specular: [150,0.0,0.0],
@@ -151,6 +153,7 @@ let lights = [
         cutoff: -1
     },
     {
+        active: true,
         ambient: [75, 75,100],
         diffuse: [75, 75, 100],
         specular: [150,150,175],
@@ -161,8 +164,8 @@ let lights = [
     }
 ]
 
+/*
 function createLight(){
-    
     for(let i = 0; i < MAX_LIGHTS; i++){
         console.log(i);
         let n = i+1;
@@ -186,6 +189,49 @@ function createLight(){
         newLight.addColor(lights[i], "cutoff").name("cutoff");
         }
 }
+*/
+
+function createLight(){
+
+        let newLightFolder = lightsFolder.addFolder("Light" + lights.length);
+
+        lights.push({
+            active: true,
+            ambient: [75, 75,100],
+            diffuse: [75, 75, 100],
+            specular: [150,150,175],
+            position: [3.0, 5.0, 2.0, 1.0],
+            axis: [-1.0, 5.0, -2.0],
+            aperture: 120.0,
+            cutoff: -5
+        });
+
+        let p = newLightFolder.addFolder("position");
+
+        p.add(lights[lights.length - 1].position, 0).name("x").step(0.1);
+        p.add(lights[lights.length - 1].position, 1).name("y").step(0.1);
+        p.add(lights[lights.length - 1].position, 2).name("z").step(0.1);
+        p.add(lights[lights.length - 1].position, 3).name("w").step(0.1);
+
+
+        let inte = newLightFolder.addFolder("intensity");
+        inte.addColor(lights[lights.length - 1], "ambient").name("ambient");
+        inte.addColor(lights[lights.length - 1], "diffuse").name("diffuse");
+        inte.addColor(lights[lights.length -1], "specular").name("specular");
+
+        let ax = newLightFolder.addFolder("axis");
+        ax.add(lights[lights.length -1].axis, 0).name("x").step(0.1);
+        ax.add(lights[lights.length -1].axis, 1).name("y").step(0.1);
+        ax.add(lights[lights.length -1].axis, 2).name("z").step(0.1);
+        
+
+        newLightFolder.add(lights[i], "aperture").name("aperture");
+        newLightFolder.add(lights[i], "cutoff").name("cutoff");
+   
+
+
+}
+
 createLight();
 
 
@@ -376,14 +422,16 @@ function renderScene(){
 
         gl.uniform1i(gl.getUniformLocation(program, "nLights"), false, lights.length);
 
-        
-
-// ... and so on for each light in the scene
-
         for(let i = 0; i <MAX_LIGHTS; i++){
             // Set the value of the 'lights[0].pos' uniform variable to the position of the first light
-            gl.uniform3f(gl.getUniformLocation(program, "Light[" + i + "].pos"), lights[i].position.x, lights[i].position.y, lights[i].position.z, lights[i].position.w);  
-            //gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].)
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position.x, lights[i].position.y, lights[i].position.z, lights[i].position.w);
+            gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient.x,lights[i].ambient.y,lights[i].ambient.z);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse.x, lights[i].diffuse.y, lights[i].diffuse.z);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular.x, lights[i].specular.y, lights[i].specular.z);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis.x,  lights[i].axis.y,  lights[i].axis.z);
+            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
+            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
+            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
         }
     }
 

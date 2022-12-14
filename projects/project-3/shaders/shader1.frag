@@ -23,10 +23,13 @@ uniform int nLights; //number of lights
 struct Light {
     int mode; //1 pont, 2 dir, 3 spot
     bool active;
-    vec3 pos;
-    vec3 ia;
-    vec3 id;
-    vec3 is;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec4 position;
+    vec3 axis;
+    float aperture;
+    float cutoff;
 };
 
 uniform Light lights[MAX_LIGHTS];
@@ -71,13 +74,13 @@ void main() {
             
             vec3 fLight;
             
-            if(lightPosition.w == 0.0){
+            if(lights[i].position.w == 0.0){
                 
-                fLight = normalize((mViewNormals * vec4(lights[i].pos, 1)).xyz);
+                fLight = normalize((mViewNormals * vec4(lights[i].position, 1)).xyz);
                 
             }else{
                 
-                fLight = normalize((mView* vec4(lights[i].pos, 1)).xyz - posC);
+                fLight = normalize((mView* vec4(lights[i].position, 1)).xyz - posC);
                 
                 }
             
