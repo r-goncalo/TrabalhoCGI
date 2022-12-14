@@ -133,33 +133,6 @@ const MAX_LIGHTS = 3;
 
 let lights = [];
 
-/*
-function createLight(){
-    for(let i = 0; i < MAX_LIGHTS; i++){
-        console.log(i);
-        let n = i+1;
-        const newLight = lightsFolder.addFolder("Light" + n);
-        const p = newLight.addFolder("position");
-        p.add(lights[i].position, 0).name("x").step(0.1);
-        p.add(lights[i].position, 1).name("y").step(0.1);
-        p.add(lights[i].position, 2).name("z").step(0.1);
-        p.add(lights[i].position, 3).name("w").step(0.1);
-        const inte = newLight.addFolder("intensities");
-        inte.addColor(lights[i], "ambient").name("ambient");
-        inte.addColor(lights[i], "diffuse").name("diffuse");
-        inte.addColor(lights[i], "specular").name("specular");
-        const ax = newLight.addFolder("axis");
-        ax.add(lights[i].axis, 0).name("x").step(0.1);
-        ax.add(lights[i].axis, 1).name("y").step(0.1);
-        ax.add(lights[i].axis, 2).name("z").step(0.1);
-        
-
-        newLight.addColor(lights[i], "aperture").name("aperture");
-        newLight.addColor(lights[i], "cutoff").name("cutoff");
-        }
-}
-*/
-
 function createLight(){
 
         let newLightFolder = lightsFolder.addFolder("Light " + lights.length);
@@ -176,6 +149,8 @@ function createLight(){
         });
 
         let p = newLightFolder.addFolder("position");
+
+        newLightFolder.add(lights[lights.length -1], "active");
 
         p.add(lights[lights.length - 1].position, 0).name("x").step(0.1);
         p.add(lights[lights.length - 1].position, 1).name("y").step(0.1);
@@ -196,6 +171,7 @@ function createLight(){
 
         newLightFolder.add(lights[lights.length -1], "aperture").name("aperture");
         newLightFolder.add(lights[lights.length -1], "cutoff").name("cutoff");
+
    
 
 
