@@ -10,7 +10,7 @@ attribute vec4 vNormal; //vertex normal in modelling coordinates
 
 
 varying vec3 fNormal; //normal vector in camera space
-varying vec3 posC;
+varying vec3 posC;  //pos in camera space
 
 void main() {
 

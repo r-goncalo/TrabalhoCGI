@@ -65,11 +65,11 @@ void main() {
             
             if(lightPosition.w == 0.0){
                 
-                fLight = normalize((mViewNormals * lightPosition).xyz);
+                fLight = normalize((mViewNormals * vec4(lights[i].pos, 1)).xyz);
                 
             }else{
                 
-                fLight = normalize((mView*lightPosition).xyz - posC);
+                fLight = normalize((mView* vec4(lights[i].pos, 1)).xyz - posC);
                 
                 }
             
