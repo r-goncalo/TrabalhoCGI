@@ -89,20 +89,43 @@ cameraFolder.add(camera, 'fovy', 1, 100, 1);
 cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
 cameraFolder.add(camera, 'far', 0.1, MAX_VP_DISTANCE * 5, 0.1);
 
-const eyeFolder = gui.addFolder("eye");
+const eyeFolder = cameraFolder.addFolder("eye");
 eyeFolder.add(camera.eye, 0).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("x");
 eyeFolder.add(camera.eye, 1).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("y");
 eyeFolder.add(camera.eye, 2).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
-const atFolder = gui.addFolder("At");
+const atFolder = cameraFolder.addFolder("At");
 atFolder.add(camera.at, 0).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("x");
 atFolder.add(camera.at, 1).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("y");
 atFolder.add(camera.at, 2).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
-const upFolder = gui.addFolder("Up");
+const upFolder = cameraFolder.addFolder("Up");
 upFolder.add(camera.up, 0).min(-1).max(1).step(0.05).name("x");
 upFolder.add(camera.up, 1).min(-1).max(1).step(0.05).name("y");
 upFolder.add(camera.up, 2).min(-1).max(1).step(0.05).name("z");
+
+
+let bunnyColor = {materialAmb : vec3(255, 255, 255), materialDif : vec3(242, 208, 106), materialSpe : vec3(114, 208, 240), shininess : 10.0};
+
+const bunnyColorFolder = gui.addFolder("Bunny material");
+
+const ambFolder = bunnyColorFolder.addFolder("amb");
+ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("R");
+ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("G");
+ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("B");
+
+const difFolder = bunnyColorFolder.addFolder("dif");
+difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("R");
+difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("G");
+difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("B");
+
+const speFolder = bunnyColorFolder.addFolder("spe");
+speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("R");
+speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("G");
+speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("B");
+
+bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
+
 
 let lightsController = {};
 
@@ -173,18 +196,18 @@ let lights = [
 
     let materials = {
 
-        GREEN : {materialAmb : vec3(1.0, 0.0, 0.0), materialDif : vec3(1.0, 0.0, 0.0), materialSpe : vec3(1.0, 0.0, 0.0), shininess : 6.0}
+        GREEN : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0}
 
     }
 
     function defineMaterial(material){
 
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), false, material.materialAmb[0], material.materialAmb[1], material.materialAmb[2]);
+        gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), false, material.materialAmb[0]/255, material.materialAmb[1]/255, material.materialAmb[2]/255);
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialDif"), false, material.materialDif[0], material.materialDif[1], material.materialDif[2]);
+        gl.uniform3f(gl.getUniformLocation(program, "materialDif"), false, material.materialDif[0]/255, material.materialDif[1]/255, material.materialDif[2]/255);
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), false, material.materialSpe[1], material.materialDif[2], material.materialDif[3]);
+        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), false, material.materialSpe[1]/255, material.materialDif[2]/255, material.materialDif[3]/255);
 
         gl.uniform1f(gl.getUniformLocation(program, "shininess"), false, material.shininess);
 
@@ -258,7 +281,7 @@ function renderBunny(){
     multTranslation([2,1,1]);
     multScale([5, 5, 5]);
     updateModelView();
-    defineMaterial(materials.GREEN);
+    defineMaterial(bunnyColor);
     BUNNY.draw(gl, program, gl.TRIANGLES);
 }
 
