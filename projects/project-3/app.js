@@ -13,7 +13,7 @@ import {GUI} from '../../libs/dat.gui.module.js';
 
 
 let gl;
-const VP_DISTANCE = 5;
+const MAX_VP_DISTANCE = 20;
 
 
 
@@ -87,22 +87,22 @@ let camera = {
 let cameraFolder = gui.addFolder("camera");
 cameraFolder.add(camera, 'fovy', 1, 100, 1);
 cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
-cameraFolder.add(camera, 'far', 0.1, 20, 0.1);
+cameraFolder.add(camera, 'far', 0.1, MAX_VP_DISTANCE * 5, 0.1);
 
 const eyeFolder = gui.addFolder("eye");
-eyeFolder.add(camera.eye, 0).step(0.05).name("x");
-eyeFolder.add(camera.eye, 1).step(0.05).name("y");
-eyeFolder.add(camera.eye, 2).step(0.05).name("z");
+eyeFolder.add(camera.eye, 0).min(0).max(MAX_VP_DISTANCE).step(0.05).name("x");
+eyeFolder.add(camera.eye, 1).min(0).max(MAX_VP_DISTANCE).step(0.05).name("y");
+eyeFolder.add(camera.eye, 2).min(0).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
 const atFolder = gui.addFolder("At");
-atFolder.add(camera.at, 0).step(0.05).name("x");
-atFolder.add(camera.at, 1).step(0.05).name("y");
-atFolder.add(camera.at, 2).step(0.05).name("z");
+atFolder.add(camera.at, 0).min(0).max(MAX_VP_DISTANCE).step(0.05).name("x");
+atFolder.add(camera.at, 1).min(0).max(MAX_VP_DISTANCE).step(0.05).name("y");
+atFolder.add(camera.at, 2).min(0).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
 const upFolder = gui.addFolder("Up");
-upFolder.add(camera.up, 0).step(0.05).name("x");
-upFolder.add(camera.up, 1).step(0.05).name("y");
-upFolder.add(camera.up, 2).step(0.05).name("z");
+upFolder.add(camera.up, 0).min(0).max(MAX_VP_DISTANCE).step(0.05).name("x");
+upFolder.add(camera.up, 1).min(0).max(MAX_VP_DISTANCE).step(0.05).name("y");
+upFolder.add(camera.up, 2).min(0).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
 let lightsController = {};
 
