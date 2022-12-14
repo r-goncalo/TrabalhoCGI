@@ -124,7 +124,7 @@ let lights = [];
 
 function createLight(){
 
-    if(lights.length<MAX_LIGHTS){
+    if(lights.length < MAX_LIGHTS){
         let newLightFolder = lightsFolder.addFolder("Light " + (lights.length+1));
 
 
@@ -143,10 +143,10 @@ function createLight(){
 
         newLightFolder.add(lights[lights.length -1], "active");
 
-        p.add(lights[lights.length - 1].position, 0).name("x").step(0.1);
-        p.add(lights[lights.length - 1].position, 1).name("y").step(0.1);
-        p.add(lights[lights.length - 1].position, 2).name("z").step(0.1);
-        p.add(lights[lights.length - 1].position, 3).name("w").step(0.1);
+        p.add(lights[lights.length - 1].position, 0).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("x");
+        p.add(lights[lights.length - 1].position, 1).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("y");
+        p.add(lights[lights.length - 1].position, 2).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("z");
+        p.add(lights[lights.length - 1].position, 3).min(0).max(1).step(1).name("w");
 
 
         let inte = newLightFolder.addFolder("intensity");
@@ -302,7 +302,7 @@ function renderGround(){
 
 function renderCube(){
 
-    multTranslation([3,1,-3]);
+    multTranslation([3, 0.7,-3]);
     updateModelView();
     defineMaterial(materials.RED); 
     CUBE.draw(gl, program, gl.TRIANGLES);
@@ -310,22 +310,23 @@ function renderCube(){
 }
 
 function renderCylinder(){
-    multTranslation([-4,1,0]);
+    multTranslation([-4, 2.5,0]);
+    multScale([1, 5, 1]);
     defineMaterial(materials.BLUE);
     updateModelView();
     CYLINDER.draw(gl, program, gl.TRIANGLES);
 }
 
 function renderSphere(){
-    multTranslation([3,1,4]);
+    multTranslation([3, 0.7,4]);
     updateModelView();
     defineMaterial(materials.GREEN);
     SPHERE.draw(gl, program, gl.TRIANGLES);
 }
 
 function renderBunny(){
-    multTranslation([2,1,1]);
-    multScale([5, 5, 5]);
+    multTranslation([2, 0.2,1]);
+    multScale([10, 10, 10]);
     updateModelView();
     defineMaterial(bunnyColor);
     BUNNY.draw(gl, program, gl.TRIANGLES);

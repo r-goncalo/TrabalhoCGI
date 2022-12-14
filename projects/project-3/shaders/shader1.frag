@@ -29,7 +29,6 @@ struct Light {
 
 uniform Light lights[MAX_LIGHTS];
 
-varying vec3 fViewer; //view vector in camera space
 varying vec3 fNormal; //normal vector in camera space
 varying vec3 posC; //pos in camera coordinates
 
@@ -47,9 +46,7 @@ void main() {
             vec3 ambientColor = lights[i].ambient * materialAmb;
             vec3 diffuseColor = lights[i].diffuse * materialDif;
             vec3 specularColor = lights[i].specular * materialSpe;
-            
-            vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
-            
+                        
             vec3 fLight;
             
             if(lights[i].position.w == 0.0){
