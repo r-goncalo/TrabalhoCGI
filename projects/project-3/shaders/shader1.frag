@@ -44,13 +44,6 @@ void main() {
         if(lights[i].active){
 
 
-            if(lights[i].spotlight){
-
-
-
-            }else {
-
-
             vec3 ambientColor = lights[i].ambient * materialAmb;
             vec3 diffuseColor = lights[i].diffuse * materialDif;
             vec3 specularColor = lights[i].specular * materialSpe;
@@ -65,7 +58,25 @@ void main() {
                 
                 fLight = normalize((mView * lights[i].position).xyz - posC);
                 
+            }
+
+
+            float lightIntensity = 1.0;
+            if(lights[i].spotlight && lights[i].position[3] == 1.0){
+
+                lightIntensity = 0.0;
+
+                vec3 spotToPoint = lights[i].position.xyz - posC;
+                float angle = acos(dot(lights[i].axis, spotToPoint));
+                
+                if(abs(angle) <= lights[i].aperture){
+
+                    lightIntensity = 1.0 - pow(cos(angle), lights[i].cutoff);
+
                 }
+
+
+            }
             
             vec3 normal = normalize(fNormal);
             vec3 reflection = reflect(-fLight, normal);
@@ -84,13 +95,7 @@ void main() {
             }
             
                         
-            gl_FragColor.xyz += (ambientColor + diffuse + specular);
-
-
-
-            }
-
-
+            gl_FragColor.xyz += (ambientColor + diffuse + specular) * lightIntensity;
 
 
         }
