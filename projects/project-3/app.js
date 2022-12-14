@@ -74,8 +74,6 @@ const optionsFolder = gui.addFolder("options");
 optionsFolder.add( optionsController, 'Backface culling');
 optionsFolder.add( optionsController, 'Depth buffer');
 
-//gl.enable(gl.CULL_FACE);
-
 let camera = {
     eye: vec3(0,5,10),
     at: vec3(0,0,0),
@@ -340,6 +338,27 @@ function renderScene(){
 
         window.requestAnimationFrame(render);
 
+        if (optionsController["Backface culling"]) {
+
+            gl.enable(gl.CULL_FACE);
+            gl.cullFace(gl.BACK);
+
+          } else {
+
+            gl.disable(gl.CULL_FACE);
+
+          }
+
+          
+
+          if (optionsController["Depth buffer"]) {
+
+            gl.enable(gl.DEPTH_TEST);
+
+          } else {
+
+            gl.disable(gl.DEPTH_TEST);
+          }
 
         
     }
