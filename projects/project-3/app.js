@@ -166,8 +166,6 @@ function createLight(){
    }
 }
 
-//this creates the first light
-createLight();
 
 
 lightsFolder.add({addLight: function(){createLight();}}, "addLight").name("Add a new light");
@@ -191,6 +189,10 @@ const deleteLightButton = lightsFolder.add({
     }, "deleteLight");
     deleteLightButton.name("Delete light");
 
+
+    
+//this creates the first light
+createLight();
 
 
 /*  
