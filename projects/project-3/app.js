@@ -377,14 +377,16 @@ function renderScene(){
 
         for(let i = 0; i < lights.length; i++){
             // Set the value of the 'lights[0].pos' uniform variable to the position of the first light
+
             gl.uniform4f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position.x, lights[i].position.y, lights[i].position.z, lights[i].position.w);
-            gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient.x,lights[i].ambient.y,lights[i].ambient.z);
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse.x, lights[i].diffuse.y, lights[i].diffuse.z);
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular.x, lights[i].specular.y, lights[i].specular.z);
+            gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient.x  / 255,lights[i].ambient.y / 255,lights[i].ambient.z / 255);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse.x / 255, lights[i].diffuse.y / 255, lights[i].diffuse.z / 255);
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular.x / 255, lights[i].specular.y / 255, lights[i].specular.z / 255);
             gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis.x,  lights[i].axis.y,  lights[i].axis.z);
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
             gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
+            
         }
     }
 

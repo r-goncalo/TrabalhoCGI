@@ -50,9 +50,6 @@ varying vec3 posC; //pos in camera coordinates
 
 void main() {
 
-    // Set the default value for gl_FragColor
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
-
     for(int i = 0; i < MAX_LIGHTS; i++){
 
         //i can not be compared with non constant expression on for loop
@@ -100,6 +97,42 @@ void main() {
         }
 
     }
+
+
+            vec3 ambientColor = lightAmb * materialAmb;
+            vec3 diffuseColor = lightDif * materialDif;
+            vec3 specularColor = lightSpe * materialSpe;
+            
+            vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
+            
+            vec3 fLight;
+            
+            if(lightPosition.w == 0.0){
+                
+                fLight = normalize((mViewNormals * lightPosition).xyz);
+                
+            }else{
+                
+                fLight = normalize((mView * lightPosition).xyz - posC);
+                
+                }
+            
+            vec3 H = normalize(fLight + fViewer);
+            
+            float diffuseFactor = max( dot(fLight, fNormal), 0.0 );
+            vec3 diffuse = diffuseFactor * diffuseColor;
+            
+            float specularFactor = pow( max(dot(fNormal, H), 0.0), shininess);
+            vec3 specular = specularFactor * specularColor;
+            
+            if( dot(fLight, fNormal) < 0.0 ) {
+                
+                specular = vec3(0.0, 0.0, 0.0);
+            
+            }
+            
+            
+            gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
 
 
 
