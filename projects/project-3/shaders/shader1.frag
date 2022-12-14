@@ -77,13 +77,12 @@ void main() {
             
                 }
 
-
-            float lightIntensity = 1.0;
+            //for spotLight
             if(lights[i].spotlight && lights[i].position[3] == 1.0){
 
-                lightIntensity = 0.0;
+                float lightIntensity = 0.0;
 
-                vec3 pointToSpot = posC - lights[i].position.xyz;
+                vec3 pointToSpot = lights[i].position.xyz - posC;
                 float angle = abs(acos(dot(normalize(-1.0 *  lights[i].axis), normalize(pointToSpot))));
                 
                 if(angle <= (lights[i].aperture)){

@@ -395,7 +395,7 @@ function renderScene(){
         gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular[0]/255, lights[i].specular[1]/255, lights[i].specular[2]/255);
 
         gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis[0],  lights[i].axis[1],  lights[i].axis[2]);
-        gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
+        gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture * Math.PI / 180);
         gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
         gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
         gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].spotlight"), lights[i].spotlight);
