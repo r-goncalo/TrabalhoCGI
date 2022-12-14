@@ -93,9 +93,8 @@ void main() {
             }
             
             
-            //gl_FragColor += vec4(ambientColor + diffuse + specular, 1.0);
+            gl_FragColor += vec4(ambientColor + diffuse + specular, 1.0);
 
-            gl_FragColor = (lights[i].ambient, 1.0);
 
         }
 
