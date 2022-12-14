@@ -131,7 +131,7 @@ const lightsFolder = gui.addFolder("Lights");
 
 const MAX_LIGHTS = 3;
 
-let lights = []
+let lights = [];
 
 /*
 function createLight(){
@@ -162,7 +162,7 @@ function createLight(){
 
 function createLight(){
 
-        let newLightFolder = lightsFolder.addFolder("Light" + lights.length);
+        let newLightFolder = lightsFolder.addFolder("Light " + lights.length);
 
         lights.push({
             active: true,
@@ -391,7 +391,7 @@ function renderScene(){
 
         gl.uniform1i(gl.getUniformLocation(program, "nLights"), false, lights.length);
 
-        for(let i = 0; i <MAX_LIGHTS; i++){
+        for(let i = 0; i < lights.length; i++){
             // Set the value of the 'lights[0].pos' uniform variable to the position of the first light
             gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position.x, lights[i].position.y, lights[i].position.z, lights[i].position.w);
             gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient.x,lights[i].ambient.y,lights[i].ambient.z);
