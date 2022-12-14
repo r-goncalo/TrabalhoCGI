@@ -41,7 +41,6 @@ void main() {
 
     float specularFactor = pow( max(dot(fNormal, H), 0.0), shininess);
     vec3 specular = specularFactor * specularColor;
-    if( dot(L,N) < 0.0 ) {
 
     if( dot(fLight, fNormal) < 0.0 ) {
 
