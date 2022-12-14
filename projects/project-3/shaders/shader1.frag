@@ -11,7 +11,12 @@ uniform vec3 materialDif;
 uniform vec3 materialSpe;
 uniform float shininess;
 
-const int MAX_LIGHTS = 8;
+const vec3 materialAmb1 = vec3(1.0, 0.0, 0.0);
+const vec3 materialDif1 = vec3(1.0, 0.0, 0.0);
+const vec3 materialSpe1 = vec3(1.0, 1.0, 1.0);
+const float shininess1 = 6.0;
+
+const int MAX_LIGHTS = 3;
 
 uniform int nLights; //number of lights
 
@@ -47,6 +52,9 @@ varying vec3 posC; //pos in camera coordinates
 
 void main() {
 
+    // Set the default value for gl_FragColor
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
+
     for(int i = 0; i < MAX_LIGHTS; i++){
 
         //i can not be compared with non constant expression on for loop
@@ -55,9 +63,9 @@ void main() {
 
         if(lights[i].active){
 
-            vec3 ambientColor = lightAmb * materialAmb;
-            vec3 diffuseColor = lightDif * materialDif;
-            vec3 specularColor = lightSpe * materialSpe;
+            vec3 ambientColor = lightAmb * materialAmb / 255.0 ;
+            vec3 diffuseColor = lightDif * materialDif / 255.0 ;
+            vec3 specularColor = lightSpe * materialSpe / 255.0 ;
             
             vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
             

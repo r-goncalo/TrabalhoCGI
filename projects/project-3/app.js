@@ -127,8 +127,6 @@ speFolder.add(bunnyColor.materialSpe, 2).min(0).max(255).step(0.5).name("B");
 bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
 
-
-
 const lightsFolder = gui.addFolder("Lights");
 
 const MAX_LIGHTS = 3;
@@ -151,14 +149,44 @@ let lights = [
         axis: [-20.0, 5.0, 5.0],
         aperture: 180.0,
         cutoff: -1
+    },
+    {
+        ambient: [75, 75,100],
+        diffuse: [75, 75, 100],
+        specular: [150,150,175],
+        position: [3.0, 5.0, 2.0, 1.0],
+        axis: [-1.0, 5.0, -2.0],
+        aperture: 120.0,
+        cutoff: -5
     }
 ]
 
 function createLight(){
+    
+    for(let i = 0; i < MAX_LIGHTS; i++){
+        console.log(i);
+        let n = i+1;
+        const newLight = lightsFolder.addFolder("Light" + n);
+        const p = newLight.addFolder("position");
+        p.add(lights[i].position, 0).name("x").step(0.1);
+        p.add(lights[i].position, 1).name("y").step(0.1);
+        p.add(lights[i].position, 2).name("z").step(0.1);
+        p.add(lights[i].position, 3).name("w").step(0.1);
+        const inte = newLight.addFolder("intensities");
+        inte.addColor(lights[i], "ambient").name("ambient");
+        inte.addColor(lights[i], "diffuse").name("diffuse");
+        inte.addColor(lights[i], "specular").name("specular");
+        const ax = newLight.addFolder("axis");
+        ax.add(lights[i].axis, 0).name("x").step(0.1);
+        ax.add(lights[i].axis, 1).name("y").step(0.1);
+        ax.add(lights[i].axis, 2).name("z").step(0.1);
+        
 
-
-
+        newLight.addColor(lights[i], "aperture").name("aperture");
+        newLight.addColor(lights[i], "cutoff").name("cutoff");
+        }
 }
+createLight();
 
 
 /*  
@@ -348,14 +376,18 @@ function renderScene(){
 
         gl.uniform1i(gl.getUniformLocation(program, "nLights"), false, lights.length);
 
-        for(let i = 0; i < lights.length; i++){
+        
 
+// ... and so on for each light in the scene
 
-            
+        for(let i = 0; i <MAX_LIGHTS; i++){
+            // Set the value of the 'lights[0].pos' uniform variable to the position of the first light
+            gl.uniform3f(gl.getUniformLocation(program, "Light[" + i + "].pos"), lights[i].position.x, lights[i].position.y, lights[i].position.z, lights[i].position.w);  
+            //gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].)
         }
-
-
     }
+
+    
 
     function loadOptions(){
 
@@ -371,7 +403,6 @@ function renderScene(){
           }
 
           
-
           if (optionsController["Depth buffer"]) {
 
             gl.enable(gl.DEPTH_TEST);
@@ -394,6 +425,8 @@ function renderScene(){
         gl.useProgram(program);
     
         loadOptions();
+
+        loadLights();
 
 
         renderCamera();
