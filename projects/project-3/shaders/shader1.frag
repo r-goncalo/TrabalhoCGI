@@ -2,7 +2,26 @@ precision highp float;
 
 const int MAX_LIGHTS = 8;
 
+<<<<<<< Updated upstream
 struct LightInfo {
+=======
+
+uniform mat4 mView; //view transformation (for points)
+uniform mat4 mViewNormals; //view transformation (for vectors)
+
+
+uniform vec3 materialAmb;
+uniform vec3 materialDif;
+uniform vec3 materialSpe;
+uniform float shininess;
+
+const int MAX_LIGHTS = 3;
+
+uniform int nLights; //number of lights
+
+struct Light {
+    //int mode; //1 pont, 2 dir, 3 spot
+>>>>>>> Stashed changes
     bool active;
     bool directional;
     vec3 pos;
