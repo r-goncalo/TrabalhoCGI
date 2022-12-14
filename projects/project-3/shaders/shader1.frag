@@ -2,6 +2,10 @@ precision highp float;
 
 const int MAX_LIGHTS = 8;
 
+uniform mat4 mView; //view transformation (for points)
+uniform mat4 mViewNormals; //view transformation (for vectors)
+
+
 //debuging light:
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
@@ -21,9 +25,8 @@ const vec3 lightSpe = vec3(1.0, 1.0, 1.0);
 //uniform MaterialInfo uMaterial;        // The material of the object being drawn
 
 varying vec3 fViewer; //view vector in camera space
-varying vec3 fLight; //Light vector in camera space
 varying vec3 fNormal; //normal vector in camera space
-
+varying vec3 posC;
 
 
 void main() {
@@ -34,6 +37,18 @@ void main() {
 
     vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
     
+    vec3 fLight;
+
+    if(lightPosition.w == 0.0){
+
+        fLight = normalize((mViewNormals * lightPosition).xyz);
+        
+    }else{
+
+        fLight = normalize((mView*lightPosition).xyz - posC);
+        
+        }
+
     vec3 H = normalize(fLight + fViewer);
 
     float diffuseFactor = max( dot(fLight, fNormal), 0.0 );
