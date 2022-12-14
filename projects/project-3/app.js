@@ -136,7 +136,7 @@ function createLight(){
             specular: [150,150,175],
             position: [3.0, 5.0, 2.0, 1.0],
             axis: [-1.0, 5.0, -2.0],
-            aperture: 120.0,
+            aperture: 30.0,
             cutoff: 0.95,
             spotlight: false
         });
@@ -162,7 +162,7 @@ function createLight(){
         ax.add(lights[lights.length -1].axis, 2).name("z").step(0.1);
         
 
-        newLightFolder.add(lights[lights.length -1], "aperture").min(0.1).max(190).step(0.01).name("aperture");
+        newLightFolder.add(lights[lights.length -1], "aperture").min(0.1).max(180).step(0.01).name("aperture");
         newLightFolder.add(lights[lights.length -1], "cutoff").min(0).max(1).step(0.01).name("cutoff");
         newLightFolder.add(lights[lights.length -1], "spotlight");
         

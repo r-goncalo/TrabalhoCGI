@@ -43,6 +43,14 @@ void main() {
 
         if(lights[i].active){
 
+
+            if(lights[i].spotlight){
+
+
+
+            }else {
+
+
             vec3 ambientColor = lights[i].ambient * materialAmb;
             vec3 diffuseColor = lights[i].diffuse * materialDif;
             vec3 specularColor = lights[i].specular * materialSpe;
@@ -77,6 +85,12 @@ void main() {
             
                         
             gl_FragColor.xyz += (ambientColor + diffuse + specular);
+
+
+
+            }
+
+
 
 
         }
