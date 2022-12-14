@@ -109,20 +109,9 @@ let bunnyColor = {materialAmb : vec3(255, 255, 255), materialDif : vec3(242, 208
 
 const bunnyColorFolder = gui.addFolder("Bunny material");
 
-const ambFolder = bunnyColorFolder.addFolder("amb");
-ambFolder.add(bunnyColor.materialAmb, 0).min(0).max(255).step(0.5).name("R");
-ambFolder.add(bunnyColor.materialAmb, 1).min(0).max(255).step(0.5).name("G");
-ambFolder.add(bunnyColor.materialAmb, 2).min(0).max(255).step(0.5).name("B");
-
-const difFolder = bunnyColorFolder.addFolder("dif");
-difFolder.add(bunnyColor.materialDif, 0).min(0).max(255).step(0.5).name("R");
-difFolder.add(bunnyColor.materialDif, 1).min(0).max(255).step(0.5).name("G");
-difFolder.add(bunnyColor.materialDif, 2).min(0).max(255).step(0.5).name("B");
-
-const speFolder = bunnyColorFolder.addFolder("spe");
-speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("R");
-speFolder.add(bunnyColor.materialSpe, 1).min(0).max(255).step(0.5).name("G");
-speFolder.add(bunnyColor.materialSpe, 2).min(0).max(255).step(0.5).name("B");
+bunnyColorFolder.addColor(bunnyColor, "materialAmb").name("ambient");
+bunnyColorFolder.addColor(bunnyColor, "materialDif").name("diffuse");
+bunnyColorFolder.addColor(bunnyColor, "materialSpe").name("specular");
 
 bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
@@ -141,8 +130,8 @@ function createLight(){
 
         lights.push({
             active: true,
-            ambient: [75, 75,100],
-            diffuse: [75, 75, 100],
+            ambient: [200, 200,200],
+            diffuse: [200, 200, 200],
             specular: [150,150,175],
             position: [3.0, 5.0, 2.0, 1.0],
             axis: [-1.0, 5.0, -2.0],
@@ -176,6 +165,10 @@ function createLight(){
         
    }
 }
+
+//this creates the first light
+createLight();
+
 
 lightsFolder.add({addLight: function(){createLight();}}, "addLight").name("Add a new light");
 
@@ -244,21 +237,23 @@ const deleteLightButton = lightsFolder.add({
 
     let materials = {
 
-        GREEN : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0},
-        BROWN : {materialAmb : vec3(200, 119, 28), materialDif : vec3(50, 71, 82), materialSpe : vec3(255, 255, 255), shininess : 4.0}
+        RED : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0},
+        BROWN : {materialAmb : vec3(200, 119, 28), materialDif : vec3(50, 71, 82), materialSpe : vec3(255, 255, 255), shininess : 4.0},
+        BLUE : {materialAmb : vec3(0, 0, 255), materialDif : vec3(0, 0, 255), materialSpe : vec3(255, 255, 255), shininess : 10.0},
+        GREEN : {materialAmb : vec3(0.0, 255, 0.0), materialDif : vec3(0.0, 255, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0},
 
     }
 
     function defineMaterial(material){
 
 
-
+        console.log(material);
 
         gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), material.materialAmb[0]/255, material.materialAmb[1]/255, material.materialAmb[2]/255);
 
         gl.uniform3f(gl.getUniformLocation(program, "materialDif"), material.materialDif[0]/255, material.materialDif[1]/255, material.materialDif[2]/255);
 
-        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), material.materialSpe[1]/255, material.materialDif[2]/255, material.materialDif[3]/255);
+        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), material.materialSpe[0]/255, material.materialDif[1]/255, material.materialDif[2]/255);
 
         gl.uniform1f(gl.getUniformLocation(program, "shininess"), material.shininess);
 
@@ -309,15 +304,15 @@ function renderCube(){
 
     multTranslation([3,1,-3]);
     updateModelView();
-    defineMaterial(materials.GREEN); 
+    defineMaterial(materials.RED); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 }
 
 function renderCylinder(){
     multTranslation([-4,1,0]);
+    defineMaterial(materials.BLUE);
     updateModelView();
-    defineMaterial(materials.GREEN);
     CYLINDER.draw(gl, program, gl.TRIANGLES);
 }
 
@@ -347,6 +342,7 @@ function renderPrimitives(){
     pushMatrix();
         renderCylinder();
     popMatrix();
+    pushMatrix();
         renderSphere();
 
 }
@@ -404,8 +400,6 @@ function renderScene(){
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
             gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
-
-            console.log(lights);
             
         }
     }

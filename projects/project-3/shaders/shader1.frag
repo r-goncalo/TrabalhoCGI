@@ -36,9 +36,7 @@ varying vec3 posC; //pos in camera coordinates
 
 void main() {
 
-    //gl_FragColor = vec4(lights[0].ambient, 1.0);
-
-    for(int i = 0; i < 1; i++){
+    for(int i = 0; i < MAX_LIGHTS; i++){
 
         //i can not be compared with non constant expression on for loop
         if(i >= nLights)
@@ -82,8 +80,6 @@ void main() {
             
                         
             gl_FragColor += vec4(ambientColor + diffuse + specular, 1.0);
-
-            //gl_FragColor += vec4(lights[i].ambient, 1.0);
 
           
 
