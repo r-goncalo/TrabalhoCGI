@@ -76,7 +76,6 @@ void main() {
                 
                 }
             
-            vec3 H = normalize(fLight + fViewer);
             vec3 normal = normalize(fNormal);
             vec3 reflection = reflect(-fLight, normal);
             vec3 V = normalize(-posC);
