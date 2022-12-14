@@ -66,7 +66,7 @@ const gui = new GUI();
 let optionsController = {
 
     "Backface culling" : true,
-    "Depth buffer" : false
+    "Depth buffer" : true
 
 };
 
@@ -90,19 +90,19 @@ cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
 cameraFolder.add(camera, 'far', 0.1, MAX_VP_DISTANCE * 5, 0.1);
 
 const eyeFolder = gui.addFolder("eye");
-eyeFolder.add(camera.eye, 0).min(0).max(MAX_VP_DISTANCE).step(0.05).name("x");
-eyeFolder.add(camera.eye, 1).min(0).max(MAX_VP_DISTANCE).step(0.05).name("y");
-eyeFolder.add(camera.eye, 2).min(0).max(MAX_VP_DISTANCE).step(0.05).name("z");
+eyeFolder.add(camera.eye, 0).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("x");
+eyeFolder.add(camera.eye, 1).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("y");
+eyeFolder.add(camera.eye, 2).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
 const atFolder = gui.addFolder("At");
-atFolder.add(camera.at, 0).min(0).max(MAX_VP_DISTANCE).step(0.05).name("x");
-atFolder.add(camera.at, 1).min(0).max(MAX_VP_DISTANCE).step(0.05).name("y");
-atFolder.add(camera.at, 2).min(0).max(MAX_VP_DISTANCE).step(0.05).name("z");
+atFolder.add(camera.at, 0).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("x");
+atFolder.add(camera.at, 1).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("y");
+atFolder.add(camera.at, 2).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("z");
 
 const upFolder = gui.addFolder("Up");
-upFolder.add(camera.up, 0).min(0).max(MAX_VP_DISTANCE).step(0.05).name("x");
-upFolder.add(camera.up, 1).min(0).max(MAX_VP_DISTANCE).step(0.05).name("y");
-upFolder.add(camera.up, 2).min(0).max(MAX_VP_DISTANCE).step(0.05).name("z");
+upFolder.add(camera.up, 0).min(-1).max(1).step(0.05).name("x");
+upFolder.add(camera.up, 1).min(-1).max(1).step(0.05).name("y");
+upFolder.add(camera.up, 2).min(-1).max(1).step(0.05).name("z");
 
 let lightsController = {};
 
@@ -157,7 +157,7 @@ let lights = [
         aspect = canvas.width / canvas.height;
 
         gl.viewport(0,0,canvas.width, canvas.height);
-        let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
+        mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
     }
 
     /**
@@ -169,33 +169,28 @@ let lights = [
 /**
  * ********Shader Stuff*********
  */
-/*
+
 
     let materials = {
 
-        BLUE : {materialAmb : vec3(1.0, 0.0, 0.0), materialDif : vec3(1.0, 0.0, 0.0), materialSpe : vec3(1.0, 0.0, 0.0), shininess : 6.0}
+        GREEN : {materialAmb : vec3(1.0, 0.0, 0.0), materialDif : vec3(1.0, 0.0, 0.0), materialSpe : vec3(1.0, 0.0, 0.0), shininess : 6.0}
 
     }
 
     function defineMaterial(material){
 
-        uniform vec3 materialAmb;
-        uniform vec3 materialDif;
-        uniform vec3 materialSpe;
-        uniform float shininess;
 
-        const vmModelView = gl.getUniformLocation(program, "mModelView");
-        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
+        gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), false, material.materialAmb[0], material.materialAmb[1], material.materialAmb[2]);
 
-        const vmModelView = gl.getUniformLocation(program, "mModelView");
-        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
+        gl.uniform3f(gl.getUniformLocation(program, "materialDif"), false, material.materialDif[0], material.materialDif[1], material.materialDif[2]);
 
-        const vmModelView = gl.getUniformLocation(program, "mModelView");
-        gl.uniformMatrix4fv(vmModelView, false, flatten(modelView()));
+        gl.uniform3f(gl.getUniformLocation(program, "materialSpe"), false, material.materialSpe[1], material.materialDif[2], material.materialDif[3]);
+
+        gl.uniform1f(gl.getUniformLocation(program, "shininess"), false, material.shininess);
 
     }
 
-*/
+
 
     //puts a color in the fragment shader
     function updateModelView(){
@@ -230,7 +225,7 @@ function renderGround(){
 
     multScale([10, 0.5, 10]);
     updateModelView();
-    //defineMaterial(materials.BROWN); 
+    defineMaterial(materials.GREEN); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 
@@ -238,35 +233,32 @@ function renderGround(){
 
 function renderCube(){
 
-    multScale([1, 1, 1]);
-    multTranslation([5,0,-5]);
+    multTranslation([3,1,-3]);
     updateModelView();
-    //defineMaterial(materials.PINK); 
+    defineMaterial(materials.GREEN); 
     CUBE.draw(gl, program, gl.TRIANGLES);
 
 }
 
 function renderCylinder(){
-    multScale([1, 1, 1]);
-    multTranslation([-5,1,0])
+    multTranslation([-4,1,0]);
     updateModelView();
-    //defineMaterial(materials.BRIGHT_BLUE);
+    defineMaterial(materials.GREEN);
     CYLINDER.draw(gl, program, gl.TRIANGLES);
 }
 
 function renderSphere(){
-    multScale([1, 1, 1]);
-    multTranslation([5,1,5])
+    multTranslation([3,1,4]);
     updateModelView();
-    //defineMaterial(materials.BLACK);
+    defineMaterial(materials.GREEN);
     SPHERE.draw(gl, program, gl.TRIANGLES);
 }
 
 function renderBunny(){
-    multScale([1, 1, 5]);
-    multTranslation([0,1,5])
+    multTranslation([2,1,1]);
+    multScale([5, 5, 5]);
     updateModelView();
-    //defineMaterial(materials.BRIGHT_GREEN);
+    defineMaterial(materials.GREEN);
     BUNNY.draw(gl, program, gl.TRIANGLES);
 }
 

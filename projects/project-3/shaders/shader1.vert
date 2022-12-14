@@ -19,18 +19,11 @@ varying vec3 fViewer; //view vector in camera space
 //debuging light:
 const vec4 lightPosition = vec4(0.0, 1.8, 1.3, 1.0);
 
-/*
+
 uniform vec3 materialAmb;
 uniform vec3 materialDif;
 uniform vec3 materialSpe;
 uniform float shininess;
-*/
-
-const vec3 materialAmb = vec3(1.0, 0.0, 0.0);
-const vec3 materialDif = vec3(1.0, 0.0, 0.0);
-const vec3 materialSpe = vec3(1.0, 1.0, 1.0);
-const float shininess = 6.0;
-
 
 const vec3 lightAmb = vec3(0.2, 0.2, 0.2);
 const vec3 lightDif = vec3(0.7, 0.7, 0.7);
@@ -38,11 +31,13 @@ const vec3 lightSpe = vec3(1.0, 1.0, 1.0);
 
 
 
-vec3 ambientColor = lightAmb * materialAmb;
-vec3 diffuseColor = lightDif * materialDif;
-vec3 specularColor = lightSpe * materialSpe;
+
 
 void main() {
+
+    vec3 ambientColor = lightAmb * materialAmb;
+    vec3 diffuseColor = lightDif * materialDif;
+    vec3 specularColor = lightSpe * materialSpe;
 
     //the vertex position after the transformations
     vec3 posC = (mModelView * vPosition).xyz;
