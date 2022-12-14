@@ -77,28 +77,31 @@ void main() {
                 }
             
             vec3 H = normalize(fLight + fViewer);
+            vec3 normal = normalize(fNormal);
+            vec3 reflection = reflect(-fLight, normal);
+            vec3 V = normalize(-posC);
             
-            float diffuseFactor = max( dot(fLight, fNormal), 0.0 );
+            float diffuseFactor = max( dot(fLight, normal), 0.0 );
             vec3 diffuse = diffuseFactor * diffuseColor;
             
-            float specularFactor = pow( max(dot(fNormal, H), 0.0), shininess);
+            float specularFactor = pow( max(dot(posC, reflection), 0.0), shininess);
             vec3 specular = specularFactor * specularColor;
             
-            if( dot(fLight, fNormal) < 0.0 ) {
+            if( dot(fLight, normal) < 0.0 ) {
                 
                 specular = vec3(0.0, 0.0, 0.0);
             
             }
             
             
-            gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
+            gl_FragColor += vec4(ambientColor + diffuse + specular, 1.0);
 
 
         }
 
     }
 
-
+/*
             vec3 ambientColor = lightAmb * materialAmb;
             vec3 diffuseColor = lightDif * materialDif;
             vec3 specularColor = lightSpe * materialSpe;
@@ -134,6 +137,6 @@ void main() {
             
             gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0);
 
-
+*/
 
 }
