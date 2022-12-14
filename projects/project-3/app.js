@@ -137,7 +137,7 @@ function createLight(){
             position: [3.0, 5.0, 2.0, 1.0],
             axis: [0, 5.0, 0],
             aperture: 30.0,
-            cutoff: 0.95,
+            cutoff: 0.05,
             spotlight: false
         });
 
@@ -157,9 +157,9 @@ function createLight(){
         inte.addColor(lights[lights.length -1], "specular").name("specular");
 
         let ax = newLightFolder.addFolder("axis");
-        ax.add(lights[lights.length -1].axis, 0).name("x").step(0.1);
-        ax.add(lights[lights.length -1].axis, 1).name("y").step(0.1);
-        ax.add(lights[lights.length -1].axis, 2).name("z").step(0.1);
+        ax.add(lights[lights.length -1].axis, 0).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("x");
+        ax.add(lights[lights.length -1].axis, 1).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("y");
+        ax.add(lights[lights.length -1].axis, 2).min(-MAX_VP_DISTANCE).max(MAX_VP_DISTANCE).step(0.05).name("z");
         
 
         newLightFolder.add(lights[lights.length -1], "aperture").min(0.1).max(360).step(0.01).name("aperture");

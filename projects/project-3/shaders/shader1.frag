@@ -67,17 +67,22 @@ void main() {
                 lightIntensity = 0.0;
 
                 vec3 spotToPoint = lights[i].position.xyz - posC;
-                float angle = acos(dot(lights[i].axis, spotToPoint));
+                float angle = abs(acos(dot(normalize(-1.0 *  lights[i].axis), normalize(spotToPoint))));
                 
-                if(abs(angle) <= lights[i].aperture){
+                if(angle <= (lights[i].aperture/3.1415926)){
 
-                    lightIntensity = 1.0 - pow(cos(angle), lights[i].cutoff);
+                    lightIntensity = 1.0 - pow(abs(cos(angle)), lights[i].cutoff);
 
                 }
 
 
-            }
-            
+                                        
+            gl_FragColor.xyz += ambientColor * lightIntensity;
+
+
+            }else{
+
+
             vec3 normal = normalize(fNormal);
             vec3 reflection = reflect(-fLight, normal);
             vec3 V = normalize(-posC);
@@ -88,14 +93,21 @@ void main() {
             float specularFactor = pow( max(dot(V, reflection), 0.0), shininess);
             vec3 specular = specularFactor * specularColor;
             
-            if( dot(fLight, normal) < 0.0 ) {
+                if( dot(fLight, normal) < 0.0 ) {
                 
-                specular = vec3(0.0, 0.0, 0.0);
+                    specular = vec3(0.0, 0.0, 0.0);
             
+                }
+
+                        
+            gl_FragColor.xyz += (ambientColor + diffuse + specular);
+
+
             }
             
-                        
-            gl_FragColor.xyz += (ambientColor + diffuse + specular) * lightIntensity;
+
+            
+
 
 
         }
