@@ -21,7 +21,7 @@ const int MAX_LIGHTS = 3;
 uniform int nLights; //number of lights
 
 struct Light {
-    int mode; //1 pont, 2 dir, 3 spot
+    //int mode; //1 pont, 2 dir, 3 spot
     bool active;
     vec3 ambient;
     vec3 diffuse;
@@ -76,11 +76,11 @@ void main() {
             
             if(lights[i].position.w == 0.0){
                 
-                fLight = normalize((mViewNormals * vec4(lights[i].position, 1)).xyz);
+                fLight = normalize((mViewNormals * lights[i].position).xyz);
                 
             }else{
                 
-                fLight = normalize((mView* vec4(lights[i].position, 1)).xyz - posC);
+                fLight = normalize((mView * lights[i].position).xyz - posC);
                 
                 }
             

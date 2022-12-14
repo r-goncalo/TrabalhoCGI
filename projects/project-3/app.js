@@ -225,8 +225,8 @@ function createLight(){
         ax.add(lights[lights.length -1].axis, 2).name("z").step(0.1);
         
 
-        newLightFolder.add(lights[i], "aperture").name("aperture");
-        newLightFolder.add(lights[i], "cutoff").name("cutoff");
+        newLightFolder.add(lights[lights.length -1], "aperture").name("aperture");
+        newLightFolder.add(lights[lights.length -1], "cutoff").name("cutoff");
    
 
 
