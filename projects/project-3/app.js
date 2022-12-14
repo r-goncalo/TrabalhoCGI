@@ -388,17 +388,19 @@ function renderScene(){
         for(let i = 0; i < lights.length; i++){
             // Set the value of the 'lights[0].pos' uniform variable to the position of the first light
 
-            console.log(lights[i].position + " " + lights[i].position.x);
+            //console.log(lights[i]);
 
 
             gl.uniform4f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position[0], lights[i].position[1], lights[i].position[2], lights[i].position[4]);
-            gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient[0]  / 255,lights[i].ambient[1] / 255,lights[i].ambient[2] / 255);
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse[0] / 255, lights[i].diffuse[1] / 255, lights[i].diffuse[2] / 255);
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular[0] / 255, lights[i].specular[1] / 255, lights[i].specular[2] / 255);
+            gl.uniform3f(gl.getUniformLocation(program, "light[" + i + "].ambient"), lights[i].ambient[0]  ,lights[i].ambient[1] ,lights[i].ambient[2] );
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse[0] , lights[i].diffuse[1] , lights[i].diffuse[2] );
+            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular[0] , lights[i].specular[1] , lights[i].specular[2]);
             gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis[0],  lights[i].axis[1],  lights[i].axis[2]);
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
             gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
+
+            console.log(gl.getUniformLocation(program, "lights[" + i + "].position"));
             
         }
     }
