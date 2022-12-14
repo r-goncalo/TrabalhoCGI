@@ -119,8 +119,6 @@ bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
 const lightsFolder = gui.addFolder("Lights");
 
-const MAX_LIGHTS = 3;
-
 let lights = [];
 
 function createLight(){
@@ -163,7 +161,7 @@ function createLight(){
         
 
         newLightFolder.add(lights[lights.length -1], "aperture").min(0.1).max(180).step(0.01).name("aperture");
-        newLightFolder.add(lights[lights.length -1], "cutoff").min(0).max(20).step(0.01).name("cutoff");
+        newLightFolder.add(lights[lights.length -1], "cutoff").min(0).max(100).step(0.01).name("cutoff");
         newLightFolder.add(lights[lights.length -1], "spotlight");
         
    }
