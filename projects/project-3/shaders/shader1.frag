@@ -16,7 +16,6 @@ const int MAX_LIGHTS = 3;
 uniform int nLights; //number of lights
 
 struct Light {
-    //int mode; //1 pont, 2 dir, 3 spot
     bool active;
     vec3 ambient;
     vec3 diffuse;
@@ -25,6 +24,7 @@ struct Light {
     vec3 axis;
     float aperture;
     float cutoff;
+    bool spotlight;
 };
 
 uniform Light lights[MAX_LIGHTS];
