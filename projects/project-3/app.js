@@ -84,7 +84,7 @@ let camera = {
 };
 
 
-let cameraFolder = gui.addFolder("camera");
+const cameraFolder = gui.addFolder("camera");
 cameraFolder.add(camera, 'fovy', 1, 100, 1);
 cameraFolder.add(camera, 'near', 0.1, 20, 0.1 );
 cameraFolder.add(camera, 'far', 0.1, MAX_VP_DISTANCE * 5, 0.1);
@@ -127,8 +127,11 @@ speFolder.add(bunnyColor.materialSpe, 0).min(0).max(255).step(0.5).name("B");
 bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
 
-let lightsController = {};
 
+
+const lightsFolder = gui.addFolder("Lights");
+
+const MAX_LIGHTS = 3;
 
 let lights = [
     {
@@ -150,6 +153,12 @@ let lights = [
         cutoff: -1
     }
 ]
+
+function createLight(){
+
+
+
+}
 
 
 /*  
