@@ -113,7 +113,7 @@ bunnyColorFolder.addColor(bunnyColor, "materialAmb").name("ambient");
 bunnyColorFolder.addColor(bunnyColor, "materialDif").name("diffuse");
 bunnyColorFolder.addColor(bunnyColor, "materialSpe").name("specular");
 
-bunnyColorFolder.add(bunnyColor, "shininess", 0, 1, 0.01);
+bunnyColorFolder.add(bunnyColor, "shininess", 0, 20, 0.1);
 
 
 const lightsFolder = gui.addFolder("Lights");
@@ -237,10 +237,10 @@ const deleteLightButton = lightsFolder.add({
 
     let materials = {
 
-        RED : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 0.5},
-        BROWN : {materialAmb : vec3(200, 119, 28), materialDif : vec3(50, 71, 82), materialSpe : vec3(255, 255, 255), shininess : 0.5},
-        BLUE : {materialAmb : vec3(0, 0, 255), materialDif : vec3(0, 0, 255), materialSpe : vec3(255, 255, 255), shininess : 0.5},
-        GREEN : {materialAmb : vec3(0.0, 255, 0.0), materialDif : vec3(0.0, 255, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 0.5},
+        RED : {materialAmb : vec3(255, 0.0, 0.0), materialDif : vec3(255, 0.0, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0},
+        BROWN : {materialAmb : vec3(200, 119, 28), materialDif : vec3(50, 71, 82), materialSpe : vec3(255, 255, 255), shininess : 4.0},
+        BLUE : {materialAmb : vec3(0, 0, 255), materialDif : vec3(0, 0, 255), materialSpe : vec3(255, 255, 255), shininess : 10.0},
+        GREEN : {materialAmb : vec3(0.0, 255, 0.0), materialDif : vec3(0.0, 255, 0.0), materialSpe : vec3(255, 0.0, 0.0), shininess : 6.0},
 
     }
 
