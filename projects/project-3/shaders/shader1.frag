@@ -5,7 +5,7 @@ precision highp float;
 uniform mat4 mView; //view transformation (for points)
 uniform mat4 mViewNormals; //view transformation (for vectors)
 
-
+//materials
 uniform vec3 materialAmb;
 uniform vec3 materialDif;
 uniform vec3 materialSpe;
@@ -66,7 +66,7 @@ void main() {
             float diffuseFactor = max( dot(fLight, normal), 0.0 );
             vec3 diffuse = diffuseFactor * diffuseColor;
             
-            float specularFactor = pow( max(dot(posC, reflection), 0.0), shininess);
+            float specularFactor = pow( max(dot(V, reflection), 0.0), shininess);
             vec3 specular = specularFactor * specularColor;
             
             if( dot(fLight, normal) < 0.0 ) {
@@ -76,7 +76,7 @@ void main() {
             }
             
                         
-            gl_FragColor += vec4(ambientColor + diffuse + specular, 1.0);
+            gl_FragColor.xyz += (ambientColor + diffuse + specular);
 
           
 
