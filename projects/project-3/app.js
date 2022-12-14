@@ -239,7 +239,7 @@ function renderGround(){
 function renderCube(){
 
     multScale([1, 1, 1]);
-    multTranslation([0,0,0]);
+    multTranslation([5,0,-5]);
     updateModelView();
     //defineMaterial(materials.PINK); 
     CUBE.draw(gl, program, gl.TRIANGLES);
@@ -247,8 +247,8 @@ function renderCube(){
 }
 
 function renderCylinder(){
-    multScale([0.1, 0.1, 0.1]);
-    multTranslation([-7,0.2,0])
+    multScale([1, 1, 1]);
+    multTranslation([-5,1,0])
     updateModelView();
     //defineMaterial(materials.BRIGHT_BLUE);
     CYLINDER.draw(gl, program, gl.TRIANGLES);
@@ -256,15 +256,15 @@ function renderCylinder(){
 
 function renderSphere(){
     multScale([1, 1, 1]);
-    multTranslation([5,0,0])
+    multTranslation([5,1,5])
     updateModelView();
     //defineMaterial(materials.BLACK);
     SPHERE.draw(gl, program, gl.TRIANGLES);
 }
 
 function renderBunny(){
-    multScale([5, 5, 5]);
-    multTranslation([0.3,0,0])
+    multScale([1, 1, 5]);
+    multTranslation([0,1,5])
     updateModelView();
     //defineMaterial(materials.BRIGHT_GREEN);
     BUNNY.draw(gl, program, gl.TRIANGLES);
@@ -332,12 +332,6 @@ function renderScene(){
         
         gl.useProgram(program);
     
-        renderCamera();
-        renderScene();
-
-
-        window.requestAnimationFrame(render);
-
         if (optionsController["Backface culling"]) {
 
             gl.enable(gl.CULL_FACE);
@@ -359,6 +353,13 @@ function renderScene(){
 
             gl.disable(gl.DEPTH_TEST);
           }
+
+
+        renderCamera();
+        renderScene();
+
+
+        window.requestAnimationFrame(render);
 
         
     }
