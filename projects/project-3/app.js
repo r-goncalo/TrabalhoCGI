@@ -180,19 +180,21 @@ function createLight(){
 lightsFolder.add({addLight: function(){createLight();}}, "addLight").name("Add a new light");
 
 
-function deleteLight() {
-    if(lights.length>0){
+function deleteLightFun() {
+
+    //tehre should be at least one light
+    if(lights.length > 1){
+
        // Delete the light from the array of lights
        lights.pop();
+
         // Delete the folder for the selected light from the GUI
         lightsFolder.removeFolder(lightsFolder.__folders["Light " + (lights.length+1)]);
         } 
 }
 
 const deleteLightButton = lightsFolder.add({
-    deleteLight: function() {
-        // Delete the light from the array of lights
-        deleteLight()},
+    deleteLight: deleteLightFun
     }, "deleteLight");
     deleteLightButton.name("Delete light");
 
@@ -400,7 +402,7 @@ function renderScene(){
             gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
             gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
 
-            console.log(lights[i].ambient);
+            console.log(lights);
             
         }
     }

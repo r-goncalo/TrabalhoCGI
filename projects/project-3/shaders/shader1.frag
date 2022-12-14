@@ -52,7 +52,7 @@ void main() {
 
     //gl_FragColor = vec4(lights[0].ambient, 1.0);
 
-    for(int i = 0; i < MAX_LIGHTS; i++){
+    for(int i = 0; i < 1; i++){
 
         //i can not be compared with non constant expression on for loop
         if(i >= nLights)
