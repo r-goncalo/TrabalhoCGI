@@ -14,6 +14,7 @@ import {GUI} from '../../libs/dat.gui.module.js';
 
 let gl;
 const MAX_VP_DISTANCE = 20;
+const LIGHT_SCALE = 0.1;
 
 
 
@@ -248,9 +249,6 @@ createLight();
 
     function defineMaterial(material){
 
-
-        console.log(material);
-
         gl.uniform3f(gl.getUniformLocation(program, "materialAmb"), material.materialAmb[0]/255, material.materialAmb[1]/255, material.materialAmb[2]/255);
 
         gl.uniform3f(gl.getUniformLocation(program, "materialDif"), material.materialDif[0]/255, material.materialDif[1]/255, material.materialDif[2]/255);
@@ -384,31 +382,52 @@ function renderScene(){
 
     }
 
+    function loadLightInfo(i){
+
+        gl.uniform4f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position[0], lights[i].position[1], lights[i].position[2], lights[i].position[3]);
+
+        gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].ambient"), lights[i].ambient[0]/255, lights[i].ambient[1]/255, lights[i].ambient[2]/255);
+
+        gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"), lights[i].diffuse[0]/255, lights[i].diffuse[1]/255, lights[i].diffuse[2]/255);
+
+        gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular[0]/255, lights[i].specular[1]/255, lights[i].specular[2]/255);
+
+        gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis[0],  lights[i].axis[1],  lights[i].axis[2]);
+        gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
+        gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
+        gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
+
+    }
+
 
     function loadLights(){
 
         gl.uniform1i(gl.getUniformLocation(program, "nLights"), lights.length);
 
         for(let i = 0; i < lights.length; i++){
-            // Set the value of the 'lights[0].pos' uniform variable to the position of the first light
+  
+            loadLightInfo(i);
 
-            //console.log(lights[i].position + " " + lights[i].position.x);
-
-
-            gl.uniform4f(gl.getUniformLocation(program, "lights[" + i + "].position"), lights[i].position[0], lights[i].position[1], lights[i].position[2], lights[i].position[4]);
-
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].ambient"), lights[i].ambient[0]/255, lights[i].ambient[1]/255, lights[i].ambient[2]/255);
-
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].diffuse"),lights[i].diffuse[0]/255, lights[i].diffuse[1] / 255, lights[i].diffuse[2]/255);
-
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].specular"), lights[i].specular[0]/255, lights[i].specular[1]/255, lights[i].specular[2]/255);
-
-            gl.uniform3f(gl.getUniformLocation(program, "lights[" + i + "].axis"), lights[i].axis[0],  lights[i].axis[1],  lights[i].axis[2]);
-            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].aperture"), lights[i].aperture);
-            gl.uniform1f(gl.getUniformLocation(program, "lights[" + i + "].cutoff"), lights[i].cutoff);
-            gl.uniform1i(gl.getUniformLocation(program, "lights[" + i + "].active"), lights[i].active);
-            
         }
+    }
+
+    function drawLights(){
+
+        for(let i = 0; i < lights.length; i++){
+
+            loadLightInfo(i);
+
+            pushMatrix();
+
+                multTranslation([lights[i].position[0], lights[i].position[1], lights[i].position[2]]);
+                multScale([LIGHT_SCALE, LIGHT_SCALE, LIGHT_SCALE]);
+                updateModelView();
+                SPHERE.draw(gl, program, gl.LINES);
+
+            popMatrix();
+
+        }
+
     }
 
     
@@ -450,12 +469,12 @@ function renderScene(){
     
         loadOptions();
 
-        loadLights();
+      
 
 
         renderCamera();
         renderScene();
-
+        loadLights();
 
         window.requestAnimationFrame(render);
 

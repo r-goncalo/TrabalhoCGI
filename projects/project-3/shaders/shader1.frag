@@ -49,7 +49,7 @@ void main() {
                         
             vec3 fLight;
             
-            if(lights[i].position.w == 0.0){
+            if(lights[i].position[3] == 0.0){
                 
                 fLight = normalize((mViewNormals * lights[i].position).xyz);
                 
@@ -63,7 +63,7 @@ void main() {
             vec3 reflection = reflect(-fLight, normal);
             vec3 V = normalize(-posC);
             
-            float diffuseFactor = max( dot(fLight, normal), 0.0 );
+            float diffuseFactor = max( dot(normal, fLight), 0.0 );
             vec3 diffuse = diffuseFactor * diffuseColor;
             
             float specularFactor = pow( max(dot(V, reflection), 0.0), shininess);
@@ -78,9 +78,9 @@ void main() {
                         
             gl_FragColor.xyz += (ambientColor + diffuse + specular);
 
-          
 
         }
 
     }
+    
 }
