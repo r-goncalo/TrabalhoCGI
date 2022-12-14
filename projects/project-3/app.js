@@ -135,7 +135,9 @@ let lights = [];
 
 function createLight(){
 
+    if(lights.length<MAX_LIGHTS){
         let newLightFolder = lightsFolder.addFolder("Light " + (lights.length+1));
+
 
         lights.push({
             active: true,
@@ -171,17 +173,29 @@ function createLight(){
 
         newLightFolder.add(lights[lights.length -1], "aperture").name("aperture");
         newLightFolder.add(lights[lights.length -1], "cutoff").name("cutoff");
-
-   
-
-
+        
+   }
 }
 
+lightsFolder.add({addLight: function(){createLight();}}, "addLight").name("Add a new light");
 
-lightsFolder.add({addLight: createLight}, "addLight").name("Add a new light");
 
+function deleteLight() {
+    if(lights.length>0){
+       // Delete the light from the array of lights
+       lights.pop();
+        // Delete the folder for the selected light from the GUI
+        lightsFolder.removeFolder(lightsFolder.__folders["Light " + (lights.length+1)]);
+        } 
+}
 
-createLight();
+const deleteLightButton = lightsFolder.add({
+    deleteLight: function() {
+        // Delete the light from the array of lights
+        deleteLight()},
+    }, "deleteLight");
+    deleteLightButton.name("Delete light");
+
 
 
 /*  
