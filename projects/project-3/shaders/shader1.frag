@@ -61,9 +61,9 @@ void main() {
 
         if(lights[i].active){
 
-            vec3 ambientColor = lightAmb * materialAmb / 255.0 ;
-            vec3 diffuseColor = lightDif * materialDif / 255.0 ;
-            vec3 specularColor = lightSpe * materialSpe / 255.0 ;
+            vec3 ambientColor = lights[i].ambient * materialAmb;
+            vec3 diffuseColor = lights[i].diffuse * materialDif;
+            vec3 specularColor = lights[i].specular * materialSpe;
             
             vec3 fViewer = vec3(0, 0, 1); // Projeção paralela...
             
