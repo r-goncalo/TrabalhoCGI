@@ -207,7 +207,7 @@ createLight();
  * RESIZE STUFF
  * 
  */
-    //let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
+    
     let mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
 
     resize_canvas();
@@ -234,6 +234,35 @@ createLight();
      * RESIZE STUFF
      * 
      */
+
+
+    /**
+     * Desafio - eventListeners
+     */
+
+    
+    let mouseX = 0;
+    let mouseY = 0;
+    let isMouseDown = false;
+    
+    // track mouse movement
+    canvas.addEventListener("mousedown", function(event) {
+    isMouseDown = true;
+    });
+    
+    canvas.addEventListener("mousemove", function(event) {
+        // Update the mouse position
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+    
+    canvas.addEventListener("mouseup", function(event) {
+    isMouseDown = false;
+    });
+
+ /**
+  * End desafio - event listeners
+  */
 
 /**
  * ********Shader Stuff*********
@@ -369,20 +398,53 @@ function renderScene(){
 
 
 
-    function renderCamera(){
+    
+ function renderCamera(){ //O desafio esta principalmente implementado aqui
 
-        mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
+    mProjection = perspective(camera.fovy, aspect, camera.near, camera.far);
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        let mView = lookAt(camera.eye, camera.at, camera.up);
 
+     // In the rendering loop, check if the mouse is being clicked and update the camera's position and orientation
+     if (isMouseDown) {
+      
+        let cameraRadius = 5;
+
+        // Use the mouse movement to update the camera's orientation
+        let rotationX = (camera.eye[0] - mouseY) / (canvas.height / 2);
+        let rotationY = (camera.eye[1] - mouseX) / (canvas.width / 2);
+
+        let absRotationX = Math.abs(rotationX);
+
+        // Calculate the scale factor for the rotation around the y-axis
+        let yScaleFactor = 1 + absRotationX / 90;
+
+        // Scale the rotation around the y-axis by the calculated factor
+        rotationY *= yScaleFactor;
+
+        let cameraPosition = vec3(
+            camera.eye[0] - cameraRadius * Math.cos(rotationY * 2),
+            camera.eye[1] - cameraRadius * Math.sin(rotationX*2),
+            camera.eye[2] - cameraRadius * Math.sin(rotationY*2)
+        );
+        
+    
+     
+        let mView = lookAt(cameraPosition, vec3(0, 0, 0), vec3(0,1,0));
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mView"), false, flatten(mView));
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
 
         loadMatrix(mView);
-    
+  }
+  else{
+        let mView = lookAt(camera.eye, camera.at, camera.up);
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mView"), false, flatten(mView));
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mViewNormals"), false, flatten(normalMatrix(mView)));
 
-    }
+        loadMatrix(mView);}
+
+
+}
 
     function loadLightInfo(i){
 
